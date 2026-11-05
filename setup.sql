@@ -18,7 +18,7 @@ create table if not exists players (
   nom text not null,
   poste text not null check (poste in ('G','D','M','A')),
   club text not null default '',
-  added_on date not null default '2026-11-07',
+  added_on date not null default '2026-11-01',
   left_on date
 );
 
