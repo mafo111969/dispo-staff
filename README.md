@@ -27,3 +27,6 @@ L'administrateur se connecte (bouton « Créer mon accès » la première fois),
 
 ## Mode démonstration
 Si `config.js` est vide, l'app fonctionne en démonstration sur l'appareil, sans rien partager, avec un sélecteur de rôle.
+
+## Envoi WhatsApp automatique (optionnel)
+Voir `docs/whatsapp-automatique.md`.

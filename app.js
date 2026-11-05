@@ -32,7 +32,7 @@ fr:{sub:'Sélection nationale · stage du 7 au 18 novembre 2026',
  perPlayer:'Par joueur',clickP:'Touchez un joueur pour voir sa fiche.',h_player:'Joueur',h_today:'Statut',h_lost:'Jours perdus',h_rate:'Dispo',h_min:'Minutes jouées',h_miss:'Matchs manqués',h_ret:'Retour prévu',
  byType:'Jours perdus par type',sheet:'Fiche',sheetTxt:'{l} jour(s) perdu(s) sur {d}, disponibilité {r} %, {m} minutes jouées, {x} match(s) manqué(s) sur {y}.',matchMark:'encadré = jour de match',
  wa_t:'Envoi WhatsApp',wa_l:'Un message par destinataire, dans sa langue et filtré selon son rôle. Touchez « Ouvrir WhatsApp », puis envoyez.',
- noPhone:'Numéro manquant',sendAll:'Envoyer à tous ({n})',serie:'Envoi {i} sur {n}',serieL:'Touchez le bouton, envoyez dans WhatsApp, puis revenez ici pour le suivant.',openFor:'Ouvrir WhatsApp pour {x}',skip:'Passer',stop:'Arrêter',allSent:'Tous les messages ont été ouverts.',sentMark:'Envoyé',open:'Ouvrir WhatsApp',copy:'Copier',copied:'Message copié',
+ noPhone:'Numéro manquant',sendAll:'Envoyer à tous ({n})',autoAll:'Envoi automatique ({n})',autoRes:'{ok} envoyé(s), {ko} échec(s)',autoBusy:'Envoi en cours…',serie:'Envoi {i} sur {n}',serieL:'Touchez le bouton, envoyez dans WhatsApp, puis revenez ici pour le suivant.',openFor:'Ouvrir WhatsApp pour {x}',skip:'Passer',stop:'Arrêter',allSent:'Tous les messages ont été ouverts.',sentMark:'Envoyé',open:'Ouvrir WhatsApp',copy:'Copier',copied:'Message copié',
  waNone:'Aucun briefing validé ce jour. Validez-le dans l\'onglet Médical.',noContacts:'Aucun destinataire. Ajoutez-les dans l\'onglet Staff et accès.',
  st_t:'Staff et accès',st_l:'Chaque personne se connecte avec son e-mail et reçoit la vue de son rôle. Le numéro WhatsApp est au format international, sans + ni espaces (ex. 244923000000).',
  st_name:'Nom',st_role:'Rôle',st_email:'E-mail de connexion',st_phone:'Numéro WhatsApp',st_lang:'Langue',st_add:'Ajouter une personne',st_del:'Retirer',
@@ -77,7 +77,7 @@ pt:{sub:'Seleção Nacional · estágio de 7 a 18 de novembro de 2026',
  perPlayer:'Por jogador',clickP:'Toque num jogador para ver a ficha.',h_player:'Jogador',h_today:'Estado',h_lost:'Dias perdidos',h_rate:'Disp.',h_min:'Minutos jogados',h_miss:'Jogos falhados',h_ret:'Regresso previsto',
  byType:'Dias perdidos por tipo',sheet:'Ficha',sheetTxt:'{l} dia(s) perdido(s) em {d}, disponibilidade {r} %, {m} minutos jogados, {x} jogo(s) falhado(s) em {y}.',matchMark:'contorno = dia de jogo',
  wa_t:'Envio WhatsApp',wa_l:'Uma mensagem por destinatário, na sua língua e filtrada segundo a sua função. Toque em «Abrir WhatsApp» e envie.',
- noPhone:'Número em falta',sendAll:'Enviar a todos ({n})',serie:'Envio {i} de {n}',serieL:'Toque no botão, envie no WhatsApp e volte aqui para o seguinte.',openFor:'Abrir WhatsApp para {x}',skip:'Saltar',stop:'Parar',allSent:'Todas as mensagens foram abertas.',sentMark:'Enviado',open:'Abrir WhatsApp',copy:'Copiar',copied:'Mensagem copiada',
+ noPhone:'Número em falta',sendAll:'Enviar a todos ({n})',autoAll:'Envio automático ({n})',autoRes:'{ok} enviado(s), {ko} falha(s)',autoBusy:'A enviar…',serie:'Envio {i} de {n}',serieL:'Toque no botão, envie no WhatsApp e volte aqui para o seguinte.',openFor:'Abrir WhatsApp para {x}',skip:'Saltar',stop:'Parar',allSent:'Todas as mensagens foram abertas.',sentMark:'Enviado',open:'Abrir WhatsApp',copy:'Copiar',copied:'Mensagem copiada',
  waNone:'Nenhum briefing validado hoje. Valide-o no separador Médico.',noContacts:'Nenhum destinatário. Adicione-os no separador Staff e acessos.',
  st_t:'Staff e acessos',st_l:'Cada pessoa entra com o seu e-mail e recebe a vista da sua função. O número WhatsApp está em formato internacional, sem + nem espaços (ex. 244923000000).',
  st_name:'Nome',st_role:'Função',st_email:'E-mail de acesso',st_phone:'Número WhatsApp',st_lang:'Língua',st_add:'Adicionar uma pessoa',st_del:'Retirar',
@@ -344,7 +344,7 @@ function buildMsg(role,L,s){
   return headL+chTxt+body+(left.length&&role!=='medical'?'\n'+tr(L,'m_left',{l:left.map(id=>'• '+byId(id).nom).join('\n')}):'')+mins;
 }
 let WA_SEND=null;
-let SERIE=null; // {sendId, ids:[], i}
+let SERIE=null, WA_ERR=[]; // {sendId, ids:[], i}
 const sentKey=id=>'sent-'+id;
 const sentSet=id=>{try{return new Set(JSON.parse(ls.get(sentKey(id))||'[]'))}catch(e){return new Set()}};
 function markSent(sendId,staffId){const st=sentSet(sendId);st.add(staffId);ls.set(sentKey(sendId),JSON.stringify([...st]))}
@@ -363,7 +363,7 @@ function viewWA(){
       serie=cur?`<div class="banner ok"><div style="display:grid;gap:4px"><b>${t('serie',{i:SERIE.i+1,n:SERIE.ids.length})}</b><span class="sync">${t('serieL')}</span></div>
         <div class="bar"><a class="btn wa" id="serieGo" href="${waLink(cur,s)}" target="_blank" rel="noopener">${t('openFor',{x:esc(cur.name||'—')})}</a><button class="btn small" id="serieSkip">${t('skip')}</button><button class="btn small" id="serieStop">${t('stop')}</button></div></div>`
         :`<div class="banner ok"><b>${t('allSent')}</b><button class="btn small" id="serieStop">OK</button></div>`;
-    }else if(withPh.length)serie=`<div class="bar"><span></span><button class="btn wa" id="sendAll">${t('sendAll',{n:withPh.length})}</button></div>`;
+    }else if(withPh.length){const todo=withPh.filter(x=>!sent.has(x.id));serie=`<div class="bar"><span class="sync">${WA_ERR.map(esc).join(' · ')}</span><div class="bar">${CFG.waAuto&&!DEMO&&todo.length?`<button class="btn wa" id="autoAll">${t('autoAll',{n:todo.length})}</button>`:''}<button class="btn${CFG.waAuto?'':' wa'}" id="sendAll">${t('sendAll',{n:withPh.length})}</button></div></div>`}
     body=`<div class="chips">${sends.map(x=>`<button data-send="${x.id}" aria-pressed="${x.id===s.id}">${sendLabel(x)} ${hmOf(x.at)}</button>`).join('')}</div>${serie}
   <div class="walist">${staff.map(x=>{const L=x.lang==='fr'?'fr':'pt',txt=buildMsg(x.role,L,s),ph=String(x.phone||'').replace(/\D/g,'');
     return `<div class="panel pad card"><div class="bar"><div><span class="name">${esc(x.name||'—')}</span><div class="sync">${t('r_'+x.role)} · ${L.toUpperCase()}</div></div>${sent.has(x.id)?pill('ok',t('sentMark')):''}</div>
@@ -449,6 +449,13 @@ V.addEventListener('click',async e=>{
     try{await Store.addSend({day:DATE,at:new Date().toISOString(),label:lab,sent_by:S.me.name||t('r_medical'),snap,match:d.match});LABEL=null;WA_SEND=null;toast(t('validated'));location.hash='wa';render(true)}catch(err){el.disabled=false;fail(err)}
     return}
   if(el.id==='sendAll'){const s=curSend(),sent=sentSet(s.id);const ids=[...S.staff].sort((a,b)=>ROLES.indexOf(a.role)-ROLES.indexOf(b.role)||String(a.name).localeCompare(b.name)).filter(x=>String(x.phone||'').replace(/\D/g,'')).map(x=>x.id);SERIE={sendId:s.id,ids:[...ids.filter(i=>!sent.has(i)),...ids.filter(i=>sent.has(i))],i:0};if(ids.every(i=>sent.has(i)))SERIE.ids=ids;return render(true)}
+  if(el.id==='autoAll'){const s=curSend(),sent=sentSet(s.id);const todo=S.staff.filter(x=>String(x.phone||'').replace(/\D/g,'')&&!sent.has(x.id));
+    el.disabled=true;el.textContent=t('autoBusy');WA_ERR=[];
+    try{const {data,error}=await sb.functions.invoke('send-whatsapp',{body:{messages:todo.map(x=>({staff_id:x.id,text:buildMsg(x.role,x.lang==='fr'?'fr':'pt',s)}))}});
+      if(error)throw error;const res=data.results||[];res.filter(r=>r.ok).forEach(r=>markSent(s.id,r.staff_id));
+      WA_ERR=res.filter(r=>!r.ok).map(r=>`${(S.staff.find(x=>x.id===r.staff_id)||{}).name||'?'} : ${r.error}`);
+      toast(t('autoRes',{ok:res.filter(r=>r.ok).length,ko:WA_ERR.length}))}catch(err){fail(err)}
+    return render(true)}
   if(el.id==='serieSkip'){SERIE.i++;return render(true)}
   if(el.id==='serieStop'){SERIE=null;return render(true)}
   if(el.dataset.copy){const x=S.staff.find(y=>y.id===el.dataset.copy),sends=sendsOf(DATE),s=sends.find(y=>y.id===WA_SEND)||sends[sends.length-1];
