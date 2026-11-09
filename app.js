@@ -136,7 +136,7 @@ function draft(day=DATE){
   roster(day).forEach(p=>{
     if(d&&d.players[p.id]){players[p.id]=d.players[p.id];return}
     const b=base[p.id]&&base[p.id].s!=='parti'?base[p.id]:blankP();
-    players[p.id]={s:b.s,c:b.s==='ok'?'':b.c,r:b.s==='ok'?'':b.r,t:b.s==='ok'?'':b.t,m:0,chr:b.chr||'',aig:b.aig||'',aigd:b.aigd||'',w:!!b.w};
+    players[p.id]={s:b.s,c:b.s==='ok'?'':b.c,r:b.s==='ok'?'':b.r,t:b.s==='ok'?'':b.t,m:0,chr:b.chr||'',aig:b.aig||'',aigd:b.aigd||'',w:!!b.w,...(b.tr?{tr:b.tr}:{})};
   });
   return {exists:!!d,carried:!d&&prevDays.length>0,players,match:d?d.match:{on:false,opp:'Sudão do Sul'}};
 }
@@ -211,6 +211,33 @@ const LOCK='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="
 const pill=(k,txt)=>`<span class="pill k-${k}"><i class="dot"></i>${txt}</span>`;
 function toast(x){const e=document.getElementById('toast');e.textContent=x;e.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>e.hidden=true,2800)}
 const timers={};const debounced=(k,fn,ms=700)=>{clearTimeout(timers[k]);timers[k]=setTimeout(fn,ms)};
+/* ---------- traduction des textes libres (FR <-> PT) ---------- */
+const TR_ON=()=>!DEMO&&!!CFG.translate;
+const PEND=new Set();
+// texte k du joueur x dans la langue L : traduction si elle correspond au texte actuel, sinon l'original
+const tx=(x,k,L=LANG)=>{const e=x&&x.tr&&x.tr[k];return e&&e.src===x[k]&&e[L]?e[L]:(x&&x[k])||''};
+async function translateField(id,k,val){
+  if(!TR_ON()||!val)return;
+  const job=(async()=>{try{
+    const {data,error}=await sb.functions.invoke('translate',{body:{texts:[val]}});
+    if(error||!data||!data.items)throw error||new Error('translate');
+    const x={...pl(id)};if(x[k]!==val)return;
+    x.tr={...(x.tr||{}),[k]:{src:val,...data.items[0]}};await setPlayer(id,x);
+  }catch(err){console.warn('traduction',err)}})();
+  PEND.add(job);job.finally(()=>PEND.delete(job));return job;
+}
+// rattrape une fois par jour affiché les textes déjà saisis sans traduction
+const BF=new Set();
+async function backfill(){
+  if(!TR_ON()||BF.has(DATE)||S.me?.role!=='medical')return;BF.add(DATE);
+  const d=draft(),todo=[];
+  Object.entries(d.players).forEach(([id,x])=>['c','chr','aig','pct'].forEach(k=>{const v=(x[k]||'').trim();if(v&&!(x.tr&&x.tr[k]&&x.tr[k].src===x[k]))todo.push({id,k,v:x[k]})}));
+  if(!todo.length)return;
+  try{const {data,error}=await sb.functions.invoke('translate',{body:{texts:todo.map(o=>o.v)}});if(error||!data||!data.items)throw error||new Error('translate');
+    const by={};todo.forEach((o,i)=>{const x=by[o.id]||(by[o.id]={...pl(o.id)});if(x[o.k]===o.v)x.tr={...(x.tr||{}),[o.k]:{src:o.v,...data.items[i]}}});
+    const d2=draft();await Store.patchDraft(DATE,d2.exists?{players:by}:{players:{...d2.players,...by},match:d2.match});render(true)
+  }catch(err){console.warn('traduction',err)}
+}
 const dateBar=()=>`<div class="datebar"><button class="btn small" data-day="-1" aria-label="-1">‹</button><strong>${longD(DATE)}</strong><button class="btn small" data-day="1" aria-label="+1">›</button></div>`;
 const head=(ti,le,withDate=true)=>`<div class="head"><div><h1>${ti}</h1><p class="lead">${le}</p></div>${withDate?dateBar():''}</div>${DEMO?`<div class="note warn">${t('demo')}</div>`:''}`;
 const sendLabel=s=>`${t('l_'+s.label)||s.label}`;
@@ -255,17 +282,18 @@ function viewMedical(){
   </div>
   <div class="banner"><label style="display:flex;gap:8px;align-items:center;font-weight:600"><input type="checkbox" id="matchOn" ${d.match?.on?'checked':''}> ${t('matchDay')}</label>${d.match?.on?`<div class="bar"><label class="f" style="min-width:200px">${t('opp')}<input type="text" id="opp" value="${esc(d.match.opp)}"></label><span class="sync">${t('played',{n:played})}</span></div>`:`<span class="sync">${t('minHint')}</span>`}</div>
   ${suivi.length?`<div class="banner suivi"><div style="display:grid;gap:6px;min-width:0"><b>${t('suivi')} (${suivi.length})</b><span class="sync">${t('suiviL')} ${t('medOnly')}.</span>
-    <ul>${suivi.map(({p,x})=>`<li><span class="name">${esc(p.nom)}</span>${x.aig?` · ${esc(x.aig)}${x.aigd?` (${t('since',{d:dm(x.aigd)})})`:''}`:''}${x.chr?` · ${t('chrS')} : ${esc(x.chr)}`:''}${x.pc?` · <b>${t('c_'+x.pc)}</b>${x.pc==='soins'&&x.pct?` : ${esc(x.pct)}`:''}`:''}</li>`).join('')}</ul></div></div>`:''}
+    <ul>${suivi.map(({p,x})=>`<li><span class="name">${esc(p.nom)}</span>${x.aig?` · ${esc(tx(x,'aig'))}${x.aigd?` (${t('since',{d:dm(x.aigd)})})`:''}`:''}${x.chr?` · ${t('chrS')} : ${esc(tx(x,'chr'))}`:''}${x.pc?` · <b>${t('c_'+x.pc)}</b>${x.pc==='soins'&&x.pct?` : ${esc(tx(x,'pct'))}`:''}`:''}</li>`).join('')}</ul></div></div>`:''}
   <div class="panel">${rows}
     <form class="addp" id="addP"><label class="f">${t('num')}<input type="number" name="num" id="ap-num" min="1"></label><label class="f">${t('nom')}<input type="text" name="nom" id="ap-nom" required></label>
     <label class="f">${t('poste')}<select name="poste" id="ap-poste">${POS.map(k=>`<option value="${k}">${t(k+'1')}</option>`).join('')}</select></label><label class="f">${t('club')}<input type="text" name="club" id="ap-club"></label>
     <button class="btn">${t('add')}</button></form>
   </div>`;
+  backfill();
 }
 function setPlayer(id,x){
   const d=draft(), patch={players:{[id]:x}};
   if(!d.exists){patch.players={...d.players,[id]:x};patch.match=d.match}
-  Store.patchDraft(DATE,patch).catch(fail);
+  return Store.patchDraft(DATE,patch).catch(fail);
 }
 
 /* ---------- vue prépa ---------- */
@@ -279,7 +307,7 @@ function viewPrepa(){
   <div class="cards">${list.map(p=>{const x=s.snap[p.id], lg=logs.filter(e=>e.player_id===p.id);
     return `<form class="panel pad card" data-id="${p.id}">
       <div class="bar"><div><span class="name">${esc(p.nom)}</span><div class="sync">${t(p.poste+'1')} · n°${p.num??''}</div></div>${pill(x.s,t('s_'+x.s))}</div>
-      <div class="consigne"><b>${t('consL')} :</b> ${esc(x.c)||t('noneC')}${x.r?`<br><b>${t('retL')} :</b> ${dm(x.r)}`:''}</div>
+      <div class="consigne"><b>${t('consL')} :</b> ${esc(tx(x,'c'))||t('noneC')}${x.r?`<br><b>${t('retL')} :</b> ${dm(x.r)}`:''}</div>
       ${RO?'':`<div class="form4">
         <label class="f">${t('dur')}<input type="number" id="d-${p.id}" name="dur" min="0" value="40"></label>
         <label class="f">${t('rpe')}<input type="number" id="rp-${p.id}" name="rpe" min="0" max="10" value="5"></label>
@@ -297,7 +325,7 @@ function viewCoach(){
   if(!s){V.innerHTML=head(t('coach_t'),t('coach_l'))+`<div class="panel empty">${t('noBrief')}</div>`;return}
   const ids=Object.keys(s.snap).filter(byId), cat=k=>ids.filter(id=>CAT(s.snap[id].s)===k).map(byId);
   const col=k=>{const l=cat(k);return `<div class="panel pad col k-${k}"><h2>${t('c_'+k)} <em>${l.length}</em></h2>
-    ${POS.map(po=>{const x=l.filter(p=>p.poste===po);return x.length?`<div class="pos"><small>${t(po)}</small><ul>${x.map(p=>{const y=s.snap[p.id];return `<li><span class="li-who">${av(p,'sm')}<span>${esc(p.nom)}</span></span>${k==='adapte'&&y.c?`<span>${esc(y.c)}</span>`:''}${k!=='ok'&&y.r?`<span>${t('m_ret',{d:dm(y.r)})}</span>`:''}</li>`}).join('')}</ul></div>`:''}).join('')}</div>`};
+    ${POS.map(po=>{const x=l.filter(p=>p.poste===po);return x.length?`<div class="pos"><small>${t(po)}</small><ul>${x.map(p=>{const y=s.snap[p.id];return `<li><span class="li-who">${av(p,'sm')}<span>${esc(p.nom)}</span></span>${k==='adapte'&&y.c?`<span>${esc(tx(y,'c'))}</span>`:''}${k!=='ok'&&y.r?`<span>${t('m_ret',{d:dm(y.r)})}</span>`:''}</li>`}).join('')}</ul></div>`:''}).join('')}</div>`};
   const left=cat('parti');
   V.innerHTML=head(t('coach_t'),t('coach_l'))+`<div class="note">${LOCK}<span>${t('coachLock')} ${t('from',{l:sendLabel(s),h:`${dm(s.day)} ${hmOf(s.at)}`})}</span></div>
   <div class="lineup">${POS.map(po=>{const all=ids.map(byId).filter(p=>p.poste===po&&s.snap[p.id].s!=='parti'),av=all.filter(p=>CAT(s.snap[p.id].s)!=='indispo');return `<div><small class="sync">${t(po)}</small><br><b>${av.length}/${all.length}</b> <span class="sync">${t('usable')}</span></div>`}).join('')}</div>
@@ -343,7 +371,7 @@ function viewDirection(){
 }
 
 /* ---------- messages WhatsApp ---------- */
-function list(L,ids,snap,withC){return ids.map(id=>{const p=byId(id),x=snap[id];return `• ${p.nom}${withC&&x.c?` : ${x.c}`:''}${x.r?` (${tr(L,'m_ret',{d:dm(x.r)})})`:''}`}).join('\n')||tr(L,'m_none')}
+function list(L,ids,snap,withC){return ids.map(id=>{const p=byId(id),x=snap[id];return `• ${p.nom}${withC&&x.c?` : ${tx(x,'c',L)}`:''}${x.r?` (${tr(L,'m_ret',{d:dm(x.r)})})`:''}`}).join('\n')||tr(L,'m_none')}
 function buildMsg(role,L,s){
   const snap=s.snap, ids=Object.keys(snap).filter(byId), c=counts(snap);
   const f=k=>ids.filter(id=>snap[id].s===k), cc=k=>ids.filter(id=>CAT(snap[id].s)===k);
@@ -479,8 +507,9 @@ V.addEventListener('click',async e=>{
     if(x.s!=='parti'&&p.left_on)Store.savePlayer({...p,left_on:null}).catch(fail);
     setPlayer(id,x);return render(true)}
   if(el.id==='validate'){
+    if(PEND.size){el.disabled=true;await Promise.all([...PEND]);el.disabled=false}
     const d=draft(), sends=sendsOf(DATE), lab=LABEL||LABELS[Math.min(sends.length,2)];
-    const snap={};Object.entries(d.players).forEach(([id,x])=>snap[id]={s:x.s,c:x.c,r:x.r,m:+x.m||0,w:!!x.w});
+    const snap={};Object.entries(d.players).forEach(([id,x])=>snap[id]={s:x.s,c:x.c,r:x.r,m:+x.m||0,w:!!x.w,...(x.c&&x.tr&&x.tr.c&&x.tr.c.src===x.c?{tr:{c:x.tr.c}}:{})});
     if(!d.exists)await Store.patchDraft(DATE,{players:d.players,match:d.match}).catch(fail);
     el.disabled=true;
     try{await Store.addSend({day:DATE,at:new Date().toISOString(),label:lab,sent_by:S.me.name||t('r_medical'),snap,match:d.match});LABEL=null;WA_SEND=null;toast(t('validated'));location.hash='wa';render(true)}catch(err){el.disabled=false;fail(err)}
@@ -516,8 +545,8 @@ V.addEventListener('change',e=>{
 });
 V.addEventListener('input',e=>{
   const el=e.target;
-  if(['chr','aig','pct'].includes(el.dataset.f)){const id=el.closest('[data-id]').dataset.id,k=el.dataset.f;debounced(k+id,()=>{const x={...pl(id)};x[k]=el.value.trim();setPlayer(id,x)});return}
-  if(el.dataset.f==='c'){const id=el.closest('[data-id]').dataset.id;debounced('c'+id,()=>{const x={...pl(id)};x.c=el.value;setPlayer(id,x)});return}
+  if(['chr','aig','pct'].includes(el.dataset.f)){const id=el.closest('[data-id]').dataset.id,k=el.dataset.f;debounced(k+id,async()=>{const x={...pl(id)},v=el.value.trim();x[k]=v;await setPlayer(id,x);translateField(id,k,v)});return}
+  if(el.dataset.f==='c'){const id=el.closest('[data-id]').dataset.id;debounced('c'+id,async()=>{const x={...pl(id)};x.c=el.value;await setPlayer(id,x);translateField(id,'c',el.value.trim())},900);return}
   if(el.dataset.m){const id=el.closest('[data-id]').dataset.id;debounced('m'+id,()=>{const x={...pl(id)};x.m=Math.min(130,Math.max(0,+el.value||0));setPlayer(id,x)});return}
   if(el.id==='opp'){debounced('opp',()=>{const d=draft();Store.patchDraft(DATE,{match:{on:true,opp:el.value}}).catch(fail)});return}
   if(el.dataset.cf){const k=el.closest('[data-ct]').dataset.ct,x=S.staff.find(y=>y.id===k);x[el.dataset.cf]=el.value.trim();debounced('st'+k,()=>Store.saveStaff({...x}).catch(fail),900);return}
