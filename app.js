@@ -3,8 +3,8 @@
 
 /* ---------- textes FR / PT ---------- */
 const T={
-fr:{sub:'Sélection nationale · stage du 7 au 18 novembre 2026',
- tab_medical:'Médical',tab_prepa:'Prépa physique',tab_coach:'Staff technique',tab_direction:'Direction',tab_wa:'Envoi WhatsApp',tab_staff:'Staff et accès',
+fr:{sub:'Sélection nationale · stage du 9 au 18 novembre 2026',
+ tab_medical:'Médical',tab_prepa:'Prépa physique',tab_coach:'Staff technique',tab_direction:'Direction',tab_wa:'Envoi WhatsApp',tab_staff:'Staff et accès',tab_roster:'Effectif',ro_t:'Effectif du rassemblement',ro_l:'Corrigez un joueur, réglez sa date d\'arrivée ou retirez-le. Un joueur n\'apparaît dans le briefing qu\'à partir de sa date d\'arrivée.',arr:'Arrivée',dep:'Départ',del:'Retirer',delOk:'Joueur retiré',delKo:'Ce joueur a déjà des données ; marquez plutôt son départ.',
  r_medical:'Médical',r_prepa:'Prépa physique',r_coach:'Coach',r_tm:'Team manager',r_direction:'Direction',
  s_indispo:'Indisponible',s_soins:'En soins',s_reath:'En réathlé',s_adapte:'Entraînement adapté',s_ok:'Sans restriction',s_parti:'A quitté le rassemblement',
  c_ok:'Disponible',c_adapte:'Disponible avec adaptation',c_indispo:'Indisponible',c_parti:'A quitté le rassemblement',
@@ -48,8 +48,8 @@ fr:{sub:'Sélection nationale · stage du 7 au 18 novembre 2026',
  m_di:'Disponibilité : {p} % ({a}/{b}).\nIndisponibles :\n{inl}',
  m_ch:'Changements :\n{l}\n',m_left:'A quitté le rassemblement :\n{l}',
  m_min:'\nMinutes vs {o} :\n{l}',m_none:'• aucun',m_ret:'retour {d}'},
-pt:{sub:'Seleção Nacional · estágio de 7 a 18 de novembro de 2026',
- tab_medical:'Médico',tab_prepa:'Preparação física',tab_coach:'Equipa técnica',tab_direction:'Direção',tab_wa:'Envio WhatsApp',tab_staff:'Staff e acessos',
+pt:{sub:'Seleção Nacional · estágio de 9 a 18 de novembro de 2026',
+ tab_medical:'Médico',tab_prepa:'Preparação física',tab_coach:'Equipa técnica',tab_direction:'Direção',tab_wa:'Envio WhatsApp',tab_staff:'Staff e acessos',tab_roster:'Plantel',ro_t:'Plantel do estágio',ro_l:'Corrija um jogador, ajuste a data de chegada ou retire-o. Um jogador só aparece no briefing a partir da data de chegada.',arr:'Chegada',dep:'Saída',del:'Retirar',delOk:'Jogador retirado',delKo:'Este jogador já tem dados; registe antes a sua saída.',
  r_medical:'Departamento médico',r_prepa:'Preparação física',r_coach:'Treinador',r_tm:'Team manager',r_direction:'Direção',
  s_indispo:'Indisponível',s_soins:'Em tratamento',s_reath:'Em readaptação',s_adapte:'Treino adaptado',s_ok:'Sem restrições',s_parti:'Deixou o estágio',
  c_ok:'Disponível',c_adapte:'Disponível com adaptação',c_indispo:'Indisponível',c_parti:'Deixou o estágio',
@@ -104,7 +104,7 @@ const STS=['indispo','soins','reath','adapte','ok','parti'], LOST=['indispo','so
 const CAT=s=>LOST.includes(s)?'indispo':s;
 const TYPES=['mus','art','ten','tra','mal','aut'], POS=['G','D','M','A'];
 const ROLES=['medical','prepa','coach','tm','direction'], LABELS=['matin','aprem','soir','match'];
-const TABS={medical:['medical','wa','prepa','coach','direction','staff'],prepa:['prepa','coach'],coach:['coach'],tm:['coach'],direction:['direction','coach']};
+const TABS={medical:['medical','wa','prepa','coach','direction','roster','staff'],prepa:['prepa','coach'],coach:['coach'],tm:['coach'],direction:['direction','coach']};
 
 /* ---------- dates ---------- */
 const pad=n=>String(n).padStart(2,'0');
@@ -188,6 +188,7 @@ const Store={
     const {data,error}=await sb.from('staff').upsert(row).select().single();if(error)throw error;
     const i=S.staff.findIndex(y=>y.id===data.id);if(i<0)S.staff.push(data);else S.staff[i]=data;return data;
   },
+  async delPlayer(id){if(DEMO){S.players=S.players.filter(x=>x.id!==id);return this.persistDemo()}const {error}=await sb.from('players').delete().eq('id',id);if(error)throw error;S.players=S.players.filter(x=>x.id!==id)},
   async delStaff(id){S.staff=S.staff.filter(x=>x.id!==id);if(DEMO)return this.persistDemo();const {error}=await sb.from('staff').delete().eq('id',id);if(error)throw error}
 };
 function localTypeStats(){const o=[];Object.values(S.drafts).forEach(d=>{const c={};Object.values(d.players).forEach(x=>{if(LOST.includes(x.s)&&x.t)c[x.t]=(c[x.t]||0)+1});Object.entries(c).forEach(([k,n])=>o.push({day:d.day,t:k,n}))});return o}
@@ -392,6 +393,22 @@ function viewStaff(){
   <div class="pad"><button class="btn" id="stAdd">${t('st_add')}</button></div></div>`;
 }
 
+/* ---------- vue effectif ---------- */
+function viewRoster(){
+  const ps=[...S.players].sort((a,b)=>POS.indexOf(a.poste)-POS.indexOf(b.poste)||(a.num??99)-(b.num??99));
+  V.innerHTML=head(t('ro_t'),t('ro_l'),false)+`<div class="panel">${ps.map(p=>`<div class="ct" data-pl="${p.id}" style="grid-template-columns:60px minmax(0,1.3fr) minmax(0,1fr) minmax(0,1.2fr) minmax(0,1fr) minmax(0,1fr) auto">
+    <label class="f">${t('num')}<input type="number" id="rn-${p.id}" data-pf="num" value="${p.num??''}"></label>
+    <label class="f">${t('nom')}<input type="text" id="rm-${p.id}" data-pf="nom" value="${esc(p.nom)}"></label>
+    <label class="f">${t('poste')}<select id="rp-${p.id}" data-pf="poste">${POS.map(k=>`<option value="${k}"${k===p.poste?' selected':''}>${t(k+'1')}</option>`).join('')}</select></label>
+    <label class="f">${t('club')}<input type="text" id="rc-${p.id}" data-pf="club" value="${esc(p.club)}"></label>
+    <label class="f">${t('arr')}<input type="date" id="ra-${p.id}" data-pf="added_on" value="${p.added_on||''}"></label>
+    <label class="f">${t('dep')}<input type="date" id="rd-${p.id}" data-pf="left_on" value="${p.left_on||''}"></label>
+    <button class="btn small" data-delp="${p.id}">${t('del')}</button></div>`).join('')}
+    <form class="addp" id="addP"><label class="f">${t('num')}<input type="number" name="num" id="ap-num" min="1"></label><label class="f">${t('nom')}<input type="text" name="nom" id="ap-nom" required></label>
+    <label class="f">${t('poste')}<select name="poste" id="ap-poste">${POS.map(k=>`<option value="${k}">${t(k+'1')}</option>`).join('')}</select></label><label class="f">${t('club')}<input type="text" name="club" id="ap-club"></label>
+    <button class="btn">${t('add')}</button></form></div>`;
+}
+
 /* ---------- connexion ---------- */
 function viewLogin(msg){
   document.getElementById('nav').innerHTML='';
@@ -403,8 +420,8 @@ function viewLogin(msg){
 }
 
 /* ---------- rendu ---------- */
-const VIEWS={medical:viewMedical,prepa:viewPrepa,coach:viewCoach,direction:viewDirection,wa:viewWA,staff:viewStaff};
-const TL={medical:'tab_medical',prepa:'tab_prepa',coach:'tab_coach',direction:'tab_direction',wa:'tab_wa',staff:'tab_staff'};
+const VIEWS={medical:viewMedical,prepa:viewPrepa,coach:viewCoach,direction:viewDirection,wa:viewWA,staff:viewStaff,roster:viewRoster};
+const TL={medical:'tab_medical',prepa:'tab_prepa',coach:'tab_coach',direction:'tab_direction',wa:'tab_wa',staff:'tab_staff',roster:'tab_roster'};
 const curTab=()=>{const h=location.hash.slice(1),ok=TABS[S.me.role];return ok.includes(h)?h:ok[0]};
 let pending=false;
 function render(force){
@@ -462,6 +479,7 @@ V.addEventListener('click',async e=>{
     const txt=buildMsg(x.role,x.lang==='fr'?'fr':'pt',s);
     try{await navigator.clipboard.writeText(txt);toast(t('copied'))}catch(err){const r=document.createRange();r.selectNodeContents(el.closest('.card').querySelector('pre'));getSelection().removeAllRanges();getSelection().addRange(r)}return}
   if(el.id==='stAdd'){try{await Store.saveStaff({name:'',role:'coach',email:'',phone:'',lang:'pt'})}catch(err){fail(err)}return render(true)}
+  if(el.dataset.delp){try{await Store.delPlayer(el.dataset.delp);toast(t('delOk'))}catch(err){toast(t('delKo'))}return render(true)}
   if(el.dataset.del){try{await Store.delStaff(el.dataset.del)}catch(err){fail(err)}return render(true)}
   if(el.dataset.pid){selP=el.dataset.pid;render(true)}
 });
@@ -470,6 +488,7 @@ V.addEventListener('change',e=>{
   const el=e.target;
   if(el.id==='matchOn'){const d=draft(),m={on:el.checked,opp:d.match?.opp||'Sudão do Sul'};const patch={match:m};if(!d.exists)patch.players=d.players;Store.patchDraft(DATE,patch).catch(fail);return render(true)}
   if(el.dataset.f==='t'||el.dataset.f==='r'){const id=el.closest('[data-id]').dataset.id,x={...pl(id)};x[el.dataset.f]=el.value;setPlayer(id,x);return}
+  if(el.dataset.pf){const k=el.closest('[data-pl]').dataset.pl,p={...byId(k)};let v=el.value.trim();if(el.dataset.pf==='num')v=v?+v:null;if(el.dataset.pf==='left_on'||el.dataset.pf==='added_on')v=v||null;if(el.dataset.pf==='added_on'&&!v)return;if(el.dataset.pf==='nom'&&!v)return;p[el.dataset.pf]=v;Store.savePlayer(p).catch(fail);return}
   if(el.dataset.cf==='role'||el.dataset.cf==='lang'){const k=el.closest('[data-ct]').dataset.ct,x=S.staff.find(y=>y.id===k);x[el.dataset.cf]=el.value;Store.saveStaff({...x}).catch(fail)}
 });
 V.addEventListener('input',e=>{
