@@ -15,7 +15,7 @@ fr:{sub:'Sélection nationale · stage du 9 au 18 novembre 2026',
  carry:'Statuts repris du jour précédent. Modifiez ce qui a changé.',fresh:'Premier briefing : tout l\'effectif démarre sans restriction.',
  sendsToday:'Briefings validés ce jour',noneYet:'aucun pour l\'instant',
  nChanges:'{n} changement(s) depuis le dernier briefing validé.',noChange:'Aucun changement depuis le dernier briefing validé.',
- label:'Briefing',validate:'Valider et envoyer',validated:'Briefing validé',
+ label:'Briefing',validate:'Valider et envoyer',validateMine:'Valider ma saisie',mineOk:'Saisie validée',checks:'Saisies validées',canSend:'Valide et envoie',validated:'Briefing validé',
  matchDay:'Jour de match',opp:'Adversaire',played:'{n} joueur(s) ont joué',minHint:'Cochez pour saisir les minutes jouées.',min:'Min.',
  type:'Type (statistiques)',ret:'Retour prévu (optionnel)',cons:'Consigne partagée (prépa et coach)',consPh:'Ex. pas de duel, volume réduit',
  lastPrepa:'Séance prépa',pathBtn:'Pathologies / soins',chr:'Pathologie chronique',chrPh:'Ex. tendinopathie rotulienne G',aig:'Pathologie aiguë',aigPh:'Ex. contusion cuisse D',aigd:'Apparue le',care:'Prise en charge du jour',c_:'—',c_recup:'Récupération',c_soins:'Soins',careTx:'Soins réalisés',careTxPh:'Ex. drainage, cryo, strapping',medOnly:'Visible du médical uniquement',suivi:'Suivi soins / récupération',suiviL:'Joueurs avec une pathologie en cours ou une prise en charge aujourd\'hui.',since:'depuis le {d}',chrS:'chronique',leftOn:'Parti le {d}',
@@ -60,7 +60,7 @@ pt:{sub:'Seleção Nacional · estágio de 9 a 18 de novembro de 2026',
  carry:'Estados retomados do dia anterior. Altere o que mudou.',fresh:'Primeiro briefing: todo o plantel começa sem restrições.',
  sendsToday:'Briefings validados hoje',noneYet:'nenhum por enquanto',
  nChanges:'{n} alteração(ões) desde o último briefing validado.',noChange:'Nenhuma alteração desde o último briefing validado.',
- label:'Briefing',validate:'Validar e enviar',validated:'Briefing validado',
+ label:'Briefing',validate:'Validar e enviar',validateMine:'Validar o meu registo',mineOk:'Registo validado',checks:'Registos validados',canSend:'Valida e envia',validated:'Briefing validado',
  matchDay:'Dia de jogo',opp:'Adversário',played:'{n} jogador(es) jogaram',minHint:'Marque para registar os minutos jogados.',min:'Min.',
  type:'Tipo (estatísticas)',ret:'Regresso previsto (opcional)',cons:'Indicação partilhada (prep. física e treinador)',consPh:'Ex. sem duelos, volume reduzido',
  lastPrepa:'Sessão prep. física',pathBtn:'Patologias / tratamentos',chr:'Patologia crónica',chrPh:'Ex. tendinopatia rotuliana E',aig:'Patologia aguda',aigPh:'Ex. contusão coxa D',aigd:'Surgiu a',care:'Tratamento do dia',c_:'—',c_recup:'Recuperação',c_soins:'Tratamento',careTx:'Tratamentos realizados',careTxPh:'Ex. drenagem, crio, ligadura',medOnly:'Visível só para o médico',suivi:'Seguimento tratamentos / recuperação',suiviL:'Jogadores com patologia em curso ou tratamento hoje.',since:'desde {d}',chrS:'crónica',leftOn:'Saiu a {d}',
@@ -174,6 +174,12 @@ const Store={
     if(DEMO)return this.persistDemo();
     const {error}=await sb.rpc('draft_patch',{d:day,patch});if(error)throw error;
   },
+  async checkDraft(day){
+    const d=S.drafts[day]||(S.drafts[day]={day,players:{},match:{on:false,opp:''}});
+    if(DEMO){d.checks=[...(d.checks||[]),{by:S.me.name||'Démo',at:new Date().toISOString()}];return this.persistDemo()}
+    const {error}=await sb.rpc('draft_check',{d:day});if(error)throw error;
+    const {data}=await sb.from('drafts').select('*').eq('day',day).maybeSingle();if(data)S.drafts[day]=data;
+  },
   async addSend(row){
     if(DEMO){row.id=Date.now();S.sends.push(row);return this.persistDemo()}
     const {data,error}=await sb.from('sends').insert(row).select().single();if(error)throw error;S.sends.push(data);
@@ -249,6 +255,7 @@ function viewMedical(){
   const lab=LABEL||LABELS[Math.min(sends.length,2)];
   const played=Object.values(d.players).filter(x=>+x.m>0).length;
   const prepToday=S.prepa.filter(e=>e.day===DATE);
+  const checks=(S.drafts[DATE]&&S.drafts[DATE].checks)||[];
   const rows=POS.map(k=>{const ps=roster(DATE).filter(p=>p.poste===k);if(!ps.length)return '';
     return `<div class="group-title">${t(k)}</div>`+ps.map(p=>{
     const x=d.players[p.id]||blankP(), s=last&&last.snap[p.id], chg=last&&s&&(s.s!==x.s||s.c!==x.c||s.r!==x.r||!!s.w!==!!x.w);
@@ -276,9 +283,9 @@ function viewMedical(){
   <div class="tally">${['indispo','soins','reath','adapte','ok'].map(k=>pill(k,`${c[k]} ${t('s_'+k).toLowerCase()}`)).join('')}${c.parti?pill('parti',`${c.parti} ${t('s_parti').toLowerCase()}`):''}</div>
   <div class="banner${sends.length&&!ch.length?' ok':''}">
     <div style="display:grid;gap:4px;min-width:0"><b>${t('sendsToday')} : ${sends.length?sends.map(s=>`${sendLabel(s)} ${hmOf(s.at)}`).join(' · '):t('noneYet')}</b>
-      <span class="sync">${!d.exists&&!sends.length?(d.carried?t('carry'):t('fresh'))+' ':''}${last?(ch.length?t('nChanges',{n:ch.length}):t('noChange')):''}</span></div>
-    <div class="bar"><div class="chips" role="group" aria-label="${t('label')}">${LABELS.map(l=>`<button data-label="${l}" aria-pressed="${l===lab}">${t('l_'+l)}</button>`).join('')}</div>
-      <button class="btn primary" id="validate">${t('validate')}</button></div>
+      <span class="sync">${!d.exists&&!sends.length?(d.carried?t('carry'):t('fresh'))+' ':''}${last?(ch.length?t('nChanges',{n:ch.length}):t('noChange')):''}</span>${checks.length?`<span class="sync"><b>${t('checks')}</b> : ${checks.map(c=>`${esc(c.by||'?')} ${hmOf(c.at)}`).join(' · ')}</span>`:''}</div>
+    <div class="bar">${CAN_SEND()?`<div class="chips" role="group" aria-label="${t('label')}">${LABELS.map(l=>`<button data-label="${l}" aria-pressed="${l===lab}">${t('l_'+l)}</button>`).join('')}</div>`:''}
+      ${CAN_SEND()?`<button class="btn primary" id="validate">${t('validate')}</button>`:`<button class="btn primary" id="validateMine">${t('validateMine')}</button>`}</div>
   </div>
   <div class="banner"><label style="display:flex;gap:8px;align-items:center;font-weight:600"><input type="checkbox" id="matchOn" ${d.match?.on?'checked':''}> ${t('matchDay')}</label>${d.match?.on?`<div class="bar"><label class="f" style="min-width:200px">${t('opp')}<input type="text" id="opp" value="${esc(d.match.opp)}"></label><span class="sync">${t('played',{n:played})}</span></div>`:`<span class="sync">${t('minHint')}</span>`}</div>
   ${suivi.length?`<div class="banner suivi"><div style="display:grid;gap:6px;min-width:0"><b>${t('suivi')} (${suivi.length})</b><span class="sync">${t('suiviL')} ${t('medOnly')}.</span>
@@ -429,13 +436,13 @@ V.addEventListener('click',e=>{
 /* ---------- vue staff ---------- */
 function viewStaff(){
   const staff=[...S.staff].sort((a,b)=>ROLES.indexOf(a.role)-ROLES.indexOf(b.role)||String(a.name).localeCompare(b.name));
-  V.innerHTML=head(t('st_t'),t('st_l'),false)+`<div class="panel">${staff.map(x=>`<div class="ct" data-ct="${x.id}" style="grid-template-columns:minmax(0,1.1fr) minmax(0,1fr) minmax(0,1.4fr) minmax(0,1.1fr) 70px auto">
+  V.innerHTML=head(t('st_t'),t('st_l'),false)+`<div class="panel">${staff.map(x=>`<div class="ct" data-ct="${x.id}" style="grid-template-columns:minmax(0,1.1fr) minmax(0,1fr) minmax(0,1.4fr) minmax(0,1.1fr) 70px auto auto">
     <label class="f">${t('st_name')}<input type="text" id="sn-${x.id}" data-cf="name" value="${esc(x.name)}"></label>
     <label class="f">${t('st_role')}<select id="sr-${x.id}" data-cf="role">${ROLES.map(r=>`<option value="${r}"${r===x.role?' selected':''}>${t('r_'+r)}</option>`).join('')}</select></label>
     <label class="f">${t('st_email')}<input type="email" id="se-${x.id}" data-cf="email" value="${esc(x.email||'')}" autocomplete="off"></label>
     <label class="f">${t('st_phone')}<input type="tel" id="sp-${x.id}" data-cf="phone" inputmode="numeric" value="${esc(x.phone)}" placeholder="244…"></label>
     <label class="f">${t('st_lang')}<select id="sl-${x.id}" data-cf="lang"><option value="pt"${x.lang!=='fr'?' selected':''}>PT</option><option value="fr"${x.lang==='fr'?' selected':''}>FR</option></select></label>
-    <button class="btn small" data-del="${x.id}">${t('st_del')}</button></div>`).join('')||`<div class="empty">${t('noContacts')}</div>`}
+    ${x.role==='medical'&&'can_send' in x?`<label class="watch" style="align-self:center"><input type="checkbox" data-cs="1"${x.can_send?' checked':''}> ${t('canSend')}</label>`:''}<button class="btn small" data-del="${x.id}">${t('st_del')}</button></div>`).join('')||`<div class="empty">${t('noContacts')}</div>`}
   <div class="pad"><button class="btn" id="stAdd">${t('st_add')}</button></div></div>`;
 }
 
@@ -469,7 +476,9 @@ function viewLogin(msg){
 /* ---------- rendu ---------- */
 const VIEWS={medical:viewMedical,prepa:viewPrepa,coach:viewCoach,direction:viewDirection,wa:viewWA,staff:viewStaff,roster:viewRoster};
 const TL={medical:'tab_medical',prepa:'tab_prepa',coach:'tab_coach',direction:'tab_direction',wa:'tab_wa',staff:'tab_staff',roster:'tab_roster'};
-const curTab=()=>{const h=location.hash.slice(1),ok=TABS[S.me.role];return ok.includes(h)?h:ok[0]};
+const CAN_SEND=()=>DEMO||S.me?.can_send!==false;
+const myTabs=()=>TABS[S.me.role].filter(k=>CAN_SEND()||(k!=='wa'&&k!=='staff'));
+const curTab=()=>{const h=location.hash.slice(1),ok=myTabs();return ok.includes(h)?h:ok[0]};
 let pending=false;
 function render(force){
   document.documentElement.lang=LANG;
@@ -484,7 +493,7 @@ function render(force){
   who.innerHTML=DEMO?`<label class="f" style="display:flex;align-items:center;gap:6px">${t('demoRole')}<select id="demoRole" style="width:auto">${ROLES.map(r=>`<option value="${r}"${r===S.me.role?' selected':''}>${t('r_'+r)}</option>`).join('')}</select></label>`
     :`<span class="sync">${esc(S.me.name||'')} · ${t('r_'+S.me.role)}</span> <button class="btn small" id="signout">${t('signout')}</button>`;
   const v=curTab();
-  document.getElementById('nav').innerHTML=TABS[S.me.role].map(k=>`<a href="#${k}"${k===v?' aria-current="page"':''}>${t(TL[k])}</a>`).join('');
+  document.getElementById('nav').innerHTML=myTabs().map(k=>`<a href="#${k}"${k===v?' aria-current="page"':''}>${t(TL[k])}</a>`).join('');
   const y=scrollY;VIEWS[v]();scrollTo(0,y);
 }
 V.addEventListener('focusout',()=>setTimeout(()=>{if(pending)render()},0));
@@ -506,6 +515,9 @@ V.addEventListener('click',async e=>{
     if(x.s==='parti'&&p.left_on!==DATE)Store.savePlayer({...p,left_on:DATE}).catch(fail);
     if(x.s!=='parti'&&p.left_on)Store.savePlayer({...p,left_on:null}).catch(fail);
     setPlayer(id,x);return render(true)}
+  if(el.id==='validateMine'){el.disabled=true;
+    try{if(PEND.size)await Promise.all([...PEND]);const d=draft();if(!d.exists)await Store.patchDraft(DATE,{players:d.players,match:d.match});await Store.checkDraft(DATE);toast(t('mineOk'))}catch(err){fail(err)}
+    return render(true)}
   if(el.id==='validate'){
     if(PEND.size){el.disabled=true;await Promise.all([...PEND]);el.disabled=false}
     const d=draft(), sends=sendsOf(DATE), lab=LABEL||LABELS[Math.min(sends.length,2)];
@@ -541,6 +553,7 @@ V.addEventListener('change',e=>{
   if(el.dataset.f==='t'||el.dataset.f==='r'){const id=el.closest('[data-id]').dataset.id,x={...pl(id)};x[el.dataset.f]=el.value;setPlayer(id,x);return}
   if(el.dataset.photo&&el.files[0]){const p={...byId(el.dataset.photo)};shrink(el.files[0]).then(u=>{p.photo=u;return Store.savePlayer(p)}).then(()=>{toast(t('photoOk'));render(true)}).catch(()=>toast(t('photoKo')));return}
   if(el.dataset.pf){const k=el.closest('[data-pl]').dataset.pl,p={...byId(k)};let v=el.value.trim();if(el.dataset.pf==='num')v=v?+v:null;if(el.dataset.pf==='left_on'||el.dataset.pf==='added_on')v=v||null;if(el.dataset.pf==='added_on'&&!v)return;if(el.dataset.pf==='nom'&&!v)return;p[el.dataset.pf]=v;Store.savePlayer(p).catch(fail);return}
+  if(el.dataset.cs){const k=el.closest('[data-ct]').dataset.ct,x=S.staff.find(y=>y.id===k);x.can_send=el.checked;Store.saveStaff({...x}).catch(fail);return}
   if(el.dataset.cf==='role'||el.dataset.cf==='lang'){const k=el.closest('[data-ct]').dataset.ct,x=S.staff.find(y=>y.id===k);x[el.dataset.cf]=el.value;Store.saveStaff({...x}).catch(fail)}
 });
 V.addEventListener('input',e=>{
