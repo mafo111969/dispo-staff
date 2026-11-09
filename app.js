@@ -46,7 +46,7 @@ fr:{sub:'Sélection nationale · stage du 9 au 18 novembre 2026',
  m_pr:'En réathlé :\n{re}\nEntraînement adapté :\n{ad}',
  m_co:'{ok} dispo, {ad} adaptés, {in} indispo.\n{pos}\nAdaptés :\n{adl}\nIndisponibles :\n{inl}',
  m_di:'Disponibilité : {p} % ({a}/{b}).\nIndisponibles :\n{inl}',
- m_ch:'Changements :\n{l}\n',m_left:'A quitté le rassemblement :\n{l}',m_watch:'\nJoueurs à surveiller :\n{l}',watch:'À surveiller',watchT:'Partagé avec les coachs, sans détail médical',
+ m_ch:'Changements :\n{l}\n',m_left:'A quitté le rassemblement :\n{l}',m_watch:'\nJoueurs à surveiller :\n{l}',m_care:'\nSoins / récupération :\n{l}',watch:'À surveiller',watchT:'Partagé avec les coachs, sans détail médical',
  m_min:'\nMinutes vs {o} :\n{l}',m_none:'• aucun',m_ret:'retour {d}'},
 pt:{sub:'Seleção Nacional · estágio de 9 a 18 de novembro de 2026',
  tab_medical:'Médico',tab_prepa:'Preparação física',tab_coach:'Equipa técnica',tab_direction:'Direção',tab_wa:'Envio WhatsApp',tab_staff:'Staff e acessos',tab_roster:'Plantel',photo:'Foto',photoKo:'Foto não guardada. Execute primeiro o comando SQL « photo ».',photoOk:'Foto guardada',cropT:'Enquadrar a foto',cropL:'Arraste para centrar o rosto, faça zoom com o cursor.',zoom:'Zoom',savePh:'Guardar',cancel:'Cancelar',ro_t:'Plantel do estágio',ro_l:'Corrija um jogador, ajuste a data de chegada ou retire-o. Um jogador só aparece no briefing a partir da data de chegada.',arr:'Chegada',dep:'Saída',del:'Retirar',delOk:'Jogador retirado',delKo:'Este jogador já tem dados; registe antes a sua saída.',
@@ -91,7 +91,7 @@ pt:{sub:'Seleção Nacional · estágio de 9 a 18 de novembro de 2026',
  m_pr:'Em readaptação:\n{re}\nTreino adaptado:\n{ad}',
  m_co:'{ok} disponíveis, {ad} adaptados, {in} indisponíveis.\n{pos}\nAdaptados:\n{adl}\nIndisponíveis:\n{inl}',
  m_di:'Disponibilidade: {p} % ({a}/{b}).\nIndisponíveis:\n{inl}',
- m_ch:'Alterações:\n{l}\n',m_left:'Deixou o estágio:\n{l}',m_watch:'\nJogadores a vigiar:\n{l}',watch:'A vigiar',watchT:'Partilhado com os treinadores, sem detalhe médico',
+ m_ch:'Alterações:\n{l}\n',m_left:'Deixou o estágio:\n{l}',m_watch:'\nJogadores a vigiar:\n{l}',m_care:'\nTratamentos / recuperação:\n{l}',watch:'A vigiar',watchT:'Partilhado com os treinadores, sem detalhe médico',
  m_min:'\nMinutos vs {o}:\n{l}',m_none:'• nenhum',m_ret:'regresso {d}'}
 };
 const ls={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
@@ -372,6 +372,7 @@ function viewCoach(){
   V.innerHTML=head(t('coach_t'),t('coach_l'))+`<div class="note">${LOCK}<span>${t('coachLock')} ${t('from',{l:sendLabel(s),h:`${dm(s.day)} ${hmOf(s.at)}`})}</span></div>
   <div class="lineup">${POS.map(po=>{const all=ids.map(byId).filter(p=>p.poste===po&&s.snap[p.id].s!=='parti'),av=all.filter(p=>CAT(s.snap[p.id].s)!=='indispo');return `<div><small class="sync">${t(po)}</small><br><b>${av.length}/${all.length}</b> <span class="sync">${t('usable')}</span></div>`}).join('')}</div>
   <div class="cols">${col('ok')}${col('adapte')}${col('indispo')}</div>
+  ${S.me?.role!=='tm'&&ids.some(id=>s.snap[id].pc&&s.snap[id].s!=='parti')?`<div class="note"><b>${t('care')}</b> : ${ids.filter(id=>s.snap[id].pc&&s.snap[id].s!=='parti').map(id=>`${esc(byId(id).nom)} (${t('c_'+s.snap[id].pc)})`).join(', ')}</div>`:''}
   ${S.me?.role!=='tm'&&ids.some(id=>s.snap[id].w&&s.snap[id].s!=='parti')?`<div class="note watchn"><b>${t('watch')}</b> : ${ids.filter(id=>s.snap[id].w&&s.snap[id].s!=='parti').map(id=>esc(byId(id).nom)).join(', ')}</div>`:''}
   ${left.length?`<div class="note">${t('c_parti')} : ${left.map(p=>esc(p.nom)).join(', ')}</div>`:''}`;
 }
@@ -430,7 +431,12 @@ function buildMsg(role,L,s){
   else body=tr(L,'m_di',{p:c.n?Math.round((c.ok+c.adapte)/c.n*100):0,a:c.ok+c.adapte,b:c.n,inl:list(L,cc('indispo'),snap,0)});
   const left=f('parti').filter(id=>!(prev&&prev.snap[id]&&prev.snap[id].s==='parti'));
   const wl=ids.filter(id=>snap[id].w&&snap[id].s!=='parti'), watch=role==='coach'&&wl.length?tr(L,'m_watch',{l:wl.map(id=>'• '+byId(id).nom).join('\n')}):'';
-  return headL+chTxt+body+watch+(left.length&&role!=='medical'?'\n'+tr(L,'m_left',{l:left.map(id=>'• '+byId(id).nom).join('\n')}):'')+mins;
+  // soins : le détail vient du brouillon (lisible par le médical seulement), jamais du briefing envoyé
+  const dp=(S.drafts[s.day]&&S.drafts[s.day].players)||{};
+  const cl=ids.filter(id=>snap[id].pc&&snap[id].s!=='parti');
+  const care=cl.length&&(role==='medical'||role==='coach')?tr(L,'m_care',{l:cl.map(id=>{const lab=tr(L,'c_'+snap[id].pc),d=dp[id];
+    const det=role==='medical'&&d&&d.pc==='soins'&&d.pct?` (${tx(d,'pct',L)})`:'';return `• ${byId(id).nom} : ${lab}${det}`}).join('\n')}):'';
+  return headL+chTxt+body+care+watch+(left.length&&role!=='medical'?'\n'+tr(L,'m_left',{l:left.map(id=>'• '+byId(id).nom).join('\n')}):'')+mins;
 }
 let WA_SEND=null;
 let SERIE=null, WA_ERR=[]; // {sendId, ids:[], i}
@@ -576,7 +582,7 @@ V.addEventListener('click',async e=>{
   if(el.id==='validate'){
     if(PEND.size){el.disabled=true;await Promise.all([...PEND]);el.disabled=false}
     const d=draft(), sends=sendsOf(DATE), lab=LABEL||LABELS[Math.min(sends.length,2)];
-    const snap={};Object.entries(d.players).forEach(([id,x])=>snap[id]={s:x.s,c:x.c,r:x.r,m:+x.m||0,w:!!x.w,...(x.c&&x.tr&&x.tr.c&&x.tr.c.src===x.c?{tr:{c:x.tr.c}}:{})});
+    const snap={};Object.entries(d.players).forEach(([id,x])=>snap[id]={s:x.s,c:x.c,r:x.r,m:+x.m||0,w:!!x.w,...(x.pc?{pc:x.pc}:{}),...(x.c&&x.tr&&x.tr.c&&x.tr.c.src===x.c?{tr:{c:x.tr.c}}:{})});
     if(!d.exists)await Store.patchDraft(DATE,{players:d.players,match:d.match}).catch(fail);
     el.disabled=true;
     try{await Store.addSend({day:DATE,at:new Date().toISOString(),label:lab,sent_by:S.me.name||t('r_medical'),snap,match:d.match});LABEL=null;WA_SEND=null;toast(t('validated'));location.hash='wa';render(true)}catch(err){el.disabled=false;fail(err)}
