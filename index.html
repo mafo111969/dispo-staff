@@ -142,12 +142,20 @@ tr.sel td{background:color-mix(in srgb,var(--accent) 10%,var(--surface))}
 .msg{white-space:pre-wrap;overflow-wrap:anywhere;font-size:13px;background:var(--sunk);border-radius:8px;padding:10px 12px;margin:0;font-family:var(--f-body)}
 .walist{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
 .ct{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) minmax(0,1.2fr) 80px auto;gap:8px;align-items:end;padding:10px 16px;border-top:1px solid var(--line)}
-.av{width:30px;height:30px;border-radius:50%;flex:none;object-fit:cover;background:var(--sunk);color:var(--muted);display:inline-grid;place-items:center;font-size:11px;font-weight:700;border:1px solid var(--line)}
+.av{width:36px;height:36px;border-radius:50%;flex:none;object-fit:cover;background:var(--sunk);color:var(--muted);display:inline-grid;place-items:center;font-size:11px;font-weight:700;border:1px solid var(--line)}
 .av.sm{width:22px;height:22px;font-size:9px}
 .av.lg{width:44px;height:44px;font-size:13px}
 .pos li .li-who>span{display:inline;font-size:inherit;color:inherit}
 img.av{display:block}
 .ctr{grid-template-columns:52px 60px minmax(0,1.3fr) minmax(0,1fr) minmax(0,1.2fr) minmax(0,1fr) minmax(0,1fr) auto}
+.crop{border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink);padding:18px;max-width:calc(100vw - 32px);display:grid;gap:12px}
+.crop[open]{display:grid}
+.crop::backdrop{background:rgba(0,0,0,.55)}
+.crop h2{margin:0;font-family:var(--f-display)}
+.cropbox{position:relative;width:280px;height:280px;margin:0 auto;touch-action:none}
+.cropbox canvas{display:block;border-radius:8px;cursor:grab}
+.cropring{position:absolute;inset:0;border-radius:50%;box-shadow:0 0 0 999px rgba(0,0,0,.45);pointer-events:none;outline:2px solid #fff}
+.cropbox{overflow:hidden;border-radius:8px}
 .phup{cursor:pointer;align-self:center}
 .phup:hover .av{border-color:var(--ink)}
 .li-who{display:inline-flex !important;align-items:center;gap:6px;font-size:inherit !important;color:inherit !important}

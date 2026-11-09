@@ -4,7 +4,7 @@
 /* ---------- textes FR / PT ---------- */
 const T={
 fr:{sub:'Sélection nationale · stage du 9 au 18 novembre 2026',
- tab_medical:'Médical',tab_prepa:'Prépa physique',tab_coach:'Staff technique',tab_direction:'Direction',tab_wa:'Envoi WhatsApp',tab_staff:'Staff et accès',tab_roster:'Effectif',photo:'Photo',photoKo:'Photo non enregistrée. Lancez d\'abord la commande SQL « photo ».',photoOk:'Photo enregistrée',ro_t:'Effectif du rassemblement',ro_l:'Corrigez un joueur, réglez sa date d\'arrivée ou retirez-le. Un joueur n\'apparaît dans le briefing qu\'à partir de sa date d\'arrivée.',arr:'Arrivée',dep:'Départ',del:'Retirer',delOk:'Joueur retiré',delKo:'Ce joueur a déjà des données ; marquez plutôt son départ.',
+ tab_medical:'Médical',tab_prepa:'Prépa physique',tab_coach:'Staff technique',tab_direction:'Direction',tab_wa:'Envoi WhatsApp',tab_staff:'Staff et accès',tab_roster:'Effectif',photo:'Photo',photoKo:'Photo non enregistrée. Lancez d\'abord la commande SQL « photo ».',photoOk:'Photo enregistrée',cropT:'Cadrer la photo',cropL:'Faites glisser pour centrer le visage, zoomez avec le curseur.',zoom:'Zoom',savePh:'Enregistrer',cancel:'Annuler',ro_t:'Effectif du rassemblement',ro_l:'Corrigez un joueur, réglez sa date d\'arrivée ou retirez-le. Un joueur n\'apparaît dans le briefing qu\'à partir de sa date d\'arrivée.',arr:'Arrivée',dep:'Départ',del:'Retirer',delOk:'Joueur retiré',delKo:'Ce joueur a déjà des données ; marquez plutôt son départ.',
  r_medical:'Médical',r_prepa:'Prépa physique',r_coach:'Coach',r_tm:'Team manager',r_direction:'Direction',
  s_indispo:'Indisponible',s_soins:'En soins',s_reath:'En réathlé',s_adapte:'Entraînement adapté',s_ok:'Sans restriction',s_parti:'A quitté le rassemblement',
  c_ok:'Disponible',c_adapte:'Disponible avec adaptation',c_indispo:'Indisponible',c_parti:'A quitté le rassemblement',
@@ -49,7 +49,7 @@ fr:{sub:'Sélection nationale · stage du 9 au 18 novembre 2026',
  m_ch:'Changements :\n{l}\n',m_left:'A quitté le rassemblement :\n{l}',m_watch:'\nJoueurs à surveiller :\n{l}',watch:'À surveiller',watchT:'Partagé avec les coachs, sans détail médical',
  m_min:'\nMinutes vs {o} :\n{l}',m_none:'• aucun',m_ret:'retour {d}'},
 pt:{sub:'Seleção Nacional · estágio de 9 a 18 de novembro de 2026',
- tab_medical:'Médico',tab_prepa:'Preparação física',tab_coach:'Equipa técnica',tab_direction:'Direção',tab_wa:'Envio WhatsApp',tab_staff:'Staff e acessos',tab_roster:'Plantel',photo:'Foto',photoKo:'Foto não guardada. Execute primeiro o comando SQL « photo ».',photoOk:'Foto guardada',ro_t:'Plantel do estágio',ro_l:'Corrija um jogador, ajuste a data de chegada ou retire-o. Um jogador só aparece no briefing a partir da data de chegada.',arr:'Chegada',dep:'Saída',del:'Retirar',delOk:'Jogador retirado',delKo:'Este jogador já tem dados; registe antes a sua saída.',
+ tab_medical:'Médico',tab_prepa:'Preparação física',tab_coach:'Equipa técnica',tab_direction:'Direção',tab_wa:'Envio WhatsApp',tab_staff:'Staff e acessos',tab_roster:'Plantel',photo:'Foto',photoKo:'Foto não guardada. Execute primeiro o comando SQL « photo ».',photoOk:'Foto guardada',cropT:'Enquadrar a foto',cropL:'Arraste para centrar o rosto, faça zoom com o cursor.',zoom:'Zoom',savePh:'Guardar',cancel:'Cancelar',ro_t:'Plantel do estágio',ro_l:'Corrija um jogador, ajuste a data de chegada ou retire-o. Um jogador só aparece no briefing a partir da data de chegada.',arr:'Chegada',dep:'Saída',del:'Retirar',delOk:'Jogador retirado',delKo:'Este jogador já tem dados; registe antes a sua saída.',
  r_medical:'Departamento médico',r_prepa:'Preparação física',r_coach:'Treinador',r_tm:'Team manager',r_direction:'Direção',
  s_indispo:'Indisponível',s_soins:'Em tratamento',s_reath:'Em readaptação',s_adapte:'Treino adaptado',s_ok:'Sem restrições',s_parti:'Deixou o estágio',
  c_ok:'Disponível',c_adapte:'Disponível com adaptação',c_indispo:'Indisponível',c_parti:'Deixou o estágio',
@@ -122,7 +122,42 @@ let selP=null, LABEL=null;
 const OPEN=new Set();
 const ini=n=>String(n||'?').split(/\s+/).map(w=>w[0]).join('').slice(0,2).toUpperCase();
 const av=(p,cls='')=>p.photo?`<img class="av ${cls}" src="${esc(p.photo)}" alt="">`:`<span class="av ${cls}" aria-hidden="true">${esc(ini(p.nom))}</span>`;
-function shrink(file,size=192){return new Promise((ok,ko)=>{const u=URL.createObjectURL(file),im=new Image();im.onload=()=>{const c=document.createElement('canvas');c.width=c.height=size;const m=Math.min(im.width,im.height),g=c.getContext('2d');g.drawImage(im,(im.width-m)/2,Math.max(0,(im.height-m)/2-m*0.1),m,m,0,0,size,size);URL.revokeObjectURL(u);ok(c.toDataURL('image/jpeg',0.82))};im.onerror=ko;im.src=u})}
+// Recadrage : l'utilisateur déplace et zoome dans un cercle, sortie 320 px nette.
+function cropDialog(file,OUT=320){return new Promise((ok,ko)=>{
+  const u=URL.createObjectURL(file),im=new Image();
+  im.onerror=()=>{URL.revokeObjectURL(u);ko(new Error('image'))};
+  im.onload=()=>{
+    const V=280,dlg=document.createElement('dialog');dlg.className='crop';
+    dlg.innerHTML=`<h2>${t('cropT')}</h2><p class="sync">${t('cropL')}</p>
+      <div class="cropbox"><canvas width="${V*2}" height="${V*2}" style="width:${V}px;height:${V}px"></canvas><div class="cropring"></div></div>
+      <label class="f">${t('zoom')}<input type="range" min="1" max="4" step="0.01" value="1"></label>
+      <div class="bar"><button class="btn" data-x="0">${t('cancel')}</button><button class="btn primary" data-x="1">${t('savePh')}</button></div>`;
+    document.body.appendChild(dlg);
+    const cv=dlg.querySelector('canvas'),g=cv.getContext('2d'),rg=dlg.querySelector('input');
+    const base=V/Math.min(im.width,im.height); // échelle pour que le petit côté remplisse le cercle
+    let z=1,cx=im.width/2,cy=Math.min(im.height/2,im.width*0.55); // portrait : visage plutôt en haut
+    const clamp=()=>{const half=V/2/(base*z);cx=Math.min(Math.max(cx,half),im.width-half);cy=Math.min(Math.max(cy,half),im.height-half)};
+    const draw=()=>{clamp();const sc=base*z*2;g.imageSmoothingQuality='high';g.fillStyle='#000';g.fillRect(0,0,cv.width,cv.height);g.drawImage(im,cv.width/2-cx*sc,cv.height/2-cy*sc,im.width*sc,im.height*sc)};
+    let drag=null;
+    cv.addEventListener('pointerdown',e=>{drag={x:e.clientX,y:e.clientY,cx,cy};cv.setPointerCapture(e.pointerId)});
+    cv.addEventListener('pointermove',e=>{if(!drag)return;const k=base*z;cx=drag.cx-(e.clientX-drag.x)/k;cy=drag.cy-(e.clientY-drag.y)/k;draw()});
+    cv.addEventListener('pointerup',()=>drag=null);cv.addEventListener('pointercancel',()=>drag=null);
+    cv.addEventListener('wheel',e=>{e.preventDefault();z=Math.min(4,Math.max(1,z*(e.deltaY<0?1.08:1/1.08)));rg.value=z;draw()},{passive:false});
+    rg.addEventListener('input',()=>{z=+rg.value;draw()});
+    const end=v=>{dlg.close();dlg.remove();URL.revokeObjectURL(u);ok(v)};
+    dlg.addEventListener('cancel',e=>{e.preventDefault();end(null)});
+    dlg.addEventListener('click',e=>{const b=e.target.closest('[data-x]');if(!b)return;
+      if(b.dataset.x!=='1')return end(null);
+      const o=document.createElement('canvas');o.width=o.height=OUT;const og=o.getContext('2d');og.imageSmoothingQuality='high';
+      const half=V/2/(base*z);// taille de la zone visible dans l'image d'origine
+      // réduction en deux étapes pour garder la netteté sur les grandes photos
+      const src=half*2,mid=document.createElement('canvas');const step=Math.min(Math.round(src),OUT*2);mid.width=mid.height=step;
+      const mg=mid.getContext('2d');mg.imageSmoothingQuality='high';mg.drawImage(im,cx-half,cy-half,src,src,0,0,step,step);
+      og.drawImage(mid,0,0,step,step,0,0,OUT,OUT);end(o.toDataURL('image/jpeg',0.9))});
+    draw();dlg.showModal();
+  };
+  im.src=u;
+})}
 const hasPath=x=>!!(x.chr||x.aig||x.pc);
 const blankP=()=>({s:'ok',c:'',r:'',t:'',m:0});
 const byId=id=>S.players.find(p=>p.id===id);
@@ -551,7 +586,7 @@ V.addEventListener('change',e=>{
   if(el.dataset.w){const id=el.closest('[data-id]').dataset.id,x={...pl(id)};x.w=el.checked;setPlayer(id,x);return render(true)}
   if(el.dataset.f==='aigd'||el.dataset.f==='pc'){const id=el.closest('[data-id]').dataset.id,x={...pl(id)};x[el.dataset.f]=el.value;if(el.dataset.f==='pc'&&el.value!=='soins')x.pct='';setPlayer(id,x);if(el.dataset.f==='pc')render(true);return}
   if(el.dataset.f==='t'||el.dataset.f==='r'){const id=el.closest('[data-id]').dataset.id,x={...pl(id)};x[el.dataset.f]=el.value;setPlayer(id,x);return}
-  if(el.dataset.photo&&el.files[0]){const p={...byId(el.dataset.photo)};shrink(el.files[0]).then(u=>{p.photo=u;return Store.savePlayer(p)}).then(()=>{toast(t('photoOk'));render(true)}).catch(()=>toast(t('photoKo')));return}
+  if(el.dataset.photo&&el.files[0]){const p={...byId(el.dataset.photo)};const f=el.files[0];el.value='';cropDialog(f).then(u=>{if(!u)return null;p.photo=u;return Store.savePlayer(p).then(()=>{toast(t('photoOk'));render(true)})}).catch(()=>toast(t('photoKo')));return}
   if(el.dataset.pf){const k=el.closest('[data-pl]').dataset.pl,p={...byId(k)};let v=el.value.trim();if(el.dataset.pf==='num')v=v?+v:null;if(el.dataset.pf==='left_on'||el.dataset.pf==='added_on')v=v||null;if(el.dataset.pf==='added_on'&&!v)return;if(el.dataset.pf==='nom'&&!v)return;p[el.dataset.pf]=v;Store.savePlayer(p).catch(fail);return}
   if(el.dataset.cs){const k=el.closest('[data-ct]').dataset.ct,x=S.staff.find(y=>y.id===k);x.can_send=el.checked;Store.saveStaff({...x}).catch(fail);return}
   if(el.dataset.cf==='role'||el.dataset.cf==='lang'){const k=el.closest('[data-ct]').dataset.ct,x=S.staff.find(y=>y.id===k);x[el.dataset.cf]=el.value;Store.saveStaff({...x}).catch(fail)}
