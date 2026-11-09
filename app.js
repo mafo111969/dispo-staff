@@ -46,7 +46,7 @@ fr:{sub:'Sélection nationale · stage du 9 au 18 novembre 2026',
  m_pr:'En réathlé :\n{re}\nEntraînement adapté :\n{ad}',
  m_co:'{ok} dispo, {ad} adaptés, {in} indispo.\n{pos}\nAdaptés :\n{adl}\nIndisponibles :\n{inl}',
  m_di:'Disponibilité : {p} % ({a}/{b}).\nIndisponibles :\n{inl}',
- m_ch:'Changements :\n{l}\n',m_left:'A quitté le rassemblement :\n{l}',
+ m_ch:'Changements :\n{l}\n',m_left:'A quitté le rassemblement :\n{l}',m_watch:'\nJoueurs à surveiller :\n{l}',watch:'À surveiller',watchT:'Partagé avec les coachs et le team manager, sans détail médical',
  m_min:'\nMinutes vs {o} :\n{l}',m_none:'• aucun',m_ret:'retour {d}'},
 pt:{sub:'Seleção Nacional · estágio de 9 a 18 de novembro de 2026',
  tab_medical:'Médico',tab_prepa:'Preparação física',tab_coach:'Equipa técnica',tab_direction:'Direção',tab_wa:'Envio WhatsApp',tab_staff:'Staff e acessos',tab_roster:'Plantel',ro_t:'Plantel do estágio',ro_l:'Corrija um jogador, ajuste a data de chegada ou retire-o. Um jogador só aparece no briefing a partir da data de chegada.',arr:'Chegada',dep:'Saída',del:'Retirar',delOk:'Jogador retirado',delKo:'Este jogador já tem dados; registe antes a sua saída.',
@@ -91,7 +91,7 @@ pt:{sub:'Seleção Nacional · estágio de 9 a 18 de novembro de 2026',
  m_pr:'Em readaptação:\n{re}\nTreino adaptado:\n{ad}',
  m_co:'{ok} disponíveis, {ad} adaptados, {in} indisponíveis.\n{pos}\nAdaptados:\n{adl}\nIndisponíveis:\n{inl}',
  m_di:'Disponibilidade: {p} % ({a}/{b}).\nIndisponíveis:\n{inl}',
- m_ch:'Alterações:\n{l}\n',m_left:'Deixou o estágio:\n{l}',
+ m_ch:'Alterações:\n{l}\n',m_left:'Deixou o estágio:\n{l}',m_watch:'\nJogadores a vigiar:\n{l}',watch:'A vigiar',watchT:'Partilhado com os treinadores e o team manager, sem detalhe médico',
  m_min:'\nMinutos vs {o}:\n{l}',m_none:'• nenhum',m_ret:'regresso {d}'}
 };
 const ls={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
@@ -133,7 +133,7 @@ function draft(day=DATE){
   roster(day).forEach(p=>{
     if(d&&d.players[p.id]){players[p.id]=d.players[p.id];return}
     const b=base[p.id]&&base[p.id].s!=='parti'?base[p.id]:blankP();
-    players[p.id]={s:b.s,c:b.s==='ok'?'':b.c,r:b.s==='ok'?'':b.r,t:b.s==='ok'?'':b.t,m:0,chr:b.chr||'',aig:b.aig||'',aigd:b.aigd||''};
+    players[p.id]={s:b.s,c:b.s==='ok'?'':b.c,r:b.s==='ok'?'':b.r,t:b.s==='ok'?'':b.t,m:0,chr:b.chr||'',aig:b.aig||'',aigd:b.aigd||'',w:!!b.w};
   });
   return {exists:!!d,carried:!d&&prevDays.length>0,players,match:d?d.match:{on:false,opp:'Sudão do Sul'}};
 }
@@ -143,7 +143,7 @@ function lastSendUpTo(day){const l=S.sends.filter(s=>s.day<=day).sort((a,b)=>a.a
 function prevSend(send){const l=S.sends.filter(s=>s.at<send.at).sort((a,b)=>a.at<b.at?-1:1);return l[l.length-1]||null}
 function counts(players){const c={indispo:0,soins:0,reath:0,adapte:0,ok:0,parti:0};Object.values(players).forEach(x=>c[x.s]=(c[x.s]||0)+1);c.n=Object.keys(players).length-c.parti;return c}
 function diff(a,b){ // a: ancien snap, b: nouveau
-  return Object.keys(b).filter(id=>{const x=a&&a[id]||blankP(),y=b[id];return x.s!==y.s||x.c!==y.c||x.r!==y.r}).map(id=>({p:byId(id),from:(a&&a[id])||blankP(),to:b[id]})).filter(x=>x.p);
+  return Object.keys(b).filter(id=>{const x=a&&a[id]||blankP(),y=b[id];return x.s!==y.s||x.c!==y.c||x.r!==y.r||!!x.w!==!!y.w}).map(id=>({p:byId(id),from:(a&&a[id])||blankP(),to:b[id]})).filter(x=>x.p);
 }
 
 /* ---------- stockage : Supabase ou démonstration locale ---------- */
@@ -221,11 +221,11 @@ function viewMedical(){
   const prepToday=S.prepa.filter(e=>e.day===DATE);
   const rows=POS.map(k=>{const ps=roster(DATE).filter(p=>p.poste===k);if(!ps.length)return '';
     return `<div class="group-title">${t(k)}</div>`+ps.map(p=>{
-    const x=d.players[p.id]||blankP(), s=last&&last.snap[p.id], chg=last&&s&&(s.s!==x.s||s.c!==x.c||s.r!==x.r);
+    const x=d.players[p.id]||blankP(), s=last&&last.snap[p.id], chg=last&&s&&(s.s!==x.s||s.c!==x.c||s.r!==x.r||!!s.w!==!!x.w);
     const logs=prepToday.filter(e=>e.player_id===p.id);
     const showPath=x.s!=='parti'&&(OPEN.has(p.id)||hasPath(x)), showMain=x.s!=='ok'&&x.s!=='parti';
     return `<div class="row${chg?' changed':''}" data-id="${p.id}">
-      <div class="who"><span class="num">${p.num??''}</span><span><span class="name">${esc(p.nom)}</span> <span class="club">${esc(p.club)}</span></span>${d.match?.on&&x.s!=='parti'?`<label class="mins">${t('min')}<input type="number" min="0" max="130" id="m-${p.id}" data-m="1" value="${x.m||''}" placeholder="0"></label>`:''}${x.s!=='parti'?`<button class="pbtn${hasPath(x)?' on':''}" data-path="${p.id}" aria-expanded="${showPath}">${t('pathBtn')}</button>`:''}</div>
+      <div class="who"><span class="num">${p.num??''}</span><span><span class="name">${esc(p.nom)}</span> <span class="club">${esc(p.club)}</span></span>${d.match?.on&&x.s!=='parti'?`<label class="mins">${t('min')}<input type="number" min="0" max="130" id="m-${p.id}" data-m="1" value="${x.m||''}" placeholder="0"></label>`:''}${x.s!=='parti'?`<label class="watch" title="${t('watchT')}"><input type="checkbox" data-w="1"${x.w?' checked':''}> ${t('watch')}</label><button class="pbtn${hasPath(x)?' on':''}" data-path="${p.id}" aria-expanded="${showPath}">${t('pathBtn')}</button>`:''}</div>
       <div class="seg" role="group" aria-label="${esc(p.nom)}">${STS.map(k=>`<button class="k-${k}" data-st="${k}" aria-pressed="${x.s===k}"><i class="dot"></i>${t('s_'+k)}</button>`).join('')}</div>
       ${!showMain&&!showPath?'':`<div class="details">${showMain?`
         <label class="f">${t('type')}<select data-f="t" id="t-${p.id}"><option value="">—</option>${TYPES.map(k=>`<option value="${k}"${k===x.t?' selected':''}>${t('t_'+k)}</option>`).join('')}</select></label>
@@ -299,6 +299,7 @@ function viewCoach(){
   V.innerHTML=head(t('coach_t'),t('coach_l'))+`<div class="note">${LOCK}<span>${t('coachLock')} ${t('from',{l:sendLabel(s),h:`${dm(s.day)} ${hmOf(s.at)}`})}</span></div>
   <div class="lineup">${POS.map(po=>{const all=ids.map(byId).filter(p=>p.poste===po&&s.snap[p.id].s!=='parti'),av=all.filter(p=>CAT(s.snap[p.id].s)!=='indispo');return `<div><small class="sync">${t(po)}</small><br><b>${av.length}/${all.length}</b> <span class="sync">${t('usable')}</span></div>`}).join('')}</div>
   <div class="cols">${col('ok')}${col('adapte')}${col('indispo')}</div>
+  ${ids.some(id=>s.snap[id].w&&s.snap[id].s!=='parti')?`<div class="note watchn"><b>${t('watch')}</b> : ${ids.filter(id=>s.snap[id].w&&s.snap[id].s!=='parti').map(id=>esc(byId(id).nom)).join(', ')}</div>`:''}
   ${left.length?`<div class="note">${t('c_parti')} : ${left.map(p=>esc(p.nom)).join(', ')}</div>`:''}`;
 }
 
@@ -343,7 +344,7 @@ function list(L,ids,snap,withC){return ids.map(id=>{const p=byId(id),x=snap[id];
 function buildMsg(role,L,s){
   const snap=s.snap, ids=Object.keys(snap).filter(byId), c=counts(snap);
   const f=k=>ids.filter(id=>snap[id].s===k), cc=k=>ids.filter(id=>CAT(snap[id].s)===k);
-  const prev=prevSend(s), ch=diff(prev?prev.snap:null,snap).filter(x=>prev);
+  const prev=prevSend(s), ch=diff(prev?prev.snap:null,snap).filter(x=>prev&&(x.from.s!==x.to.s||x.from.c!==x.to.c||x.from.r!==x.to.r));
   const lab=x=>(role==='medical'||role==='prepa')?tr(L,'s_'+x.s):tr(L,'c_'+CAT(x.s));
   let chl=role==='medical'?ch:role==='prepa'?ch.filter(x=>['reath','adapte','parti'].includes(x.to.s)||['reath','adapte'].includes(x.from.s)):ch.filter(x=>CAT(x.from.s)!==CAT(x.to.s)||x.from.c!==x.to.c||x.from.r!==x.to.r);
   const chTxt=chl.length?tr(L,'m_ch',{l:chl.map(x=>`• ${x.p.nom} : ${lab(x.from)} → ${lab(x.to)}`).join('\n')}):'';
@@ -355,7 +356,8 @@ function buildMsg(role,L,s){
   else if(role==='coach'||role==='tm')body=tr(L,'m_co',{ok:cc('ok').length,ad:cc('adapte').length,in:cc('indispo').length,pos:POS.map(po=>{const a=ids.filter(id=>byId(id).poste===po&&snap[id].s!=='parti');return `${tr(L,po)} : ${a.filter(id=>CAT(snap[id].s)!=='indispo').length}/${a.length}`}).join('\n'),adl:list(L,cc('adapte'),snap,1),inl:list(L,cc('indispo'),snap,0)});
   else body=tr(L,'m_di',{p:c.n?Math.round((c.ok+c.adapte)/c.n*100):0,a:c.ok+c.adapte,b:c.n,inl:list(L,cc('indispo'),snap,0)});
   const left=f('parti').filter(id=>!(prev&&prev.snap[id]&&prev.snap[id].s==='parti'));
-  return headL+chTxt+body+(left.length&&role!=='medical'?'\n'+tr(L,'m_left',{l:left.map(id=>'• '+byId(id).nom).join('\n')}):'')+mins;
+  const wl=ids.filter(id=>snap[id].w&&snap[id].s!=='parti'), watch=(role==='coach'||role==='tm')&&wl.length?tr(L,'m_watch',{l:wl.map(id=>'• '+byId(id).nom).join('\n')}):'';
+  return headL+chTxt+body+watch+(left.length&&role!=='medical'?'\n'+tr(L,'m_left',{l:left.map(id=>'• '+byId(id).nom).join('\n')}):'')+mins;
 }
 let WA_SEND=null;
 let SERIE=null, WA_ERR=[]; // {sendId, ids:[], i}
@@ -468,13 +470,13 @@ V.addEventListener('click',async e=>{
   if(el.dataset.send){WA_SEND=+el.dataset.send||el.dataset.send;return render(true)}
   if(el.dataset.path){const id=el.dataset.path;OPEN.has(id)?OPEN.delete(id):OPEN.add(id);return render(true)}
   if(el.dataset.st){
-    const id=el.closest('[data-id]').dataset.id,x={...pl(id)},p=byId(id);x.s=el.dataset.st;if(x.s==='ok'||x.s==='parti'){x.c='';x.r='';x.t='';}
+    const id=el.closest('[data-id]').dataset.id,x={...pl(id)},p=byId(id);x.s=el.dataset.st;if(x.s==='ok'||x.s==='parti'){x.c='';x.r='';x.t='';}if(x.s==='parti')x.w=false;
     if(x.s==='parti'&&p.left_on!==DATE)Store.savePlayer({...p,left_on:DATE}).catch(fail);
     if(x.s!=='parti'&&p.left_on)Store.savePlayer({...p,left_on:null}).catch(fail);
     setPlayer(id,x);return render(true)}
   if(el.id==='validate'){
     const d=draft(), sends=sendsOf(DATE), lab=LABEL||LABELS[Math.min(sends.length,2)];
-    const snap={};Object.entries(d.players).forEach(([id,x])=>snap[id]={s:x.s,c:x.c,r:x.r,m:+x.m||0});
+    const snap={};Object.entries(d.players).forEach(([id,x])=>snap[id]={s:x.s,c:x.c,r:x.r,m:+x.m||0,w:!!x.w});
     if(!d.exists)await Store.patchDraft(DATE,{players:d.players,match:d.match}).catch(fail);
     el.disabled=true;
     try{await Store.addSend({day:DATE,at:new Date().toISOString(),label:lab,sent_by:S.me.name||t('r_medical'),snap,match:d.match});LABEL=null;WA_SEND=null;toast(t('validated'));location.hash='wa';render(true)}catch(err){el.disabled=false;fail(err)}
@@ -501,6 +503,7 @@ V.addEventListener('keydown',e=>{const r=e.target.closest('tr.pick');if(r&&(e.ke
 V.addEventListener('change',e=>{
   const el=e.target;
   if(el.id==='matchOn'){const d=draft(),m={on:el.checked,opp:d.match?.opp||'Sudão do Sul'};const patch={match:m};if(!d.exists)patch.players=d.players;Store.patchDraft(DATE,patch).catch(fail);return render(true)}
+  if(el.dataset.w){const id=el.closest('[data-id]').dataset.id,x={...pl(id)};x.w=el.checked;setPlayer(id,x);return render(true)}
   if(el.dataset.f==='aigd'||el.dataset.f==='pc'){const id=el.closest('[data-id]').dataset.id,x={...pl(id)};x[el.dataset.f]=el.value;if(el.dataset.f==='pc'&&el.value!=='soins')x.pct='';setPlayer(id,x);if(el.dataset.f==='pc')render(true);return}
   if(el.dataset.f==='t'||el.dataset.f==='r'){const id=el.closest('[data-id]').dataset.id,x={...pl(id)};x[el.dataset.f]=el.value;setPlayer(id,x);return}
   if(el.dataset.pf){const k=el.closest('[data-pl]').dataset.pl,p={...byId(k)};let v=el.value.trim();if(el.dataset.pf==='num')v=v?+v:null;if(el.dataset.pf==='left_on'||el.dataset.pf==='added_on')v=v||null;if(el.dataset.pf==='added_on'&&!v)return;if(el.dataset.pf==='nom'&&!v)return;p[el.dataset.pf]=v;Store.savePlayer(p).catch(fail);return}
