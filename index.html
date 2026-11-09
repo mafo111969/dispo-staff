@@ -85,6 +85,12 @@ label.f{display:grid;gap:4px;font-size:12px;color:var(--muted);font-weight:500;m
 .seg button:disabled{cursor:default}
 .details{grid-column:1/-1;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;padding:6px 0 4px 32px}
 .details .wide{grid-column:span 2}
+.path{grid-column:1/-1;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;padding:10px 12px;border:1px dashed var(--line);border-radius:8px}
+.path .wide{grid-column:span 2}
+.medonly{grid-column:1/-1;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.pbtn{font:inherit;font-size:12px;font-weight:600;padding:4px 9px;border-radius:6px;border:1px solid var(--line);background:var(--surface);color:var(--muted);cursor:pointer}
+.pbtn.on{color:var(--ink);border-color:var(--s-soins,var(--line))}
+.suivi ul{margin:0;padding-left:18px;display:grid;gap:4px;font-size:14px}
 .changed{box-shadow:inset 3px 0 0 var(--s-adapte)}
 .banner{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:12px 16px;border-radius:10px;border:1px solid var(--line);background:var(--surface)}
 .banner.ok{border-color:var(--s-ok)}
@@ -139,6 +145,7 @@ tr.sel td{background:color-mix(in srgb,var(--accent) 10%,var(--surface))}
 @media (max-width:820px){
   .row{grid-template-columns:1fr}
   .details{grid-template-columns:repeat(2,minmax(0,1fr));padding-left:0}
+  .path{grid-template-columns:repeat(2,minmax(0,1fr))}
   .cols,.kpis,.two{grid-template-columns:1fr}
   .lineup{grid-template-columns:repeat(2,minmax(0,1fr))}
   .hbar{grid-template-columns:110px minmax(0,1fr) 40px}

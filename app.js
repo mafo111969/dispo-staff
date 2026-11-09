@@ -11,14 +11,14 @@ fr:{sub:'Sélection nationale · stage du 9 au 18 novembre 2026',
  G:'Gardiens',D:'Défenseurs',M:'Milieux',A:'Attaquants',G1:'Gardien',D1:'Défenseur',M1:'Milieu',A1:'Attaquant',
  t_mus:'Musculaire',t_art:'Articulaire / ligamentaire',t_ten:'Tendineuse',t_tra:'Traumatique / contusion',t_mal:'Maladie',t_aut:'Autre',
  l_matin:'Matin',l_aprem:'Après-midi',l_soir:'Soir',l_match:'Après-match',
- med_t:'Briefing médical',med_l:'Passez l\'effectif en revue joueur par joueur. Seuls le statut, la consigne et la date de retour sont partagés. Aucun diagnostic n\'est saisi dans l\'application.',
+ med_t:'Briefing médical',med_l:'Passez l\'effectif en revue joueur par joueur. Seuls le statut, la consigne et la date de retour sont partagés. Pathologies et soins restent visibles du seul staff médical, jamais envoyés.',
  carry:'Statuts repris du jour précédent. Modifiez ce qui a changé.',fresh:'Premier briefing : tout l\'effectif démarre sans restriction.',
  sendsToday:'Briefings validés ce jour',noneYet:'aucun pour l\'instant',
  nChanges:'{n} changement(s) depuis le dernier briefing validé.',noChange:'Aucun changement depuis le dernier briefing validé.',
  label:'Briefing',validate:'Valider et envoyer',validated:'Briefing validé',
  matchDay:'Jour de match',opp:'Adversaire',played:'{n} joueur(s) ont joué',minHint:'Cochez pour saisir les minutes jouées.',min:'Min.',
  type:'Type (statistiques)',ret:'Retour prévu (optionnel)',cons:'Consigne partagée (prépa et coach)',consPh:'Ex. pas de duel, volume réduit',
- lastPrepa:'Séance prépa',leftOn:'Parti le {d}',
+ lastPrepa:'Séance prépa',pathBtn:'Pathologies / soins',chr:'Pathologie chronique',chrPh:'Ex. tendinopathie rotulienne G',aig:'Pathologie aiguë',aigPh:'Ex. contusion cuisse D',aigd:'Apparue le',care:'Prise en charge du jour',c_:'—',c_recup:'Récupération',c_soins:'Soins',careTx:'Soins réalisés',careTxPh:'Ex. drainage, cryo, strapping',medOnly:'Visible du médical uniquement',suivi:'Suivi soins / récupération',suiviL:'Joueurs avec une pathologie en cours ou une prise en charge aujourd\'hui.',since:'depuis le {d}',chrS:'chronique',leftOn:'Parti le {d}',
  addP:'Ajouter un joueur qui arrive',num:'N°',nom:'Nom',poste:'Poste',club:'Club',add:'Ajouter',added:'Joueur ajouté',
  prepa_t:'Prépa physique',prepa_l:'Joueurs en réathlé ou en entraînement adapté selon le dernier briefing validé. La séance saisie est visible par le médical.',
  prepaLock:'Vous voyez le statut et la consigne. Les détails médicaux se discutent à l\'oral avec le médical.',
@@ -56,14 +56,14 @@ pt:{sub:'Seleção Nacional · estágio de 9 a 18 de novembro de 2026',
  G:'Guarda-redes',D:'Defesas',M:'Médios',A:'Avançados',G1:'Guarda-redes',D1:'Defesa',M1:'Médio',A1:'Avançado',
  t_mus:'Muscular',t_art:'Articular / ligamentar',t_ten:'Tendinosa',t_tra:'Traumática / contusão',t_mal:'Doença',t_aut:'Outro',
  l_matin:'Manhã',l_aprem:'Tarde',l_soir:'Noite',l_match:'Pós-jogo',
- med_t:'Briefing médico',med_l:'Passe o plantel em revista jogador a jogador. Só o estado, a indicação e a data de regresso são partilhados. Nenhum diagnóstico é registado na aplicação.',
+ med_t:'Briefing médico',med_l:'Passe o plantel em revista jogador a jogador. Só o estado, a indicação e a data de regresso são partilhados. Patologias e tratamentos ficam visíveis só para o staff médico, nunca enviados.',
  carry:'Estados retomados do dia anterior. Altere o que mudou.',fresh:'Primeiro briefing: todo o plantel começa sem restrições.',
  sendsToday:'Briefings validados hoje',noneYet:'nenhum por enquanto',
  nChanges:'{n} alteração(ões) desde o último briefing validado.',noChange:'Nenhuma alteração desde o último briefing validado.',
  label:'Briefing',validate:'Validar e enviar',validated:'Briefing validado',
  matchDay:'Dia de jogo',opp:'Adversário',played:'{n} jogador(es) jogaram',minHint:'Marque para registar os minutos jogados.',min:'Min.',
  type:'Tipo (estatísticas)',ret:'Regresso previsto (opcional)',cons:'Indicação partilhada (prep. física e treinador)',consPh:'Ex. sem duelos, volume reduzido',
- lastPrepa:'Sessão prep. física',leftOn:'Saiu a {d}',
+ lastPrepa:'Sessão prep. física',pathBtn:'Patologias / tratamentos',chr:'Patologia crónica',chrPh:'Ex. tendinopatia rotuliana E',aig:'Patologia aguda',aigPh:'Ex. contusão coxa D',aigd:'Surgiu a',care:'Tratamento do dia',c_:'—',c_recup:'Recuperação',c_soins:'Tratamento',careTx:'Tratamentos realizados',careTxPh:'Ex. drenagem, crio, ligadura',medOnly:'Visível só para o médico',suivi:'Seguimento tratamentos / recuperação',suiviL:'Jogadores com patologia em curso ou tratamento hoje.',since:'desde {d}',chrS:'crónica',leftOn:'Saiu a {d}',
  addP:'Adicionar um jogador que chega',num:'N.º',nom:'Nome',poste:'Posição',club:'Clube',add:'Adicionar',added:'Jogador adicionado',
  prepa_t:'Preparação física',prepa_l:'Jogadores em readaptação ou treino adaptado segundo o último briefing validado. A sessão registada é visível pelo departamento médico.',
  prepaLock:'Vê o estado e a indicação. Os detalhes médicos são discutidos oralmente com o departamento médico.',
@@ -119,6 +119,8 @@ let DATE=iso(new Date());
 /* ---------- état ---------- */
 const S={players:[],drafts:{},sends:[],prepa:[],staff:[],typeStats:[],me:null,ready:false};
 let selP=null, LABEL=null;
+const OPEN=new Set();
+const hasPath=x=>!!(x.chr||x.aig||x.pc);
 const blankP=()=>({s:'ok',c:'',r:'',t:'',m:0});
 const byId=id=>S.players.find(p=>p.id===id);
 const activeOn=(p,day)=>p.added_on<=day&&(!p.left_on||p.left_on>=day);
@@ -131,7 +133,7 @@ function draft(day=DATE){
   roster(day).forEach(p=>{
     if(d&&d.players[p.id]){players[p.id]=d.players[p.id];return}
     const b=base[p.id]&&base[p.id].s!=='parti'?base[p.id]:blankP();
-    players[p.id]={s:b.s,c:b.s==='ok'?'':b.c,r:b.s==='ok'?'':b.r,t:b.s==='ok'?'':b.t,m:0};
+    players[p.id]={s:b.s,c:b.s==='ok'?'':b.c,r:b.s==='ok'?'':b.r,t:b.s==='ok'?'':b.t,m:0,chr:b.chr||'',aig:b.aig||'',aigd:b.aigd||''};
   });
   return {exists:!!d,carried:!d&&prevDays.length>0,players,match:d?d.match:{on:false,opp:'Sudão do Sul'}};
 }
@@ -221,16 +223,25 @@ function viewMedical(){
     return `<div class="group-title">${t(k)}</div>`+ps.map(p=>{
     const x=d.players[p.id]||blankP(), s=last&&last.snap[p.id], chg=last&&s&&(s.s!==x.s||s.c!==x.c||s.r!==x.r);
     const logs=prepToday.filter(e=>e.player_id===p.id);
+    const showPath=x.s!=='parti'&&(OPEN.has(p.id)||hasPath(x)), showMain=x.s!=='ok'&&x.s!=='parti';
     return `<div class="row${chg?' changed':''}" data-id="${p.id}">
-      <div class="who"><span class="num">${p.num??''}</span><span><span class="name">${esc(p.nom)}</span> <span class="club">${esc(p.club)}</span></span>${d.match?.on&&x.s!=='parti'?`<label class="mins">${t('min')}<input type="number" min="0" max="130" id="m-${p.id}" data-m="1" value="${x.m||''}" placeholder="0"></label>`:''}</div>
+      <div class="who"><span class="num">${p.num??''}</span><span><span class="name">${esc(p.nom)}</span> <span class="club">${esc(p.club)}</span></span>${d.match?.on&&x.s!=='parti'?`<label class="mins">${t('min')}<input type="number" min="0" max="130" id="m-${p.id}" data-m="1" value="${x.m||''}" placeholder="0"></label>`:''}${x.s!=='parti'?`<button class="pbtn${hasPath(x)?' on':''}" data-path="${p.id}" aria-expanded="${showPath}">${t('pathBtn')}</button>`:''}</div>
       <div class="seg" role="group" aria-label="${esc(p.nom)}">${STS.map(k=>`<button class="k-${k}" data-st="${k}" aria-pressed="${x.s===k}"><i class="dot"></i>${t('s_'+k)}</button>`).join('')}</div>
-      ${x.s==='ok'||x.s==='parti'?'':`<div class="details">
+      ${!showMain&&!showPath?'':`<div class="details">${showMain?`
         <label class="f">${t('type')}<select data-f="t" id="t-${p.id}"><option value="">—</option>${TYPES.map(k=>`<option value="${k}"${k===x.t?' selected':''}>${t('t_'+k)}</option>`).join('')}</select></label>
         <label class="f">${t('ret')}<input type="date" data-f="r" id="r-${p.id}" value="${esc(x.r)}"></label>
         <label class="f wide">${t('cons')}<input type="text" data-f="c" id="c-${p.id}" value="${esc(x.c)}" placeholder="${t('consPh')}"></label>
-        ${logs.length?`<div class="sync" style="grid-column:1/-1">${t('lastPrepa')} : ${logs.map(e=>`${e.dur}′ · RPE ${e.rpe} · ${e.gps} m · ${esc(e.exos)}`).join(' / ')}</div>`:''}
+        ${logs.length?`<div class="sync" style="grid-column:1/-1">${t('lastPrepa')} : ${logs.map(e=>`${e.dur}′ · RPE ${e.rpe} · ${e.gps} m · ${esc(e.exos)}`).join(' / ')}</div>`:''}`:''}
+        ${showPath?`<div class="path"><span class="medonly">${t('medOnly')}</span>
+          <label class="f wide">${t('chr')}<input type="text" data-f="chr" id="chr-${p.id}" value="${esc(x.chr||'')}" placeholder="${t('chrPh')}"></label>
+          <label class="f wide">${t('aig')}<input type="text" data-f="aig" id="aig-${p.id}" value="${esc(x.aig||'')}" placeholder="${t('aigPh')}"></label>
+          <label class="f">${t('aigd')}<input type="date" data-f="aigd" id="aigd-${p.id}" value="${esc(x.aigd||'')}"></label>
+          <label class="f">${t('care')}<select data-f="pc" id="pc-${p.id}">${['','recup','soins'].map(k=>`<option value="${k}"${k===(x.pc||'')?' selected':''}>${t('c_'+k)}</option>`).join('')}</select></label>
+          ${x.pc==='soins'?`<label class="f wide">${t('careTx')}<input type="text" data-f="pct" id="pct-${p.id}" value="${esc(x.pct||'')}" placeholder="${t('careTxPh')}"></label>`:''}
+        </div>`:''}
       </div>`}
     </div>`}).join('')}).join('');
+  const suivi=roster(DATE).map(p=>({p,x:d.players[p.id]||blankP()})).filter(o=>o.x.s!=='parti'&&hasPath(o.x));
   V.innerHTML=head(t('med_t'),t('med_l'))+`
   <div class="tally">${['indispo','soins','reath','adapte','ok'].map(k=>pill(k,`${c[k]} ${t('s_'+k).toLowerCase()}`)).join('')}${c.parti?pill('parti',`${c.parti} ${t('s_parti').toLowerCase()}`):''}</div>
   <div class="banner${sends.length&&!ch.length?' ok':''}">
@@ -240,6 +251,8 @@ function viewMedical(){
       <button class="btn primary" id="validate">${t('validate')}</button></div>
   </div>
   <div class="banner"><label style="display:flex;gap:8px;align-items:center;font-weight:600"><input type="checkbox" id="matchOn" ${d.match?.on?'checked':''}> ${t('matchDay')}</label>${d.match?.on?`<div class="bar"><label class="f" style="min-width:200px">${t('opp')}<input type="text" id="opp" value="${esc(d.match.opp)}"></label><span class="sync">${t('played',{n:played})}</span></div>`:`<span class="sync">${t('minHint')}</span>`}</div>
+  ${suivi.length?`<div class="banner suivi"><div style="display:grid;gap:6px;min-width:0"><b>${t('suivi')} (${suivi.length})</b><span class="sync">${t('suiviL')} ${t('medOnly')}.</span>
+    <ul>${suivi.map(({p,x})=>`<li><span class="name">${esc(p.nom)}</span>${x.aig?` · ${esc(x.aig)}${x.aigd?` (${t('since',{d:dm(x.aigd)})})`:''}`:''}${x.chr?` · ${t('chrS')} : ${esc(x.chr)}`:''}${x.pc?` · <b>${t('c_'+x.pc)}</b>${x.pc==='soins'&&x.pct?` : ${esc(x.pct)}`:''}`:''}</li>`).join('')}</ul></div></div>`:''}
   <div class="panel">${rows}
     <form class="addp" id="addP"><label class="f">${t('num')}<input type="number" name="num" id="ap-num" min="1"></label><label class="f">${t('nom')}<input type="text" name="nom" id="ap-nom" required></label>
     <label class="f">${t('poste')}<select name="poste" id="ap-poste">${POS.map(k=>`<option value="${k}">${t(k+'1')}</option>`).join('')}</select></label><label class="f">${t('club')}<input type="text" name="club" id="ap-club"></label>
@@ -453,6 +466,7 @@ V.addEventListener('click',async e=>{
   if(el.dataset.day){DATE=addDays(DATE,+el.dataset.day);LABEL=null;WA_SEND=null;return render(true)}
   if(el.dataset.label){LABEL=el.dataset.label;return render(true)}
   if(el.dataset.send){WA_SEND=+el.dataset.send||el.dataset.send;return render(true)}
+  if(el.dataset.path){const id=el.dataset.path;OPEN.has(id)?OPEN.delete(id):OPEN.add(id);return render(true)}
   if(el.dataset.st){
     const id=el.closest('[data-id]').dataset.id,x={...pl(id)},p=byId(id);x.s=el.dataset.st;if(x.s==='ok'||x.s==='parti'){x.c='';x.r='';x.t='';}
     if(x.s==='parti'&&p.left_on!==DATE)Store.savePlayer({...p,left_on:DATE}).catch(fail);
@@ -487,12 +501,14 @@ V.addEventListener('keydown',e=>{const r=e.target.closest('tr.pick');if(r&&(e.ke
 V.addEventListener('change',e=>{
   const el=e.target;
   if(el.id==='matchOn'){const d=draft(),m={on:el.checked,opp:d.match?.opp||'Sudão do Sul'};const patch={match:m};if(!d.exists)patch.players=d.players;Store.patchDraft(DATE,patch).catch(fail);return render(true)}
+  if(el.dataset.f==='aigd'||el.dataset.f==='pc'){const id=el.closest('[data-id]').dataset.id,x={...pl(id)};x[el.dataset.f]=el.value;if(el.dataset.f==='pc'&&el.value!=='soins')x.pct='';setPlayer(id,x);if(el.dataset.f==='pc')render(true);return}
   if(el.dataset.f==='t'||el.dataset.f==='r'){const id=el.closest('[data-id]').dataset.id,x={...pl(id)};x[el.dataset.f]=el.value;setPlayer(id,x);return}
   if(el.dataset.pf){const k=el.closest('[data-pl]').dataset.pl,p={...byId(k)};let v=el.value.trim();if(el.dataset.pf==='num')v=v?+v:null;if(el.dataset.pf==='left_on'||el.dataset.pf==='added_on')v=v||null;if(el.dataset.pf==='added_on'&&!v)return;if(el.dataset.pf==='nom'&&!v)return;p[el.dataset.pf]=v;Store.savePlayer(p).catch(fail);return}
   if(el.dataset.cf==='role'||el.dataset.cf==='lang'){const k=el.closest('[data-ct]').dataset.ct,x=S.staff.find(y=>y.id===k);x[el.dataset.cf]=el.value;Store.saveStaff({...x}).catch(fail)}
 });
 V.addEventListener('input',e=>{
   const el=e.target;
+  if(['chr','aig','pct'].includes(el.dataset.f)){const id=el.closest('[data-id]').dataset.id,k=el.dataset.f;debounced(k+id,()=>{const x={...pl(id)};x[k]=el.value.trim();setPlayer(id,x)});return}
   if(el.dataset.f==='c'){const id=el.closest('[data-id]').dataset.id;debounced('c'+id,()=>{const x={...pl(id)};x.c=el.value;setPlayer(id,x)});return}
   if(el.dataset.m){const id=el.closest('[data-id]').dataset.id;debounced('m'+id,()=>{const x={...pl(id)};x.m=Math.min(130,Math.max(0,+el.value||0));setPlayer(id,x)});return}
   if(el.id==='opp'){debounced('opp',()=>{const d=draft();Store.patchDraft(DATE,{match:{on:true,opp:el.value}}).catch(fail)});return}
