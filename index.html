@@ -142,6 +142,15 @@ tr.sel td{background:color-mix(in srgb,var(--accent) 10%,var(--surface))}
 .msg{white-space:pre-wrap;overflow-wrap:anywhere;font-size:13px;background:var(--sunk);border-radius:8px;padding:10px 12px;margin:0;font-family:var(--f-body)}
 .walist{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
 .ct{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) minmax(0,1.2fr) 80px auto;gap:8px;align-items:end;padding:10px 16px;border-top:1px solid var(--line)}
+.av{width:30px;height:30px;border-radius:50%;flex:none;object-fit:cover;background:var(--sunk);color:var(--muted);display:inline-grid;place-items:center;font-size:11px;font-weight:700;border:1px solid var(--line)}
+.av.sm{width:22px;height:22px;font-size:9px}
+.av.lg{width:44px;height:44px;font-size:13px}
+.pos li .li-who>span{display:inline;font-size:inherit;color:inherit}
+img.av{display:block}
+.ctr{grid-template-columns:52px 60px minmax(0,1.3fr) minmax(0,1fr) minmax(0,1.2fr) minmax(0,1fr) minmax(0,1fr) auto}
+.phup{cursor:pointer;align-self:center}
+.phup:hover .av{border-color:var(--ink)}
+.li-who{display:inline-flex !important;align-items:center;gap:6px;font-size:inherit !important;color:inherit !important}
 .empty{color:var(--muted);font-size:13px;text-align:center;padding:24px 8px}
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(20px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:8px;font-weight:500;z-index:20;max-width:calc(100% - 32px)}
 .sync{font-size:12px;color:var(--muted)}
@@ -153,6 +162,8 @@ tr.sel td{background:color-mix(in srgb,var(--accent) 10%,var(--surface))}
   .lineup{grid-template-columns:repeat(2,minmax(0,1fr))}
   .hbar{grid-template-columns:110px minmax(0,1fr) 40px}
   .ct{grid-template-columns:1fr 1fr}
+  .ctr{grid-template-columns:52px 1fr 1fr}
+  .ctr .phup{grid-row:span 4;align-self:start}
   .datebar strong{min-width:0}
 }
 @media (prefers-reduced-motion:no-preference){.seg button,.btn{transition:background .15s,border-color .15s}}

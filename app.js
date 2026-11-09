@@ -4,7 +4,7 @@
 /* ---------- textes FR / PT ---------- */
 const T={
 fr:{sub:'Sélection nationale · stage du 9 au 18 novembre 2026',
- tab_medical:'Médical',tab_prepa:'Prépa physique',tab_coach:'Staff technique',tab_direction:'Direction',tab_wa:'Envoi WhatsApp',tab_staff:'Staff et accès',tab_roster:'Effectif',ro_t:'Effectif du rassemblement',ro_l:'Corrigez un joueur, réglez sa date d\'arrivée ou retirez-le. Un joueur n\'apparaît dans le briefing qu\'à partir de sa date d\'arrivée.',arr:'Arrivée',dep:'Départ',del:'Retirer',delOk:'Joueur retiré',delKo:'Ce joueur a déjà des données ; marquez plutôt son départ.',
+ tab_medical:'Médical',tab_prepa:'Prépa physique',tab_coach:'Staff technique',tab_direction:'Direction',tab_wa:'Envoi WhatsApp',tab_staff:'Staff et accès',tab_roster:'Effectif',photo:'Photo',photoKo:'Photo non enregistrée. Lancez d\'abord la commande SQL « photo ».',photoOk:'Photo enregistrée',ro_t:'Effectif du rassemblement',ro_l:'Corrigez un joueur, réglez sa date d\'arrivée ou retirez-le. Un joueur n\'apparaît dans le briefing qu\'à partir de sa date d\'arrivée.',arr:'Arrivée',dep:'Départ',del:'Retirer',delOk:'Joueur retiré',delKo:'Ce joueur a déjà des données ; marquez plutôt son départ.',
  r_medical:'Médical',r_prepa:'Prépa physique',r_coach:'Coach',r_tm:'Team manager',r_direction:'Direction',
  s_indispo:'Indisponible',s_soins:'En soins',s_reath:'En réathlé',s_adapte:'Entraînement adapté',s_ok:'Sans restriction',s_parti:'A quitté le rassemblement',
  c_ok:'Disponible',c_adapte:'Disponible avec adaptation',c_indispo:'Indisponible',c_parti:'A quitté le rassemblement',
@@ -49,7 +49,7 @@ fr:{sub:'Sélection nationale · stage du 9 au 18 novembre 2026',
  m_ch:'Changements :\n{l}\n',m_left:'A quitté le rassemblement :\n{l}',m_watch:'\nJoueurs à surveiller :\n{l}',watch:'À surveiller',watchT:'Partagé avec les coachs, sans détail médical',
  m_min:'\nMinutes vs {o} :\n{l}',m_none:'• aucun',m_ret:'retour {d}'},
 pt:{sub:'Seleção Nacional · estágio de 9 a 18 de novembro de 2026',
- tab_medical:'Médico',tab_prepa:'Preparação física',tab_coach:'Equipa técnica',tab_direction:'Direção',tab_wa:'Envio WhatsApp',tab_staff:'Staff e acessos',tab_roster:'Plantel',ro_t:'Plantel do estágio',ro_l:'Corrija um jogador, ajuste a data de chegada ou retire-o. Um jogador só aparece no briefing a partir da data de chegada.',arr:'Chegada',dep:'Saída',del:'Retirar',delOk:'Jogador retirado',delKo:'Este jogador já tem dados; registe antes a sua saída.',
+ tab_medical:'Médico',tab_prepa:'Preparação física',tab_coach:'Equipa técnica',tab_direction:'Direção',tab_wa:'Envio WhatsApp',tab_staff:'Staff e acessos',tab_roster:'Plantel',photo:'Foto',photoKo:'Foto não guardada. Execute primeiro o comando SQL « photo ».',photoOk:'Foto guardada',ro_t:'Plantel do estágio',ro_l:'Corrija um jogador, ajuste a data de chegada ou retire-o. Um jogador só aparece no briefing a partir da data de chegada.',arr:'Chegada',dep:'Saída',del:'Retirar',delOk:'Jogador retirado',delKo:'Este jogador já tem dados; registe antes a sua saída.',
  r_medical:'Departamento médico',r_prepa:'Preparação física',r_coach:'Treinador',r_tm:'Team manager',r_direction:'Direção',
  s_indispo:'Indisponível',s_soins:'Em tratamento',s_reath:'Em readaptação',s_adapte:'Treino adaptado',s_ok:'Sem restrições',s_parti:'Deixou o estágio',
  c_ok:'Disponível',c_adapte:'Disponível com adaptação',c_indispo:'Indisponível',c_parti:'Deixou o estágio',
@@ -120,6 +120,9 @@ let DATE=iso(new Date());
 const S={players:[],drafts:{},sends:[],prepa:[],staff:[],typeStats:[],me:null,ready:false};
 let selP=null, LABEL=null;
 const OPEN=new Set();
+const ini=n=>String(n||'?').split(/\s+/).map(w=>w[0]).join('').slice(0,2).toUpperCase();
+const av=(p,cls='')=>p.photo?`<img class="av ${cls}" src="${esc(p.photo)}" alt="">`:`<span class="av ${cls}" aria-hidden="true">${esc(ini(p.nom))}</span>`;
+function shrink(file,size=192){return new Promise((ok,ko)=>{const u=URL.createObjectURL(file),im=new Image();im.onload=()=>{const c=document.createElement('canvas');c.width=c.height=size;const m=Math.min(im.width,im.height),g=c.getContext('2d');g.drawImage(im,(im.width-m)/2,Math.max(0,(im.height-m)/2-m*0.1),m,m,0,0,size,size);URL.revokeObjectURL(u);ok(c.toDataURL('image/jpeg',0.82))};im.onerror=ko;im.src=u})}
 const hasPath=x=>!!(x.chr||x.aig||x.pc);
 const blankP=()=>({s:'ok',c:'',r:'',t:'',m:0});
 const byId=id=>S.players.find(p=>p.id===id);
@@ -225,7 +228,7 @@ function viewMedical(){
     const logs=prepToday.filter(e=>e.player_id===p.id);
     const showPath=x.s!=='parti'&&(OPEN.has(p.id)||hasPath(x)), showMain=x.s!=='ok'&&x.s!=='parti';
     return `<div class="row${chg?' changed':''}" data-id="${p.id}">
-      <div class="who"><span class="num">${p.num??''}</span><span><span class="name">${esc(p.nom)}</span> <span class="club">${esc(p.club)}</span></span>${d.match?.on&&x.s!=='parti'?`<label class="mins">${t('min')}<input type="number" min="0" max="130" id="m-${p.id}" data-m="1" value="${x.m||''}" placeholder="0"></label>`:''}${x.s!=='parti'?`<label class="watch" title="${t('watchT')}"><input type="checkbox" data-w="1"${x.w?' checked':''}> ${t('watch')}</label><button class="pbtn${hasPath(x)?' on':''}" data-path="${p.id}" aria-expanded="${showPath}">${t('pathBtn')}</button>`:''}</div>
+      <div class="who"><span class="num">${p.num??''}</span>${av(p)}<span><span class="name">${esc(p.nom)}</span> <span class="club">${esc(p.club)}</span></span>${d.match?.on&&x.s!=='parti'?`<label class="mins">${t('min')}<input type="number" min="0" max="130" id="m-${p.id}" data-m="1" value="${x.m||''}" placeholder="0"></label>`:''}${x.s!=='parti'?`<label class="watch" title="${t('watchT')}"><input type="checkbox" data-w="1"${x.w?' checked':''}> ${t('watch')}</label><button class="pbtn${hasPath(x)?' on':''}" data-path="${p.id}" aria-expanded="${showPath}">${t('pathBtn')}</button>`:''}</div>
       <div class="seg" role="group" aria-label="${esc(p.nom)}">${STS.map(k=>`<button class="k-${k}" data-st="${k}" aria-pressed="${x.s===k}"><i class="dot"></i>${t('s_'+k)}</button>`).join('')}</div>
       ${!showMain&&!showPath?'':`<div class="details">${showMain?`
         <label class="f">${t('type')}<select data-f="t" id="t-${p.id}"><option value="">—</option>${TYPES.map(k=>`<option value="${k}"${k===x.t?' selected':''}>${t('t_'+k)}</option>`).join('')}</select></label>
@@ -294,7 +297,7 @@ function viewCoach(){
   if(!s){V.innerHTML=head(t('coach_t'),t('coach_l'))+`<div class="panel empty">${t('noBrief')}</div>`;return}
   const ids=Object.keys(s.snap).filter(byId), cat=k=>ids.filter(id=>CAT(s.snap[id].s)===k).map(byId);
   const col=k=>{const l=cat(k);return `<div class="panel pad col k-${k}"><h2>${t('c_'+k)} <em>${l.length}</em></h2>
-    ${POS.map(po=>{const x=l.filter(p=>p.poste===po);return x.length?`<div class="pos"><small>${t(po)}</small><ul>${x.map(p=>{const y=s.snap[p.id];return `<li>${esc(p.nom)}${k==='adapte'&&y.c?`<span>${esc(y.c)}</span>`:''}${k!=='ok'&&y.r?`<span>${t('m_ret',{d:dm(y.r)})}</span>`:''}</li>`}).join('')}</ul></div>`:''}).join('')}</div>`};
+    ${POS.map(po=>{const x=l.filter(p=>p.poste===po);return x.length?`<div class="pos"><small>${t(po)}</small><ul>${x.map(p=>{const y=s.snap[p.id];return `<li><span class="li-who">${av(p,'sm')}<span>${esc(p.nom)}</span></span>${k==='adapte'&&y.c?`<span>${esc(y.c)}</span>`:''}${k!=='ok'&&y.r?`<span>${t('m_ret',{d:dm(y.r)})}</span>`:''}</li>`}).join('')}</ul></div>`:''}).join('')}</div>`};
   const left=cat('parti');
   V.innerHTML=head(t('coach_t'),t('coach_l'))+`<div class="note">${LOCK}<span>${t('coachLock')} ${t('from',{l:sendLabel(s),h:`${dm(s.day)} ${hmOf(s.at)}`})}</span></div>
   <div class="lineup">${POS.map(po=>{const all=ids.map(byId).filter(p=>p.poste===po&&s.snap[p.id].s!=='parti'),av=all.filter(p=>CAT(s.snap[p.id].s)!=='indispo');return `<div><small class="sync">${t(po)}</small><br><b>${av.length}/${all.length}</b> <span class="sync">${t('usable')}</span></div>`}).join('')}</div>
@@ -411,7 +414,8 @@ function viewStaff(){
 /* ---------- vue effectif ---------- */
 function viewRoster(){
   const ps=[...S.players].sort((a,b)=>POS.indexOf(a.poste)-POS.indexOf(b.poste)||(a.num??99)-(b.num??99));
-  V.innerHTML=head(t('ro_t'),t('ro_l'),false)+`<div class="panel">${ps.map(p=>`<div class="ct" data-pl="${p.id}" style="grid-template-columns:60px minmax(0,1.3fr) minmax(0,1fr) minmax(0,1.2fr) minmax(0,1fr) minmax(0,1fr) auto">
+  V.innerHTML=head(t('ro_t'),t('ro_l'),false)+`<div class="panel">${ps.map(p=>`<div class="ct ctr" data-pl="${p.id}">
+ <label class="phup" title="${t('photo')}">${av(p,'lg')}<input type="file" accept="image/*" data-photo="${p.id}" id="ph-${p.id}" hidden></label>
     <label class="f">${t('num')}<input type="number" id="rn-${p.id}" data-pf="num" value="${p.num??''}"></label>
     <label class="f">${t('nom')}<input type="text" id="rm-${p.id}" data-pf="nom" value="${esc(p.nom)}"></label>
     <label class="f">${t('poste')}<select id="rp-${p.id}" data-pf="poste">${POS.map(k=>`<option value="${k}"${k===p.poste?' selected':''}>${t(k+'1')}</option>`).join('')}</select></label>
@@ -506,6 +510,7 @@ V.addEventListener('change',e=>{
   if(el.dataset.w){const id=el.closest('[data-id]').dataset.id,x={...pl(id)};x.w=el.checked;setPlayer(id,x);return render(true)}
   if(el.dataset.f==='aigd'||el.dataset.f==='pc'){const id=el.closest('[data-id]').dataset.id,x={...pl(id)};x[el.dataset.f]=el.value;if(el.dataset.f==='pc'&&el.value!=='soins')x.pct='';setPlayer(id,x);if(el.dataset.f==='pc')render(true);return}
   if(el.dataset.f==='t'||el.dataset.f==='r'){const id=el.closest('[data-id]').dataset.id,x={...pl(id)};x[el.dataset.f]=el.value;setPlayer(id,x);return}
+  if(el.dataset.photo&&el.files[0]){const p={...byId(el.dataset.photo)};shrink(el.files[0]).then(u=>{p.photo=u;return Store.savePlayer(p)}).then(()=>{toast(t('photoOk'));render(true)}).catch(()=>toast(t('photoKo')));return}
   if(el.dataset.pf){const k=el.closest('[data-pl]').dataset.pl,p={...byId(k)};let v=el.value.trim();if(el.dataset.pf==='num')v=v?+v:null;if(el.dataset.pf==='left_on'||el.dataset.pf==='added_on')v=v||null;if(el.dataset.pf==='added_on'&&!v)return;if(el.dataset.pf==='nom'&&!v)return;p[el.dataset.pf]=v;Store.savePlayer(p).catch(fail);return}
   if(el.dataset.cf==='role'||el.dataset.cf==='lang'){const k=el.closest('[data-ct]').dataset.ct,x=S.staff.find(y=>y.id===k);x[el.dataset.cf]=el.value;Store.saveStaff({...x}).catch(fail)}
 });

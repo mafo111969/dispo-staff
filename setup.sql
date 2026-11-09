@@ -19,8 +19,10 @@ create table if not exists players (
   poste text not null check (poste in ('G','D','M','A')),
   club text not null default '',
   added_on date not null default '2026-11-01',
-  left_on date
+  left_on date,
+  photo text
 );
+alter table players add column if not exists photo text;
 
 -- Brouillon du briefing du jour (statut, consigne, retour, type, minutes). Médical uniquement.
 create table if not exists drafts (
