@@ -27,7 +27,7 @@ Deno.serve(async (req) => {
     global: { headers: { Authorization: req.headers.get("Authorization") ?? "" } },
   });
   const { data: me } = await sb.rpc("whoami");
-  if (!me || me.role !== "medical") return json({ error: "Réservé au staff médical" }, 403);
+  if (!me || me.role !== "medical" || me.can_send === false) return json({ error: "Réservé à qui valide et envoie" }, 403);
 
   let body: { messages?: { staff_id: string; text: string }[] };
   try { body = await req.json(); } catch { return json({ error: "JSON invalide" }, 400); }
