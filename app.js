@@ -6,7 +6,7 @@ const T={
 fr:{sub:'Sélection nationale · stage du 9 au 18 novembre 2026',
  tab_medical:'Médical',tab_prepa:'Prépa physique',tab_coach:'Staff technique',tab_direction:'Direction',tab_wa:'Envoi WhatsApp',tab_staff:'Staff et accès',tab_roster:'Effectif',photo:'Photo',photoKo:'Photo non enregistrée. Lancez d\'abord la commande SQL « photo ».',photoOk:'Photo enregistrée',cropT:'Cadrer la photo',cropL:'Faites glisser pour centrer le visage, zoomez avec le curseur.',zoom:'Zoom',savePh:'Enregistrer',cancel:'Annuler',ro_t:'Effectif du rassemblement',ro_l:'Corrigez un joueur, réglez sa date d\'arrivée ou retirez-le. Un joueur n\'apparaît dans le briefing qu\'à partir de sa date d\'arrivée.',arr:'Arrivée',dep:'Départ',del:'Retirer',delOk:'Joueur retiré',delKo:'Ce joueur a déjà des données ; marquez plutôt son départ.',
  r_medical:'Médical',r_prepa:'Prépa physique',r_coach:'Coach',r_tm:'Team manager',r_direction:'Direction',
- s_indispo:'Indisponible',s_soins:'En soins',s_reath:'En réathlé',s_adapte:'Entraînement adapté',s_ok:'Sans restriction',s_parti:'A quitté le rassemblement',
+ s_indispo:'Indisponible',s_soins:'En soins',s_reath:'En réathlé',s_adapte:'Entraînement adapté',s_ok:'Sans restriction',s_absent:'Absent',s_parti:'A quitté le rassemblement',
  c_ok:'Disponible',c_adapte:'Disponible avec adaptation',c_indispo:'Indisponible',c_parti:'A quitté le rassemblement',
  G:'Gardiens',D:'Défenseurs',M:'Milieux',A:'Attaquants',G1:'Gardien',D1:'Défenseur',M1:'Milieu',A1:'Attaquant',
  t_mus:'Musculaire',t_art:'Articulaire / ligamentaire',t_ten:'Tendineuse',t_tra:'Traumatique / contusion',t_mal:'Maladie',t_aut:'Autre',
@@ -42,7 +42,7 @@ fr:{sub:'Sélection nationale · stage du 9 au 18 novembre 2026',
  email:'E-mail',pwd:'Mot de passe (6 caractères minimum)',signin:'Se connecter',signup:'Créer mon accès',signout:'Se déconnecter',
  li_bad:'E-mail ou mot de passe incorrect.',li_made:'Accès créé. Connectez-vous.',noRole:'Cet e-mail n\'est pas enregistré dans le staff. Demandez au staff médical de l\'ajouter.',
  m_head:'{l} du {d} ({h}), validé par {by}.',
- m_med:'{ok} sans restriction, {ad} adaptés, {re} en réathlé, {so} en soins, {in} indisponibles.',
+ m_med:'{ok} sans restriction, {ad} adaptés, {re} en réathlé, {so} en soins, {in} indisponibles{ab}.',
  m_pr:'En réathlé :\n{re}\nEntraînement adapté :\n{ad}',
  m_co:'{ok} dispo, {ad} adaptés, {in} indispo.\n{pos}\nAdaptés :\n{adl}\nIndisponibles :\n{inl}',
  m_di:'Disponibilité : {p} % ({a}/{b}).\nIndisponibles :\n{inl}',
@@ -51,7 +51,7 @@ fr:{sub:'Sélection nationale · stage du 9 au 18 novembre 2026',
 pt:{sub:'Seleção Nacional · estágio de 9 a 18 de novembro de 2026',
  tab_medical:'Médico',tab_prepa:'Preparação física',tab_coach:'Equipa técnica',tab_direction:'Direção',tab_wa:'Envio WhatsApp',tab_staff:'Staff e acessos',tab_roster:'Plantel',photo:'Foto',photoKo:'Foto não guardada. Execute primeiro o comando SQL « photo ».',photoOk:'Foto guardada',cropT:'Enquadrar a foto',cropL:'Arraste para centrar o rosto, faça zoom com o cursor.',zoom:'Zoom',savePh:'Guardar',cancel:'Cancelar',ro_t:'Plantel do estágio',ro_l:'Corrija um jogador, ajuste a data de chegada ou retire-o. Um jogador só aparece no briefing a partir da data de chegada.',arr:'Chegada',dep:'Saída',del:'Retirar',delOk:'Jogador retirado',delKo:'Este jogador já tem dados; registe antes a sua saída.',
  r_medical:'Departamento médico',r_prepa:'Preparação física',r_coach:'Treinador',r_tm:'Team manager',r_direction:'Direção',
- s_indispo:'Indisponível',s_soins:'Em tratamento',s_reath:'Em readaptação',s_adapte:'Treino adaptado',s_ok:'Sem restrições',s_parti:'Deixou o estágio',
+ s_indispo:'Indisponível',s_soins:'Em tratamento',s_reath:'Em readaptação',s_adapte:'Treino adaptado',s_ok:'Sem restrições',s_absent:'Ausente',s_parti:'Deixou o estágio',
  c_ok:'Disponível',c_adapte:'Disponível com adaptação',c_indispo:'Indisponível',c_parti:'Deixou o estágio',
  G:'Guarda-redes',D:'Defesas',M:'Médios',A:'Avançados',G1:'Guarda-redes',D1:'Defesa',M1:'Médio',A1:'Avançado',
  t_mus:'Muscular',t_art:'Articular / ligamentar',t_ten:'Tendinosa',t_tra:'Traumática / contusão',t_mal:'Doença',t_aut:'Outro',
@@ -87,7 +87,7 @@ pt:{sub:'Seleção Nacional · estágio de 9 a 18 de novembro de 2026',
  email:'E-mail',pwd:'Palavra-passe (mínimo 6 caracteres)',signin:'Entrar',signup:'Criar o meu acesso',signout:'Sair',
  li_bad:'E-mail ou palavra-passe incorretos.',li_made:'Acesso criado. Entre agora.',noRole:'Este e-mail não está registado no staff. Peça ao departamento médico para o adicionar.',
  m_head:'{l} de {d} ({h}), validado por {by}.',
- m_med:'{ok} sem restrições, {ad} adaptados, {re} em readaptação, {so} em tratamento, {in} indisponíveis.',
+ m_med:'{ok} sem restrições, {ad} adaptados, {re} em readaptação, {so} em tratamento, {in} indisponíveis{ab}.',
  m_pr:'Em readaptação:\n{re}\nTreino adaptado:\n{ad}',
  m_co:'{ok} disponíveis, {ad} adaptados, {in} indisponíveis.\n{pos}\nAdaptados:\n{adl}\nIndisponíveis:\n{inl}',
  m_di:'Disponibilidade: {p} % ({a}/{b}).\nIndisponíveis:\n{inl}',
@@ -100,8 +100,8 @@ const tr=(L,k,v={})=>String(T[L][k]??T.fr[k]??k).replace(/\{(\w+)\}/g,(_,x)=>v[x
 const t=(k,v)=>tr(LANG,k,v);
 
 /* ---------- constantes ---------- */
-const STS=['indispo','soins','reath','adapte','ok','parti'], LOST=['indispo','soins','reath'];
-const CAT=s=>LOST.includes(s)?'indispo':s;
+const STS=['indispo','soins','reath','adapte','ok','absent','parti'], LOST=['indispo','soins','reath'];
+const CAT=s=>LOST.includes(s)||s==='absent'?'indispo':s;
 const TYPES=['mus','art','ten','tra','mal','aut'], POS=['G','D','M','A'];
 const ROLES=['medical','prepa','coach','tm','direction'], LABELS=['matin','aprem','soir','match'];
 const TABS={medical:['medical','wa','prepa','coach','direction','roster','staff'],prepa:['prepa','coach'],coach:['coach'],tm:['coach'],direction:['direction','coach']};
@@ -179,7 +179,7 @@ const pl=(id,day=DATE)=>draft(day).players[id]||blankP();
 const sendsOf=day=>S.sends.filter(s=>s.day===day).sort((a,b)=>a.at<b.at?-1:1);
 function lastSendUpTo(day){const l=S.sends.filter(s=>s.day<=day).sort((a,b)=>a.at<b.at?-1:1);return l[l.length-1]||null}
 function prevSend(send){const l=S.sends.filter(s=>s.at<send.at).sort((a,b)=>a.at<b.at?-1:1);return l[l.length-1]||null}
-function counts(players){const c={indispo:0,soins:0,reath:0,adapte:0,ok:0,parti:0};Object.values(players).forEach(x=>c[x.s]=(c[x.s]||0)+1);c.n=Object.keys(players).length-c.parti;return c}
+function counts(players){const c={indispo:0,soins:0,reath:0,adapte:0,ok:0,absent:0,parti:0};Object.values(players).forEach(x=>c[x.s]=(c[x.s]||0)+1);c.n=Object.keys(players).length-c.parti-c.absent;return c}
 function diff(a,b){ // a: ancien snap, b: nouveau
   return Object.keys(b).filter(id=>{const x=a&&a[id]||blankP(),y=b[id];return x.s!==y.s||x.c!==y.c||x.r!==y.r||!!x.w!==!!y.w}).map(id=>({p:byId(id),from:(a&&a[id])||blankP(),to:b[id]})).filter(x=>x.p);
 }
@@ -315,7 +315,7 @@ function viewMedical(){
     </div>`}).join('')}).join('');
   const suivi=roster(DATE).map(p=>({p,x:d.players[p.id]||blankP()})).filter(o=>o.x.s!=='parti'&&hasPath(o.x));
   V.innerHTML=head(t('med_t'),t('med_l'))+`
-  <div class="tally">${['indispo','soins','reath','adapte','ok'].map(k=>pill(k,`${c[k]} ${t('s_'+k).toLowerCase()}`)).join('')}${c.parti?pill('parti',`${c.parti} ${t('s_parti').toLowerCase()}`):''}</div>
+  <div class="tally">${['indispo','soins','reath','adapte','ok'].map(k=>pill(k,`${c[k]} ${t('s_'+k).toLowerCase()}`)).join('')}${c.absent?pill('absent',`${c.absent} ${t('s_absent').toLowerCase()}`):''}${c.parti?pill('parti',`${c.parti} ${t('s_parti').toLowerCase()}`):''}</div>
   <div class="banner${sends.length&&!ch.length?' ok':''}">
     <div style="display:grid;gap:4px;min-width:0"><b>${t('sendsToday')} : ${sends.length?sends.map(s=>`${sendLabel(s)} ${hmOf(s.at)}`).join(' · '):t('noneYet')}</b>
       <span class="sync">${!d.exists&&!sends.length?(d.carried?t('carry'):t('fresh'))+' ':''}${last?(ch.length?t('nChanges',{n:ch.length}):t('noChange')):''}</span>${checks.length?`<span class="sync"><b>${t('checks')}</b> : ${checks.map(c=>`${esc(c.by||'?')} ${hmOf(c.at)}`).join(' · ')}</span>`:''}</div>
@@ -367,7 +367,7 @@ function viewCoach(){
   if(!s){V.innerHTML=head(t('coach_t'),t('coach_l'))+`<div class="panel empty">${t('noBrief')}</div>`;return}
   const ids=Object.keys(s.snap).filter(byId), cat=k=>ids.filter(id=>CAT(s.snap[id].s)===k).map(byId);
   const col=k=>{const l=cat(k);return `<div class="panel pad col k-${k}"><h2>${t('c_'+k)} <em>${l.length}</em></h2>
-    ${POS.map(po=>{const x=l.filter(p=>p.poste===po);return x.length?`<div class="pos"><small>${t(po)}</small><ul>${x.map(p=>{const y=s.snap[p.id];return `<li><span class="li-who">${av(p,'sm')}<span>${esc(p.nom)}</span></span>${k==='adapte'&&y.c?`<span>${esc(tx(y,'c'))}</span>`:''}${k!=='ok'&&y.r?`<span>${t('m_ret',{d:dm(y.r)})}</span>`:''}</li>`}).join('')}</ul></div>`:''}).join('')}</div>`};
+    ${POS.map(po=>{const x=l.filter(p=>p.poste===po);return x.length?`<div class="pos"><small>${t(po)}</small><ul>${x.map(p=>{const y=s.snap[p.id];return `<li><span class="li-who">${av(p,'sm')}<span>${esc(p.nom)}</span></span>${y.s==='absent'?`<span>${t('s_absent')}</span>`:''}${k==='adapte'&&y.c?`<span>${esc(tx(y,'c'))}</span>`:''}${k!=='ok'&&y.r?`<span>${t('m_ret',{d:dm(y.r)})}</span>`:''}</li>`}).join('')}</ul></div>`:''}).join('')}</div>`};
   const left=cat('parti');
   V.innerHTML=head(t('coach_t'),t('coach_l'))+`<div class="note">${LOCK}<span>${t('coachLock')} ${t('from',{l:sendLabel(s),h:`${dm(s.day)} ${hmOf(s.at)}`})}</span></div>
   <div class="lineup">${POS.map(po=>{const all=ids.map(byId).filter(p=>p.poste===po&&s.snap[p.id].s!=='parti'),av=all.filter(p=>CAT(s.snap[p.id].s)!=='indispo');return `<div><small class="sync">${t(po)}</small><br><b>${av.length}/${all.length}</b> <span class="sync">${t('usable')}</span></div>`}).join('')}</div>
@@ -383,7 +383,7 @@ function viewDirection(){
   const finals=Object.fromEntries(daysAll.map(k=>{const l=sendsOf(k);return [k,l[l.length-1]]}));
   const mdays=daysAll.filter(k=>finals[k].match?.on);
   const ids=[...new Set(daysAll.flatMap(k=>Object.keys(finals[k].snap)))].filter(byId);
-  const rows=ids.map(id=>{let pres=0,lost=0,min=0,miss=0,mt=0;daysAll.forEach(k=>{const x=finals[k].snap[id];if(!x||x.s==='parti')return;pres++;if(LOST.includes(x.s))lost++;min+=+x.m||0;if(finals[k].match?.on){mt++;if(LOST.includes(x.s))miss++}});
+  const rows=ids.map(id=>{let pres=0,lost=0,min=0,miss=0,mt=0;daysAll.forEach(k=>{const x=finals[k].snap[id];if(!x||x.s==='parti'||x.s==='absent')return;pres++;if(LOST.includes(x.s))lost++;min+=+x.m||0;if(finals[k].match?.on){mt++;if(LOST.includes(x.s))miss++}});
     return{p:byId(id),pres,lost,min,miss,mt,rate:pres?Math.round((pres-lost)/pres*100):null}}).sort((a,b)=>b.lost-a.lost||(a.p.num??99)-(b.p.num??99));
   const totP=rows.reduce((s,r)=>s+r.pres,0), tot=rows.reduce((s,r)=>s+r.lost,0);
   const cur=lastSendUpTo(DATE), c=cur?counts(cur.snap):{ok:0,adapte:0,n:0}, av=c.ok+c.adapte;
@@ -414,7 +414,7 @@ function viewDirection(){
 }
 
 /* ---------- messages WhatsApp ---------- */
-function list(L,ids,snap,withC){return ids.map(id=>{const p=byId(id),x=snap[id];return `• ${p.nom}${withC&&x.c?` : ${tx(x,'c',L)}`:''}${x.r?` (${tr(L,'m_ret',{d:dm(x.r)})})`:''}`}).join('\n')||tr(L,'m_none')}
+function list(L,ids,snap,withC){return ids.map(id=>{const p=byId(id),x=snap[id];return `• ${p.nom}${x.s==='absent'?` (${tr(L,'s_absent').toLowerCase()})`:''}${withC&&x.c?` : ${tx(x,'c',L)}`:''}${x.r?` (${tr(L,'m_ret',{d:dm(x.r)})})`:''}`}).join('\n')||tr(L,'m_none')}
 function buildMsg(role,L,s){
   const snap=s.snap, ids=Object.keys(snap).filter(byId), c=counts(snap);
   const f=k=>ids.filter(id=>snap[id].s===k), cc=k=>ids.filter(id=>CAT(snap[id].s)===k);
@@ -425,7 +425,7 @@ function buildMsg(role,L,s){
   const mp=ids.filter(id=>+snap[id].m>0), mins=s.match?.on&&mp.length&&role!=='medical'&&role!=='coach'&&role!=='tm'?tr(L,'m_min',{o:s.match.opp,l:mp.map(id=>`• ${byId(id).nom} : ${snap[id].m}′`).join('\n')}):'';
   const headL=tr(L,'m_head',{l:tr(L,'label')+' '+(tr(L,'l_'+s.label)||''),d:dm(s.day),h:hmOf(s.at),by:s.sent_by})+'\n';
   let body;
-  if(role==='medical')body=tr(L,'m_med',{ok:c.ok,ad:c.adapte,re:c.reath,so:c.soins,in:c.indispo});
+  if(role==='medical')body=tr(L,'m_med',{ok:c.ok,ad:c.adapte,re:c.reath,so:c.soins,in:c.indispo,ab:c.absent?`, ${c.absent} ${tr(L,'s_absent').toLowerCase()}`:''});
   else if(role==='prepa')body=tr(L,'m_pr',{re:list(L,f('reath'),snap,1),ad:list(L,f('adapte'),snap,1)});
   else if(role==='coach'||role==='tm')body=tr(L,'m_co',{ok:cc('ok').length,ad:cc('adapte').length,in:cc('indispo').length,pos:POS.map(po=>{const a=ids.filter(id=>byId(id).poste===po&&snap[id].s!=='parti');return `${tr(L,po)} : ${a.filter(id=>CAT(snap[id].s)!=='indispo').length}/${a.length}`}).join('\n'),adl:list(L,cc('adapte'),snap,1),inl:list(L,cc('indispo'),snap,0)});
   else body=tr(L,'m_di',{p:c.n?Math.round((c.ok+c.adapte)/c.n*100):0,a:c.ok+c.adapte,b:c.n,inl:list(L,cc('indispo'),snap,0)});
