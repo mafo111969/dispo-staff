@@ -448,7 +448,8 @@ let WA_MODE=(()=>{try{return localStorage.getItem('waMode')||'person'}catch(e){r
 // message d'un groupe : langue(s) des membres de ce rôle, les deux si le groupe est mixte
 function groupMsg(role,s){
   const ls_=[...new Set(S.staff.filter(x=>x.role===role).map(x=>x.lang==='fr'?'fr':'pt'))];
-  const langs=ls_.length?ls_.sort():['fr','pt'];
+  const fixed=(CFG.waLang||{})[role];
+  const langs=fixed?[fixed]:ls_.length?ls_.sort():['fr','pt'];
   return langs.map(L=>buildMsg(role,L,s)).join('\n\n— — —\n\n');
 }
 function viewWA(){
