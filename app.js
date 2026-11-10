@@ -471,7 +471,7 @@ function viewWA(){
       const roles=ROLES.filter(r=>S.staff.some(x=>x.role===r));
       body=`<div class="chips">${sends.map(x=>`<button data-send="${x.id}" aria-pressed="${x.id===s.id}">${sendLabel(x)} ${hmOf(x.at)}</button>`).join('')}</div>${modeBar}<p class="sync">${t('grpL')}</p>
       <div class="walist">${(roles.length?roles:ROLES).map(r=>{const txt=groupMsg(r,s);
-        return `<div class="panel pad card"><div class="bar"><div><span class="name">${t('grpName',{r:t('r_'+r)})}</span></div>${sent.has('g-'+r)?pill('ok',t('sentMark')):''}</div>
+        return `<div class="panel pad card"><div class="bar"><div><span class="name">${t('grpName',{r:t('r_'+r)})}</span>${(()=>{const g=(CFG.waGroups||{})[r],m=S.staff.filter(x=>x.role===r);const h=g||(m.length===1&&m[0].name?m[0].name:'');return h?`<div class="sync">→ ${esc(h)}</div>`:''})()}</div>${sent.has('g-'+r)?pill('ok',t('sentMark')):''}</div>
         <pre class="msg">${esc(txt)}</pre>
         <div class="bar"><a class="btn wa" data-wag="${r}" href="https://wa.me/?text=${encodeURIComponent(txt)}" target="_blank" rel="noopener">${t('grpOpen')}</a><button class="btn small" data-copyg="${r}">${t('copy')}</button></div></div>`}).join('')}</div>`;
       V.innerHTML=head(t('wa_t'),t('wa_l'))+body;return;
