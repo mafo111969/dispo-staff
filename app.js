@@ -44,7 +44,7 @@ fr:{sub:'Sélection nationale · stage du 9 au 18 novembre 2026',
  m_head:'{l} du {d} ({h}), validé par {by}.',
  m_med:'{ok} sans restriction, {ad} adaptés, {re} en réathlé, {so} en soins, {in} indisponibles{ab}.',
  m_pr:'En réathlé :\n{re}\nEntraînement adapté :\n{ad}',
- m_co:'{pos}\nAdaptés :\n{adl}\nIndisponibles :\n{inl}',sum:{ok:'dispo',adapte:'adaptés',reath:'en réathlé',soins:'en soins',indispo:'indispo',absent:'absent(s)'},m_rate:'Taux de disponibilité : {p} % ({a}/{b}).',m_tmleft:'A quitté le rassemblement :\n{l}\n→ Organiser son départ du rassemblement, informer le club et organiser son retour.',
+ m_co:'{pos}\nAdaptés :\n{adl}\nIndisponibles :\n{inl}',sum:{ok:'dispo',adapte:'adaptés',reath:'en réathlé',soins:'en soins',indispo:'indispo',absent:'absent(s)'},m_rate:'Taux de disponibilité : {p} % ({a}/{b}).',m_tmabs:'\nPas à l\'entraînement :\n{l}',m_tmleft:'A quitté le rassemblement :\n{l}\n→ Organiser son départ du rassemblement, informer le club et organiser son retour.',
  m_di:'Disponibilité : {p} % ({a}/{b}).\nIndisponibles :\n{inl}',
  m_ch:'Changements :\n{l}\n',m_left:'A quitté le rassemblement :\n{l}',m_watch:'\nJoueurs à surveiller :\n{l}',m_care:'\nSoins / récupération :\n{l}',watch:'À surveiller',watchT:'Partagé avec les coachs, sans détail médical',
  m_min:'\nMinutes vs {o} :\n{l}',m_none:'• aucun',m_ret:'retour {d}'},
@@ -89,7 +89,7 @@ pt:{sub:'Seleção Nacional · estágio de 9 a 18 de novembro de 2026',
  m_head:'{l} de {d} ({h}), validado por {by}.',
  m_med:'{ok} sem restrições, {ad} adaptados, {re} em readaptação, {so} em tratamento, {in} indisponíveis{ab}.',
  m_pr:'Em readaptação:\n{re}\nTreino adaptado:\n{ad}',
- m_co:'{pos}\nAdaptados:\n{adl}\nIndisponíveis:\n{inl}',sum:{ok:'disponíveis',adapte:'adaptados',reath:'em readaptação',soins:'em tratamento',indispo:'indisponíveis',absent:'ausente(s)'},m_rate:'Taxa de disponibilidade: {p} % ({a}/{b}).',m_tmleft:'Deixou o estágio:\n{l}\n→ Organizar a saída do estágio, informar o clube e organizar o regresso.',
+ m_co:'{pos}\nAdaptados:\n{adl}\nIndisponíveis:\n{inl}',sum:{ok:'disponíveis',adapte:'adaptados',reath:'em readaptação',soins:'em tratamento',indispo:'indisponíveis',absent:'ausente(s)'},m_rate:'Taxa de disponibilidade: {p} % ({a}/{b}).',m_tmabs:'\nNão estão no treino:\n{l}',m_tmleft:'Deixou o estágio:\n{l}\n→ Organizar a saída do estágio, informar o clube e organizar o regresso.',
  m_di:'Disponibilidade: {p} % ({a}/{b}).\nIndisponíveis:\n{inl}',
  m_ch:'Alterações:\n{l}\n',m_left:'Deixou o estágio:\n{l}',m_watch:'\nJogadores a vigiar:\n{l}',m_care:'\nTratamentos / recuperação:\n{l}',watch:'A vigiar',watchT:'Partilhado com os treinadores, sem detalhe médico',
  m_min:'\nMinutos vs {o}:\n{l}',m_none:'• nenhum',m_ret:'regresso {d}'}
@@ -443,7 +443,7 @@ function buildMsg(role,L,s){
     return headL+summary+(wl2?'\n'+wl2:'')+(left.length?'\n'+tr(L,'m_left',{l:leftL}):'')+'\n'+body+care+(chTxt?'\n'+chTxt.trim():'')+mins}
   if(role==='direction'){const wl2=wl.length?tr(L,'m_watch',{l:wl.map(id=>'• '+byId(id).nom).join('\n')}):'';
     return headL+summary+'\n'+tr(L,'m_rate',{p:c.n?Math.round((c.ok+c.adapte)/c.n*100):0,a:c.ok+c.adapte,b:c.n})+wl2+(left.length?'\n'+tr(L,'m_left',{l:leftL}):'')+mins}
-  if(role==='tm')return headL+summary+(left.length?'\n'+tr(L,'m_tmleft',{l:leftL}):'');
+  if(role==='tm'){const ab=cc('indispo');return headL+summary+(ab.length?tr(L,'m_tmabs',{l:ab.map(id=>'• '+byId(id).nom).join('\n')}):'')+(left.length?'\n'+tr(L,'m_tmleft',{l:leftL}):'')}
   return headL+chTxt+body+care+(left.length&&role!=='medical'?'\n'+tr(L,'m_left',{l:leftL}):'')+mins;
 }
 let WA_SEND=null;
