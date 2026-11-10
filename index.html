@@ -63,6 +63,10 @@ h2{font-family:var(--f-display);font-size:20px;font-weight:600;margin:0;text-tra
 .btn.small{padding:5px 10px;font-size:12px}
 .btn:disabled{opacity:.45;cursor:not-allowed}
 .tally{display:flex;gap:6px;flex-wrap:wrap}
+button.pill{font:inherit;font-size:12px;font-weight:600;border:1px solid transparent;color:var(--ink);cursor:pointer}
+button.pill[aria-pressed="true"]{border-color:var(--c);background:color-mix(in srgb,var(--c) 14%,var(--surface))}
+button.pill:disabled{cursor:default;opacity:.6}
+.tlist ul{margin:8px 0 0;padding-left:18px;display:grid;gap:4px}
 .pill{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;padding:3px 9px;border-radius:999px;background:var(--sunk);white-space:nowrap}
 .dot{width:9px;height:9px;border-radius:50%;flex:none;background:var(--c,var(--muted));display:inline-block}
 .k-indispo{--c:var(--s-indispo)} .k-soins{--c:var(--s-soins)} .k-reath{--c:var(--s-reath)} .k-adapte{--c:var(--s-adapte)} .k-ok{--c:var(--s-ok)}

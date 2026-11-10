@@ -118,7 +118,7 @@ let DATE=iso(new Date());
 
 /* ---------- état ---------- */
 const S={players:[],drafts:{},sends:[],prepa:[],staff:[],typeStats:[],me:null,ready:false};
-let selP=null, LABEL=null;
+let selP=null, LABEL=null, TALLY=null;
 const OPEN=new Set();
 const ini=n=>String(n||'?').split(/\s+/).map(w=>w[0]).join('').slice(0,2).toUpperCase();
 const av=(p,cls='')=>p.photo?`<img class="av ${cls}" src="${esc(p.photo)}" alt="">`:`<span class="av ${cls}" aria-hidden="true">${esc(ini(p.nom))}</span>`;
@@ -315,7 +315,8 @@ function viewMedical(){
     </div>`}).join('')}).join('');
   const suivi=roster(DATE).map(p=>({p,x:d.players[p.id]||blankP()})).filter(o=>o.x.s!=='parti'&&hasPath(o.x));
   V.innerHTML=head(t('med_t'),t('med_l'))+`
-  <div class="tally">${['indispo','soins','reath','adapte','ok'].map(k=>pill(k,`${c[k]} ${t('s_'+k).toLowerCase()}`)).join('')}${c.absent?pill('absent',`${c.absent} ${t('s_absent').toLowerCase()}`):''}${c.parti?pill('parti',`${c.parti} ${t('s_parti').toLowerCase()}`):''}</div>
+  <div class="tally">${['indispo','soins','reath','adapte','ok','absent','parti'].filter(k=>c[k]||!['absent','parti'].includes(k)).map(k=>`<button class="pill k-${k}" data-tally="${k}" aria-pressed="${TALLY===k}"${c[k]?'':' disabled'}><i class="dot"></i>${c[k]} ${t('s_'+k).toLowerCase()}</button>`).join('')}</div>
+  ${TALLY&&c[TALLY]?`<div class="panel pad tlist"><b>${t('s_'+TALLY)} (${c[TALLY]})</b><ul>${roster(DATE).filter(p=>(d.players[p.id]||blankP()).s===TALLY).map(p=>{const x=d.players[p.id];return `<li><span class="name">${esc(p.nom)}</span> <span class="sync">${t(p.poste+'1')}${x.c?` · ${esc(tx(x,'c'))}`:''}${x.r?` · ${t('m_ret',{d:dm(x.r)})}`:''}${x.pc?` · ${t('c_'+x.pc)}`:''}</span></li>`}).join('')}</ul></div>`:''}
   <div class="banner${sends.length&&!ch.length?' ok':''}">
     <div style="display:grid;gap:4px;min-width:0"><b>${t('sendsToday')} : ${sends.length?sends.map(s=>`${sendLabel(s)} ${hmOf(s.at)}`).join(' · '):t('noneYet')}</b>
       <span class="sync">${!d.exists&&!sends.length?(d.carried?t('carry'):t('fresh'))+' ':''}${last?(ch.length?t('nChanges',{n:ch.length}):t('noChange')):''}</span>${checks.length?`<span class="sync"><b>${t('checks')}</b> : ${checks.map(c=>`${esc(c.by||'?')} ${hmOf(c.at)}`).join(' · ')}</span>`:''}</div>
@@ -568,6 +569,7 @@ V.addEventListener('click',async e=>{
   if(el.dataset.auth){e.preventDefault();return auth(el.dataset.auth)}
   if(el.dataset.day){DATE=addDays(DATE,+el.dataset.day);LABEL=null;WA_SEND=null;return render(true)}
   if(el.dataset.label){LABEL=el.dataset.label;return render(true)}
+  if(el.dataset.tally){TALLY=TALLY===el.dataset.tally?null:el.dataset.tally;return render(true)}
   if(el.dataset.wamode){WA_MODE=el.dataset.wamode;SERIE=null;try{localStorage.setItem('waMode',WA_MODE)}catch(e){}return render(true)}
   if(el.dataset.copyg){const txt=groupMsg(el.dataset.copyg,curSend());try{await navigator.clipboard.writeText(txt);toast(t('copied'))}catch(err){}return}
   if(el.dataset.send){WA_SEND=+el.dataset.send||el.dataset.send;return render(true)}
