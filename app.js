@@ -10,7 +10,7 @@ fr:{sub:'Sélection nationale · stage du 9 au 18 novembre 2026',
  c_ok:'Disponible',c_adapte:'Disponible avec adaptation',c_indispo:'Indisponible',c_parti:'A quitté le rassemblement',
  G:'Gardiens',D:'Défenseurs',M:'Milieux',A:'Attaquants',G1:'Gardien',D1:'Défenseur',M1:'Milieu',A1:'Attaquant',
  t_mus:'Musculaire',t_art:'Articulaire / ligamentaire',t_ten:'Tendineuse',t_tra:'Traumatique / contusion',t_mal:'Maladie',t_aut:'Autre',
- l_matin:'Matin',l_aprem:'Après-midi',l_soir:'Soir',l_match:'Après-match',
+ l_matin:'Matin',l_aprem:'Après-midi',l_soir:'Soir',l_avmatch:'Avant-match',l_match:'Après-match',g_ok:'Dispo match',g_no:'Indispo match',avL:'Avant-match : indiquez seulement qui est disponible ou non pour le match.',apL:'Après-match : minutes jouées et plainte éventuelle. Le détail de la plainte reste au médical.',pl:'Plainte',pl_non:'Non',pl_oui:'Oui',plt:'Détail de la plainte',pltPh:'Ex. douleur ischio droit',m_av:'Match {o} :\nDisponibles ({a}) :\n{al}\nIndisponibles ({b}) :\n{bl}',m_pl:'\nPlaintes après-match :\n{l}',m_pl0:'\nAucune plainte après-match.',avT:'Avant-match',
  med_t:'Briefing médical',med_l:'Passez l\'effectif en revue joueur par joueur. Seuls le statut, la consigne et la date de retour sont partagés. Pathologies et soins restent visibles du seul staff médical, jamais envoyés.',
  carry:'Statuts repris du jour précédent. Modifiez ce qui a changé.',fresh:'Premier briefing : tout l\'effectif démarre sans restriction.',
  sendsToday:'Briefings validés ce jour',noneYet:'aucun pour l\'instant',
@@ -55,7 +55,7 @@ pt:{sub:'Seleção Nacional · estágio de 9 a 18 de novembro de 2026',
  c_ok:'Disponível',c_adapte:'Disponível com adaptação',c_indispo:'Indisponível',c_parti:'Deixou o estágio',
  G:'Guarda-redes',D:'Defesas',M:'Médios',A:'Avançados',G1:'Guarda-redes',D1:'Defesa',M1:'Médio',A1:'Avançado',
  t_mus:'Muscular',t_art:'Articular / ligamentar',t_ten:'Tendinosa',t_tra:'Traumática / contusão',t_mal:'Doença',t_aut:'Outro',
- l_matin:'Manhã',l_aprem:'Tarde',l_soir:'Noite',l_match:'Pós-jogo',
+ l_matin:'Manhã',l_aprem:'Tarde',l_soir:'Noite',l_avmatch:'Pré-jogo',l_match:'Pós-jogo',g_ok:'Disponível jogo',g_no:'Indisponível jogo',avL:'Pré-jogo: indique apenas quem está disponível ou não para o jogo.',apL:'Pós-jogo: minutos jogados e eventual queixa. O detalhe da queixa fica no médico.',pl:'Queixa',pl_non:'Não',pl_oui:'Sim',plt:'Detalhe da queixa',pltPh:'Ex. dor isquiotibial direito',m_av:'Jogo {o}:\nDisponíveis ({a}):\n{al}\nIndisponíveis ({b}):\n{bl}',m_pl:'\nQueixas pós-jogo:\n{l}',m_pl0:'\nNenhuma queixa pós-jogo.',avT:'Pré-jogo',
  med_t:'Briefing médico',med_l:'Passe o plantel em revista jogador a jogador. Só o estado, a indicação e a data de regresso são partilhados. Patologias e tratamentos ficam visíveis só para o staff médico, nunca enviados.',
  carry:'Estados retomados do dia anterior. Altere o que mudou.',fresh:'Primeiro briefing: todo o plantel começa sem restrições.',
  sendsToday:'Briefings validados hoje',noneYet:'nenhum por enquanto',
@@ -103,7 +103,10 @@ const t=(k,v)=>tr(LANG,k,v);
 const STS=['indispo','soins','reath','adapte','ok','absent','parti'], LOST=['indispo','soins','reath'];
 const CAT=s=>LOST.includes(s)||s==='absent'?'indispo':s;
 const TYPES=['mus','art','ten','tra','mal','aut'], POS=['G','D','M','A'];
-const ROLES=['medical','prepa','coach','tm','direction'], LABELS=['matin','aprem','soir','match'];
+const ROLES=['medical','prepa','coach','tm','direction'], LABELS=['matin','aprem','soir','avmatch','match'];
+// étiquette proposée par défaut : avant-match puis après-match les jours de match
+const defLabel=(sends,d)=>{if(d&&d.match?.on){const ls_=sends.map(x=>x.label);return ls_.includes('avmatch')?'match':'avmatch'}return ['matin','aprem','soir'][Math.min(sends.length,2)]};
+const gOf=x=>x.g||(['ok','adapte'].includes(x.s)?'ok':'no');
 const TABS={medical:['medical','wa','prepa','coach','direction','roster','staff'],prepa:['prepa','coach'],coach:['coach'],tm:['coach'],direction:['direction','coach']};
 
 /* ---------- dates ---------- */
@@ -272,7 +275,7 @@ const BF=new Set();
 async function backfill(){
   if(!TR_ON()||BF.has(DATE)||S.me?.role!=='medical')return;BF.add(DATE);
   const d=draft(),todo=[];
-  Object.entries(d.players).forEach(([id,x])=>['c','chr','aig','pct'].forEach(k=>{const v=(x[k]||'').trim();if(v&&!(x.tr&&x.tr[k]&&x.tr[k].src===x[k]))todo.push({id,k,v:x[k]})}));
+  Object.entries(d.players).forEach(([id,x])=>['c','chr','aig','pct','plt'].forEach(k=>{const v=(x[k]||'').trim();if(v&&!(x.tr&&x.tr[k]&&x.tr[k].src===x[k]))todo.push({id,k,v:x[k]})}));
   if(!todo.length)return;
   try{const {data,error}=await sb.functions.invoke('translate',{body:{texts:todo.map(o=>o.v)}});if(error||!data||!data.items)throw error||new Error('translate');
     const by={};todo.forEach((o,i)=>{const x=by[o.id]||(by[o.id]={...pl(o.id)});if(x[o.k]===o.v)x.tr={...(x.tr||{}),[o.k]:{src:o.v,...data.items[i]}}});
@@ -287,7 +290,8 @@ const sendLabel=s=>`${t('l_'+s.label)||s.label}`;
 function viewMedical(){
   const d=draft(), c=counts(d.players), sends=sendsOf(DATE), last=lastSendUpTo(DATE);
   const ch=diff(last?last.snap:null,d.players).filter(x=>!(x.to.s==='ok'&&!last));
-  const lab=LABEL||LABELS[Math.min(sends.length,2)];
+  let lab=LABEL||defLabel(sends,d);if(!d.match?.on&&['avmatch','match'].includes(lab))lab=defLabel(sends,d);
+  const MODE=d.match?.on&&['avmatch','match'].includes(lab)?lab:'';
   const played=Object.values(d.players).filter(x=>+x.m>0).length;
   const prepToday=S.prepa.filter(e=>e.day===DATE);
   const checks=(S.drafts[DATE]&&S.drafts[DATE].checks)||[];
@@ -295,10 +299,14 @@ function viewMedical(){
     return `<div class="group-title">${t(k)}</div>`+ps.map(p=>{
     const x=d.players[p.id]||blankP(), s=last&&last.snap[p.id], chg=last&&s&&(s.s!==x.s||s.c!==x.c||s.r!==x.r||!!s.w!==!!x.w);
     const logs=prepToday.filter(e=>e.player_id===p.id);
-    const showPath=x.s!=='parti'&&(OPEN.has(p.id)||hasPath(x)), showMain=x.s!=='ok'&&x.s!=='parti';
+    const showPath=!MODE&&x.s!=='parti'&&(OPEN.has(p.id)||hasPath(x)), showMain=!MODE&&x.s!=='ok'&&x.s!=='parti';
+    if(MODE==='avmatch'){if(x.s==='parti')return '';const g=gOf(x);return `<div class="row" data-id="${p.id}"><div class="who"><span class="num">${p.num??''}</span>${av(p)}<span><span class="name">${esc(p.nom)}</span> <span class="club">${t('s_'+x.s)}</span></span></div>
+      <div class="seg" role="group" aria-label="${esc(p.nom)}">${['ok','no'].map(k=>`<button class="k-${k==='ok'?'ok':'indispo'}" data-g="${k}" aria-pressed="${g===k}"><i class="dot"></i>${t('g_'+k)}</button>`).join('')}</div></div>`}
+    if(MODE==='match'&&x.s==='parti')return '';
     return `<div class="row${chg?' changed':''}" data-id="${p.id}">
-      <div class="who"><span class="num">${p.num??''}</span>${av(p)}<span><span class="name">${esc(p.nom)}</span> <span class="club">${esc(p.club)}</span></span>${d.match?.on&&x.s!=='parti'?`<label class="mins">${t('min')}<input type="number" min="0" max="130" id="m-${p.id}" data-m="1" value="${x.m||''}" placeholder="0"></label>`:''}${x.s!=='parti'?`<label class="watch" title="${t('watchT')}"><input type="checkbox" data-w="1"${x.w?' checked':''}> ${t('watch')}</label><button class="pbtn${hasPath(x)?' on':''}" data-path="${p.id}" aria-expanded="${showPath}">${t('pathBtn')}</button>`:''}</div>
+      <div class="who"><span class="num">${p.num??''}</span>${av(p)}<span><span class="name">${esc(p.nom)}</span> <span class="club">${esc(p.club)}</span></span>${MODE==='match'&&x.s!=='parti'?`<label class="mins">${t('min')}<input type="number" min="0" max="130" id="m-${p.id}" data-m="1" value="${x.m||''}" placeholder="0"></label>`:''}${!MODE&&x.s!=='parti'?`<label class="watch" title="${t('watchT')}"><input type="checkbox" data-w="1"${x.w?' checked':''}> ${t('watch')}</label><button class="pbtn${hasPath(x)?' on':''}" data-path="${p.id}" aria-expanded="${showPath}">${t('pathBtn')}</button>`:''}</div>
       <div class="seg" role="group" aria-label="${esc(p.nom)}">${STS.map(k=>`<button class="k-${k}" data-st="${k}" aria-pressed="${x.s===k}"><i class="dot"></i>${t('s_'+k)}</button>`).join('')}</div>
+      ${MODE==='match'?`<div class="details"><label class="f">${t('pl')}<select data-f="pl" id="pl-${p.id}">${['non','oui'].map(k=>`<option value="${k}"${k===(x.pl||'non')?' selected':''}>${t('pl_'+k)}</option>`).join('')}</select></label>${x.pl==='oui'?`<label class="f wide">${t('plt')}<input type="text" data-f="plt" id="plt-${p.id}" value="${esc(x.plt||'')}" placeholder="${t('pltPh')}"></label><span class="medonly">${t('medOnly')}</span>`:''}</div>`:''}
       ${!showMain&&!showPath?'':`<div class="details">${showMain?`
         <label class="f">${t('type')}<select data-f="t" id="t-${p.id}"><option value="">—</option>${TYPES.map(k=>`<option value="${k}"${k===x.t?' selected':''}>${t('t_'+k)}</option>`).join('')}</select></label>
         <label class="f">${t('ret')}<input type="date" data-f="r" id="r-${p.id}" value="${esc(x.r)}"></label>
@@ -320,11 +328,11 @@ function viewMedical(){
   <div class="banner${sends.length&&!ch.length?' ok':''}">
     <div style="display:grid;gap:4px;min-width:0"><b>${t('sendsToday')} : ${sends.length?sends.map(s=>`${sendLabel(s)} ${hmOf(s.at)}`).join(' · '):t('noneYet')}</b>
       <span class="sync">${!d.exists&&!sends.length?(d.carried?t('carry'):t('fresh'))+' ':''}${last?(ch.length?t('nChanges',{n:ch.length}):t('noChange')):''}</span>${checks.length?`<span class="sync"><b>${t('checks')}</b> : ${checks.map(c=>`${esc(c.by||'?')} ${hmOf(c.at)}`).join(' · ')}</span>`:''}</div>
-    <div class="bar">${CAN_SEND()?`<div class="chips" role="group" aria-label="${t('label')}">${LABELS.map(l=>`<button data-label="${l}" aria-pressed="${l===lab}">${t('l_'+l)}</button>`).join('')}</div>`:''}
+    <div class="bar">${`<div class="chips" role="group" aria-label="${t('label')}">${LABELS.filter(l=>d.match?.on||!['avmatch','match'].includes(l)).map(l=>`<button data-label="${l}" aria-pressed="${l===lab}">${t('l_'+l)}</button>`).join('')}</div>`}
       ${CAN_SEND()?`<button class="btn primary" id="validate">${t('validate')}</button>`:`<button class="btn primary" id="validateMine">${t('validateMine')}</button>`}</div>
   </div>
-  <div class="banner"><label style="display:flex;gap:8px;align-items:center;font-weight:600"><input type="checkbox" id="matchOn" ${d.match?.on?'checked':''}> ${t('matchDay')}</label>${d.match?.on?`<div class="bar"><label class="f" style="min-width:200px">${t('opp')}<input type="text" id="opp" value="${esc(d.match.opp)}"></label><span class="sync">${t('played',{n:played})}</span></div>`:`<span class="sync">${t('minHint')}</span>`}</div>
-  ${suivi.length?`<div class="banner suivi"><div style="display:grid;gap:6px;min-width:0"><b>${t('suivi')} (${suivi.length})</b><span class="sync">${t('suiviL')} ${t('medOnly')}.</span>
+  <div class="banner"><label style="display:flex;gap:8px;align-items:center;font-weight:600"><input type="checkbox" id="matchOn" ${d.match?.on?'checked':''}> ${t('matchDay')}</label>${d.match?.on?`<div class="bar"><label class="f" style="min-width:200px">${t('opp')}<input type="text" id="opp" value="${esc(d.match.opp)}"></label><span class="sync">${t('played',{n:played})}</span></div>`:`<span class="sync">${t('minHint')}</span>`}${MODE?`<span class="sync" style="flex-basis:100%">${t(MODE==='avmatch'?'avL':'apL')}</span>`:''}</div>
+  ${!MODE&&suivi.length?`<div class="banner suivi"><div style="display:grid;gap:6px;min-width:0"><b>${t('suivi')} (${suivi.length})</b><span class="sync">${t('suiviL')} ${t('medOnly')}.</span>
     <ul>${suivi.map(({p,x})=>`<li><span class="name">${esc(p.nom)}</span>${x.aig?` · ${esc(tx(x,'aig'))}${x.aigd?` (${t('since',{d:dm(x.aigd)})})`:''}`:''}${x.chr?` · ${t('chrS')} : ${esc(tx(x,'chr'))}`:''}${x.pc?` · <b>${t('c_'+x.pc)}</b>${x.pc==='soins'&&x.pct?` : ${esc(tx(x,'pct'))}`:''}`:''}</li>`).join('')}</ul></div></div>`:''}
   <div class="panel">${rows}
     <form class="addp" id="addP"><label class="f">${t('num')}<input type="number" name="num" id="ap-num" min="1"></label><label class="f">${t('nom')}<input type="text" name="nom" id="ap-nom" required></label>
@@ -370,7 +378,10 @@ function viewCoach(){
   const col=k=>{const l=cat(k);return `<div class="panel pad col k-${k}"><h2>${t('c_'+k)} <em>${l.length}</em></h2>
     ${POS.map(po=>{const x=l.filter(p=>p.poste===po);return x.length?`<div class="pos"><small>${t(po)}</small><ul>${x.map(p=>{const y=s.snap[p.id];return `<li><span class="li-who">${av(p,'sm')}<span>${esc(p.nom)}</span></span>${y.s==='absent'?`<span>${t('s_absent')}</span>`:''}${k==='adapte'&&y.c?`<span>${esc(tx(y,'c'))}</span>`:''}${k!=='ok'&&y.r?`<span>${t('m_ret',{d:dm(y.r)})}</span>`:''}</li>`}).join('')}</ul></div>`:''}).join('')}</div>`};
   const left=cat('parti');
-  V.innerHTML=head(t('coach_t'),t('coach_l'))+`<div class="note">${LOCK}<span>${t('coachLock')} ${t('from',{l:sendLabel(s),h:`${dm(s.day)} ${hmOf(s.at)}`})}</span></div>
+  const avs=sendsOf(DATE).filter(x=>x.label==='avmatch'&&Object.values(x.snap).some(y=>y.g)), av_=avs[avs.length-1];
+  const avP=av_?(()=>{const ii=Object.keys(av_.snap).filter(id=>byId(id)&&av_.snap[id].g&&av_.snap[id].s!=='parti'),a=ii.filter(id=>av_.snap[id].g==='ok'),b=ii.filter(id=>av_.snap[id].g!=='ok');
+    return `<div class="panel pad"><h2>${t('avT')}${av_.match?.opp?' · '+esc(av_.match.opp):''} <span class="sync">${hmOf(av_.at)}</span></h2><p style="margin:6px 0">${pill('ok',`${a.length} ${t('g_ok').toLowerCase()}`)} ${pill('indispo',`${b.length} ${t('g_no').toLowerCase()}`)}</p>${b.length?`<p class="sync" style="margin:0">${t('g_no')} : ${b.map(id=>esc(byId(id).nom)).join(', ')}</p>`:''}</div>`})():'';
+  V.innerHTML=head(t('coach_t'),t('coach_l'))+avP+`<div class="note">${LOCK}<span>${t('coachLock')} ${t('from',{l:sendLabel(s),h:`${dm(s.day)} ${hmOf(s.at)}`})}</span></div>
   <div class="lineup">${POS.map(po=>{const all=ids.map(byId).filter(p=>p.poste===po&&s.snap[p.id].s!=='parti'),av=all.filter(p=>CAT(s.snap[p.id].s)!=='indispo');return `<div><small class="sync">${t(po)}</small><br><b>${av.length}/${all.length}</b> <span class="sync">${t('usable')}</span></div>`}).join('')}</div>
   <div class="cols">${col('ok')}${col('adapte')}${col('indispo')}</div>
   ${S.me?.role!=='tm'&&ids.some(id=>s.snap[id].pc&&s.snap[id].s!=='parti')?`<div class="note"><b>${t('care')}</b> : ${ids.filter(id=>s.snap[id].pc&&s.snap[id].s!=='parti').map(id=>`${esc(byId(id).nom)} (${t('c_'+s.snap[id].pc)})`).join(', ')}</div>`:''}
@@ -433,7 +444,15 @@ function buildShort(role,L,s){
   lines.push(tr(L,'m_link',{u:location.origin+location.pathname+'#'+TAB_OF[role]}));
   return lines.join('\n');
 }
+function avMsg(L,s){
+  const snap=s.snap, ids=Object.keys(snap).filter(id=>byId(id)&&snap[id].s!=='parti'&&snap[id].g);
+  const a=ids.filter(id=>snap[id].g==='ok'), b=ids.filter(id=>snap[id].g!=='ok');
+  const al=POS.map(po=>{const x=a.filter(id=>byId(id).poste===po);return x.length?`${tr(L,po)} (${x.length}) : ${x.map(id=>byId(id).nom).join(', ')}`:''}).filter(Boolean).join('\n')||tr(L,'m_none');
+  const head=tr(L,'m_head',{l:tr(L,'label')+' '+tr(L,'l_avmatch'),d:dm(s.day),h:hmOf(s.at),by:s.sent_by});
+  return head+'\n'+tr(L,'m_av',{o:s.match?.opp||'',a:a.length,al,b:b.length,bl:b.map(id=>'• '+byId(id).nom).join('\n')||tr(L,'m_none')});
+}
 function buildMsg(role,L,s){
+  if(s.label==='avmatch'&&Object.values(s.snap).some(x=>x.g))return avMsg(L,s);
   if(WA_LEN==='short')return buildShort(role,L,s);
   const snap=s.snap, ids=Object.keys(snap).filter(byId), c=counts(snap);
   const f=k=>ids.filter(id=>snap[id].s===k), cc=k=>ids.filter(id=>CAT(snap[id].s)===k);
@@ -456,13 +475,17 @@ function buildMsg(role,L,s){
   const care=cl.length&&(role==='medical'||role==='coach')?tr(L,'m_care',{l:cl.map(id=>{const lab=tr(L,'c_'+snap[id].pc),d=dp[id];
     const det=role==='medical'&&d&&d.pc==='soins'&&d.pct?` (${tx(d,'pct',L)})`:'';return `• ${byId(id).nom} : ${lab}${det}`}).join('\n')}):'';
   const SM=(T[L]||T.fr).sum, summary=['ok','adapte','reath','soins','indispo','absent'].filter(k=>k==='ok'||k==='adapte'||c[k]).map(k=>`${c[k]} ${SM[k]}`).join(', ')+'.';
+  // plaintes après-match : médical seulement, lues dans le brouillon
+  const plL=role==='medical'&&s.label==='match'&&s.match?.on?ids.filter(id=>dp[id]&&dp[id].pl==='oui'&&snap[id].s!=='parti'):null;
+  const plaintes=plL?(plL.length?tr(L,'m_pl',{l:plL.map(id=>`• ${byId(id).nom}${dp[id].plt?` : ${tx(dp[id],'plt',L)}`:''}`).join('\n')}):tr(L,'m_pl0')):'';
+  const minsMed=role==='medical'&&s.label==='match'&&s.match?.on&&mp.length?tr(L,'m_min',{o:s.match.opp,l:mp.map(id=>`• ${byId(id).nom} : ${snap[id].m}′`).join('\n')}):'';
   const leftL=left.map(id=>'• '+byId(id).nom).join('\n');
   if(role==='coach'){const wl2=wl.length?tr(L,'m_watch',{l:wl.map(id=>'• '+byId(id).nom).join('\n')}).replace(/^\n/,''):'';
     return headL+summary+(wl2?'\n'+wl2:'')+(left.length?'\n'+tr(L,'m_left',{l:leftL}):'')+'\n'+body+care+(chTxt?'\n'+chTxt.trim():'')+mins}
   if(role==='direction'){const wl2=wl.length?tr(L,'m_watch',{l:wl.map(id=>'• '+byId(id).nom).join('\n')}):'';
     return headL+summary+'\n'+tr(L,'m_rate',{p:c.n?Math.round((c.ok+c.adapte)/c.n*100):0,a:c.ok+c.adapte,b:c.n})+wl2+(left.length?'\n'+tr(L,'m_left',{l:leftL}):'')+mins}
   if(role==='tm'){const ab=cc('indispo');return headL+summary+(ab.length?tr(L,'m_tmabs',{l:ab.map(id=>'• '+byId(id).nom).join('\n')}):'')+(left.length?'\n'+tr(L,'m_tmleft',{l:leftL}):'')}
-  return headL+chTxt+body+care+(left.length&&role!=='medical'?'\n'+tr(L,'m_left',{l:leftL}):'')+mins;
+  return headL+chTxt+body+care+plaintes+minsMed+(left.length&&role!=='medical'?'\n'+tr(L,'m_left',{l:leftL}):'')+mins;
 }
 let WA_SEND=null;
 let SERIE=null, WA_ERR=[]; // {sendId, ids:[], i}
@@ -600,6 +623,7 @@ V.addEventListener('click',async e=>{
   if(el.dataset.copyg){const txt=groupMsg(el.dataset.copyg,curSend());try{await navigator.clipboard.writeText(txt);toast(t('copied'))}catch(err){}return}
   if(el.dataset.send){WA_SEND=+el.dataset.send||el.dataset.send;return render(true)}
   if(el.dataset.path){const id=el.dataset.path;OPEN.has(id)?OPEN.delete(id):OPEN.add(id);return render(true)}
+  if(el.dataset.g){const id=el.closest('[data-id]').dataset.id,x={...pl(id)};x.g=el.dataset.g;setPlayer(id,x);return render(true)}
   if(el.dataset.st){
     const id=el.closest('[data-id]').dataset.id,x={...pl(id)},p=byId(id);x.s=el.dataset.st;if(x.s==='ok'||x.s==='parti'){x.c='';x.r='';x.t='';}if(x.s==='parti')x.w=false;
     if(x.s==='parti'&&p.left_on!==DATE)Store.savePlayer({...p,left_on:DATE}).catch(fail);
@@ -610,8 +634,8 @@ V.addEventListener('click',async e=>{
     return render(true)}
   if(el.id==='validate'){
     if(PEND.size){el.disabled=true;await Promise.all([...PEND]);el.disabled=false}
-    const d=draft(), sends=sendsOf(DATE), lab=LABEL||LABELS[Math.min(sends.length,2)];
-    const snap={};Object.entries(d.players).forEach(([id,x])=>snap[id]={s:x.s,c:x.c,r:x.r,m:+x.m||0,w:!!x.w,...(x.pc?{pc:x.pc}:{}),...(x.c&&x.tr&&x.tr.c&&x.tr.c.src===x.c?{tr:{c:x.tr.c}}:{})});
+    const d=draft(), sends=sendsOf(DATE);let lab=LABEL||defLabel(sends,d);if(!d.match?.on&&['avmatch','match'].includes(lab))lab=defLabel(sends,d);
+    const snap={};Object.entries(d.players).forEach(([id,x])=>snap[id]={s:x.s,...(lab==='avmatch'&&x.s!=='parti'?{g:gOf(x)}:{}),c:x.c,r:x.r,m:+x.m||0,w:!!x.w,...(x.pc?{pc:x.pc}:{}),...(x.c&&x.tr&&x.tr.c&&x.tr.c.src===x.c?{tr:{c:x.tr.c}}:{})});
     if(!d.exists)await Store.patchDraft(DATE,{players:d.players,match:d.match}).catch(fail);
     el.disabled=true;
     try{await Store.addSend({day:DATE,at:new Date().toISOString(),label:lab,sent_by:S.me.name||t('r_medical'),snap,match:d.match});LABEL=null;WA_SEND=null;toast(t('validated'));location.hash='wa';render(true)}catch(err){el.disabled=false;fail(err)}
@@ -639,6 +663,7 @@ V.addEventListener('change',e=>{
   const el=e.target;
   if(el.id==='matchOn'){const d=draft(),m={on:el.checked,opp:d.match?.opp||'Sudão do Sul'};const patch={match:m};if(!d.exists)patch.players=d.players;Store.patchDraft(DATE,patch).catch(fail);return render(true)}
   if(el.dataset.w){const id=el.closest('[data-id]').dataset.id,x={...pl(id)};x.w=el.checked;setPlayer(id,x);return render(true)}
+  if(el.dataset.f==='pl'){const id=el.closest('[data-id]').dataset.id,x={...pl(id)};x.pl=el.value;if(el.value!=='oui')x.plt='';setPlayer(id,x);return render(true)}
   if(el.dataset.f==='aigd'||el.dataset.f==='pc'){const id=el.closest('[data-id]').dataset.id,x={...pl(id)};x[el.dataset.f]=el.value;if(el.dataset.f==='pc'&&el.value!=='soins')x.pct='';setPlayer(id,x);if(el.dataset.f==='pc')render(true);return}
   if(el.dataset.f==='t'||el.dataset.f==='r'){const id=el.closest('[data-id]').dataset.id,x={...pl(id)};x[el.dataset.f]=el.value;setPlayer(id,x);return}
   if(el.dataset.photo&&el.files[0]){const p={...byId(el.dataset.photo)};const f=el.files[0];el.value='';cropDialog(f).then(u=>{if(!u)return null;p.photo=u;return Store.savePlayer(p).then(()=>{toast(t('photoOk'));render(true)})}).catch(()=>toast(t('photoKo')));return}
@@ -648,7 +673,7 @@ V.addEventListener('change',e=>{
 });
 V.addEventListener('input',e=>{
   const el=e.target;
-  if(['chr','aig','pct'].includes(el.dataset.f)){const id=el.closest('[data-id]').dataset.id,k=el.dataset.f;debounced(k+id,async()=>{const x={...pl(id)},v=el.value.trim();x[k]=v;await setPlayer(id,x);translateField(id,k,v)});return}
+  if(['chr','aig','pct','plt'].includes(el.dataset.f)){const id=el.closest('[data-id]').dataset.id,k=el.dataset.f;debounced(k+id,async()=>{const x={...pl(id)},v=el.value.trim();x[k]=v;await setPlayer(id,x);translateField(id,k,v)});return}
   if(el.dataset.f==='c'){const id=el.closest('[data-id]').dataset.id;debounced('c'+id,async()=>{const x={...pl(id)};x.c=el.value;await setPlayer(id,x);translateField(id,'c',el.value.trim())},900);return}
   if(el.dataset.m){const id=el.closest('[data-id]').dataset.id;debounced('m'+id,()=>{const x={...pl(id)};x.m=Math.min(130,Math.max(0,+el.value||0));setPlayer(id,x)});return}
   if(el.id==='opp'){debounced('opp',()=>{const d=draft();Store.patchDraft(DATE,{match:{on:true,opp:el.value}}).catch(fail)});return}
