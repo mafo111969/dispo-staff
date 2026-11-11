@@ -10,7 +10,7 @@ fr:{sub:'Sélection nationale · stage du 9 au 18 novembre 2026',
  c_ok:'Disponible',c_adapte:'Disponible avec adaptation',c_indispo:'Indisponible',c_parti:'A quitté le rassemblement',
  G:'Gardiens',D:'Défenseurs',M:'Milieux',A:'Attaquants',G1:'Gardien',D1:'Défenseur',M1:'Milieu',A1:'Attaquant',
  t_mus:'Musculaire',t_art:'Articulaire / ligamentaire',t_ten:'Tendineuse',t_tra:'Traumatique / contusion',t_mal:'Maladie',t_aut:'Autre',
- l_matin:'Matin',l_aprem:'Après-midi',l_soir:'Soir',l_avmatch:'Avant-match',l_match:'Après-match',g_ok:'Dispo match',g_no:'Indispo match',avL:'Avant-match : indiquez seulement qui est disponible ou non pour le match.',apL:'Après-match : minutes jouées et plainte éventuelle. Le détail de la plainte reste au médical.',pl:'Plainte',pl_non:'Non',pl_oui:'Oui',plt:'Détail de la plainte',pltPh:'Ex. douleur ischio droit',m_av:'Match {o} :\nDisponibles ({a}) :\n{al}\nIndisponibles ({b}) :\n{bl}',m_pl:'\nPlaintes après-match :\n{l}',m_pl0:'\nAucune plainte après-match.',avT:'Avant-match',
+ l_matin:'Matin',l_aprem:'Après-midi',l_soir:'Soir',l_avmatch:'Avant-match',l_match:'Après-match',g_ok:'Dispo match',g_no:'Indispo match',avL:'Avant-match : indiquez seulement qui est disponible ou non pour le match.',apL:'Après-match : minutes jouées et plainte éventuelle. Le détail de la plainte reste au médical.',pl:'Plainte',pl_non:'Non',pl_oui:'Oui',plt:'Détail de la plainte',pltPh:'Ex. douleur ischio droit',m_av:'Match {o} :\nDisponibles ({a}) :\n{al}\nIndisponibles ({b}) :\n{bl}',m_pl:'\nPlaintes après-match :\n{l}',m_pl0:'\nAucune plainte après-match.',avT:'Avant-match',cp:'Compensation',cpm:'Durée (min)',m_cp:'\nCompensation (dispos n\'ayant pas joué) :\n{l}',cpNo:'non',
  med_t:'Briefing médical',med_l:'Passez l\'effectif en revue joueur par joueur. Seuls le statut, la consigne et la date de retour sont partagés. Pathologies et soins restent visibles du seul staff médical, jamais envoyés.',
  carry:'Statuts repris du jour précédent. Modifiez ce qui a changé.',fresh:'Premier briefing : tout l\'effectif démarre sans restriction.',
  sendsToday:'Briefings validés ce jour',noneYet:'aucun pour l\'instant',
@@ -55,7 +55,7 @@ pt:{sub:'Seleção Nacional · estágio de 9 a 18 de novembro de 2026',
  c_ok:'Disponível',c_adapte:'Disponível com adaptação',c_indispo:'Indisponível',c_parti:'Deixou o estágio',
  G:'Guarda-redes',D:'Defesas',M:'Médios',A:'Avançados',G1:'Guarda-redes',D1:'Defesa',M1:'Médio',A1:'Avançado',
  t_mus:'Muscular',t_art:'Articular / ligamentar',t_ten:'Tendinosa',t_tra:'Traumática / contusão',t_mal:'Doença',t_aut:'Outro',
- l_matin:'Manhã',l_aprem:'Tarde',l_soir:'Noite',l_avmatch:'Pré-jogo',l_match:'Pós-jogo',g_ok:'Disponível jogo',g_no:'Indisponível jogo',avL:'Pré-jogo: indique apenas quem está disponível ou não para o jogo.',apL:'Pós-jogo: minutos jogados e eventual queixa. O detalhe da queixa fica no médico.',pl:'Queixa',pl_non:'Não',pl_oui:'Sim',plt:'Detalhe da queixa',pltPh:'Ex. dor isquiotibial direito',m_av:'Jogo {o}:\nDisponíveis ({a}):\n{al}\nIndisponíveis ({b}):\n{bl}',m_pl:'\nQueixas pós-jogo:\n{l}',m_pl0:'\nNenhuma queixa pós-jogo.',avT:'Pré-jogo',
+ l_matin:'Manhã',l_aprem:'Tarde',l_soir:'Noite',l_avmatch:'Pré-jogo',l_match:'Pós-jogo',g_ok:'Disponível jogo',g_no:'Indisponível jogo',avL:'Pré-jogo: indique apenas quem está disponível ou não para o jogo.',apL:'Pós-jogo: minutos jogados e eventual queixa. O detalhe da queixa fica no médico.',pl:'Queixa',pl_non:'Não',pl_oui:'Sim',plt:'Detalhe da queixa',pltPh:'Ex. dor isquiotibial direito',m_av:'Jogo {o}:\nDisponíveis ({a}):\n{al}\nIndisponíveis ({b}):\n{bl}',m_pl:'\nQueixas pós-jogo:\n{l}',m_pl0:'\nNenhuma queixa pós-jogo.',avT:'Pré-jogo',cp:'Compensação',cpm:'Duração (min)',m_cp:'\nCompensação (disponíveis que não jogaram):\n{l}',cpNo:'não',
  med_t:'Briefing médico',med_l:'Passe o plantel em revista jogador a jogador. Só o estado, a indicação e a data de regresso são partilhados. Patologias e tratamentos ficam visíveis só para o staff médico, nunca enviados.',
  carry:'Estados retomados do dia anterior. Altere o que mudou.',fresh:'Primeiro briefing: todo o plantel começa sem restrições.',
  sendsToday:'Briefings validados hoje',noneYet:'nenhum por enquanto',
@@ -306,7 +306,7 @@ function viewMedical(){
     return `<div class="row${chg?' changed':''}" data-id="${p.id}">
       <div class="who"><span class="num">${p.num??''}</span>${av(p)}<span><span class="name">${esc(p.nom)}</span> <span class="club">${esc(p.club)}</span></span>${MODE==='match'&&x.s!=='parti'?`<label class="mins">${t('min')}<input type="number" min="0" max="130" id="m-${p.id}" data-m="1" value="${x.m||''}" placeholder="0"></label>`:''}${!MODE&&x.s!=='parti'?`<label class="watch" title="${t('watchT')}"><input type="checkbox" data-w="1"${x.w?' checked':''}> ${t('watch')}</label><button class="pbtn${hasPath(x)?' on':''}" data-path="${p.id}" aria-expanded="${showPath}">${t('pathBtn')}</button>`:''}</div>
       <div class="seg" role="group" aria-label="${esc(p.nom)}">${STS.map(k=>`<button class="k-${k}" data-st="${k}" aria-pressed="${x.s===k}"><i class="dot"></i>${t('s_'+k)}</button>`).join('')}</div>
-      ${MODE==='match'?`<div class="details"><label class="f">${t('pl')}<select data-f="pl" id="pl-${p.id}">${['non','oui'].map(k=>`<option value="${k}"${k===(x.pl||'non')?' selected':''}>${t('pl_'+k)}</option>`).join('')}</select></label>${x.pl==='oui'?`<label class="f wide">${t('plt')}<input type="text" data-f="plt" id="plt-${p.id}" value="${esc(x.plt||'')}" placeholder="${t('pltPh')}"></label><span class="medonly">${t('medOnly')}</span>`:''}</div>`:''}
+      ${MODE==='match'?`<div class="details"><label class="f">${t('pl')}<select data-f="pl" id="pl-${p.id}">${['non','oui'].map(k=>`<option value="${k}"${k===(x.pl||'non')?' selected':''}>${t('pl_'+k)}</option>`).join('')}</select></label>${!(+x.m>0)&&gOf(x)==='ok'?`<label class="f">${t('cp')}<select data-f="cp" id="cp-${p.id}">${['','non','oui'].map(k=>`<option value="${k}"${k===(x.cp||'')?' selected':''}>${k?t('pl_'+k):'—'}</option>`).join('')}</select></label>${x.cp==='oui'?`<label class="f">${t('cpm')}<input type="number" min="0" max="180" data-cpm="1" id="cpm-${p.id}" value="${x.cpm||''}"></label>`:''}`:''}${x.pl==='oui'?`<label class="f wide">${t('plt')}<input type="text" data-f="plt" id="plt-${p.id}" value="${esc(x.plt||'')}" placeholder="${t('pltPh')}"></label><span class="medonly">${t('medOnly')}</span>`:''}</div>`:''}
       ${!showMain&&!showPath?'':`<div class="details">${showMain?`
         <label class="f">${t('type')}<select data-f="t" id="t-${p.id}"><option value="">—</option>${TYPES.map(k=>`<option value="${k}"${k===x.t?' selected':''}>${t('t_'+k)}</option>`).join('')}</select></label>
         <label class="f">${t('ret')}<input type="date" data-f="r" id="r-${p.id}" value="${esc(x.r)}"></label>
@@ -479,13 +479,15 @@ function buildMsg(role,L,s){
   const plL=role==='medical'&&s.label==='match'&&s.match?.on?ids.filter(id=>dp[id]&&dp[id].pl==='oui'&&snap[id].s!=='parti'):null;
   const plaintes=plL?(plL.length?tr(L,'m_pl',{l:plL.map(id=>`• ${byId(id).nom}${dp[id].plt?` : ${tx(dp[id],'plt',L)}`:''}`).join('\n')}):tr(L,'m_pl0')):'';
   const minsMed=role==='medical'&&s.label==='match'&&s.match?.on&&mp.length?tr(L,'m_min',{o:s.match.opp,l:mp.map(id=>`• ${byId(id).nom} : ${snap[id].m}′`).join('\n')}):'';
+  const cpL=s.label==='match'&&['medical','prepa','coach'].includes(role)?ids.filter(id=>snap[id].cp&&!(+snap[id].m>0)):[];
+  const cpTxt=cpL.length?tr(L,'m_cp',{l:cpL.map(id=>`• ${byId(id).nom} : ${snap[id].cp==='oui'?(snap[id].cpm?snap[id].cpm+'′':tr(L,'pl_oui')):tr(L,'cpNo')}`).join('\n')}):'';
   const leftL=left.map(id=>'• '+byId(id).nom).join('\n');
   if(role==='coach'){const wl2=wl.length?tr(L,'m_watch',{l:wl.map(id=>'• '+byId(id).nom).join('\n')}).replace(/^\n/,''):'';
-    return headL+summary+(wl2?'\n'+wl2:'')+(left.length?'\n'+tr(L,'m_left',{l:leftL}):'')+'\n'+body+care+(chTxt?'\n'+chTxt.trim():'')+mins}
+    return headL+summary+(wl2?'\n'+wl2:'')+(left.length?'\n'+tr(L,'m_left',{l:leftL}):'')+'\n'+body+care+cpTxt+(chTxt?'\n'+chTxt.trim():'')+mins}
   if(role==='direction'){const wl2=wl.length?tr(L,'m_watch',{l:wl.map(id=>'• '+byId(id).nom).join('\n')}):'';
     return headL+summary+'\n'+tr(L,'m_rate',{p:c.n?Math.round((c.ok+c.adapte)/c.n*100):0,a:c.ok+c.adapte,b:c.n})+wl2+(left.length?'\n'+tr(L,'m_left',{l:leftL}):'')+mins}
   if(role==='tm'){const ab=cc('indispo');return headL+summary+(ab.length?tr(L,'m_tmabs',{l:ab.map(id=>'• '+byId(id).nom).join('\n')}):'')+(left.length?'\n'+tr(L,'m_tmleft',{l:leftL}):'')}
-  return headL+chTxt+body+care+plaintes+minsMed+(left.length&&role!=='medical'?'\n'+tr(L,'m_left',{l:leftL}):'')+mins;
+  return headL+chTxt+body+care+plaintes+minsMed+cpTxt+(left.length&&role!=='medical'?'\n'+tr(L,'m_left',{l:leftL}):'')+mins;
 }
 let WA_SEND=null;
 let SERIE=null, WA_ERR=[]; // {sendId, ids:[], i}
@@ -635,7 +637,7 @@ V.addEventListener('click',async e=>{
   if(el.id==='validate'){
     if(PEND.size){el.disabled=true;await Promise.all([...PEND]);el.disabled=false}
     const d=draft(), sends=sendsOf(DATE);let lab=LABEL||defLabel(sends,d);if(!d.match?.on&&['avmatch','match'].includes(lab))lab=defLabel(sends,d);
-    const snap={};Object.entries(d.players).forEach(([id,x])=>snap[id]={s:x.s,...(lab==='avmatch'&&x.s!=='parti'?{g:gOf(x)}:{}),c:x.c,r:x.r,m:+x.m||0,w:!!x.w,...(x.pc?{pc:x.pc}:{}),...(x.c&&x.tr&&x.tr.c&&x.tr.c.src===x.c?{tr:{c:x.tr.c}}:{})});
+    const snap={};Object.entries(d.players).forEach(([id,x])=>snap[id]={s:x.s,...(lab==='avmatch'&&x.s!=='parti'?{g:gOf(x)}:{}),...(lab==='match'&&x.cp&&!(+x.m>0)?{cp:x.cp,cpm:+x.cpm||0}:{}),c:x.c,r:x.r,m:+x.m||0,w:!!x.w,...(x.pc?{pc:x.pc}:{}),...(x.c&&x.tr&&x.tr.c&&x.tr.c.src===x.c?{tr:{c:x.tr.c}}:{})});
     if(!d.exists)await Store.patchDraft(DATE,{players:d.players,match:d.match}).catch(fail);
     el.disabled=true;
     try{await Store.addSend({day:DATE,at:new Date().toISOString(),label:lab,sent_by:S.me.name||t('r_medical'),snap,match:d.match});LABEL=null;WA_SEND=null;toast(t('validated'));location.hash='wa';render(true)}catch(err){el.disabled=false;fail(err)}
@@ -663,6 +665,7 @@ V.addEventListener('change',e=>{
   const el=e.target;
   if(el.id==='matchOn'){const d=draft(),m={on:el.checked,opp:d.match?.opp||'Sudão do Sul'};const patch={match:m};if(!d.exists)patch.players=d.players;Store.patchDraft(DATE,patch).catch(fail);return render(true)}
   if(el.dataset.w){const id=el.closest('[data-id]').dataset.id,x={...pl(id)};x.w=el.checked;setPlayer(id,x);return render(true)}
+  if(el.dataset.f==='cp'){const id=el.closest('[data-id]').dataset.id,x={...pl(id)};x.cp=el.value;if(el.value!=='oui')x.cpm=0;setPlayer(id,x);return render(true)}
   if(el.dataset.f==='pl'){const id=el.closest('[data-id]').dataset.id,x={...pl(id)};x.pl=el.value;if(el.value!=='oui')x.plt='';setPlayer(id,x);return render(true)}
   if(el.dataset.f==='aigd'||el.dataset.f==='pc'){const id=el.closest('[data-id]').dataset.id,x={...pl(id)};x[el.dataset.f]=el.value;if(el.dataset.f==='pc'&&el.value!=='soins')x.pct='';setPlayer(id,x);if(el.dataset.f==='pc')render(true);return}
   if(el.dataset.f==='t'||el.dataset.f==='r'){const id=el.closest('[data-id]').dataset.id,x={...pl(id)};x[el.dataset.f]=el.value;setPlayer(id,x);return}
@@ -675,6 +678,7 @@ V.addEventListener('input',e=>{
   const el=e.target;
   if(['chr','aig','pct','plt'].includes(el.dataset.f)){const id=el.closest('[data-id]').dataset.id,k=el.dataset.f;debounced(k+id,async()=>{const x={...pl(id)},v=el.value.trim();x[k]=v;await setPlayer(id,x);translateField(id,k,v)});return}
   if(el.dataset.f==='c'){const id=el.closest('[data-id]').dataset.id;debounced('c'+id,async()=>{const x={...pl(id)};x.c=el.value;await setPlayer(id,x);translateField(id,'c',el.value.trim())},900);return}
+  if(el.dataset.cpm){const id=el.closest('[data-id]').dataset.id;debounced('cpm'+id,()=>{const x={...pl(id)};x.cpm=Math.min(180,Math.max(0,+el.value||0));setPlayer(id,x)});return}
   if(el.dataset.m){const id=el.closest('[data-id]').dataset.id;debounced('m'+id,()=>{const x={...pl(id)};x.m=Math.min(130,Math.max(0,+el.value||0));setPlayer(id,x)});return}
   if(el.id==='opp'){debounced('opp',()=>{const d=draft();Store.patchDraft(DATE,{match:{on:true,opp:el.value}}).catch(fail)});return}
   if(el.dataset.cf){const k=el.closest('[data-ct]').dataset.ct,x=S.staff.find(y=>y.id===k);x[el.dataset.cf]=el.value.trim();debounced('st'+k,()=>Store.saveStaff({...x}).catch(fail),900);return}
