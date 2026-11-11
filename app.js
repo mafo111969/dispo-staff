@@ -32,7 +32,7 @@ fr:{sub:'Sélection nationale · stage du 9 au 18 novembre 2026',
  perPlayer:'Par joueur',clickP:'Touchez un joueur pour voir sa fiche.',h_player:'Joueur',h_today:'Statut',h_lost:'Jours perdus',h_rate:'Dispo',h_min:'Minutes jouées',h_miss:'Matchs manqués',h_ret:'Retour prévu',
  byType:'Jours perdus par type',sheet:'Fiche',sheetTxt:'{l} jour(s) perdu(s) sur {d}, disponibilité {r} %, {m} minutes jouées, {x} match(s) manqué(s) sur {y}.',matchMark:'encadré = jour de match',
  wa_t:'Envoi WhatsApp',wa_l:'Un message par destinataire, dans sa langue et filtré selon son rôle. Touchez « Ouvrir WhatsApp », puis envoyez.',
- noPhone:'Numéro manquant',byPerson:'Par personne',byGroup:'Par groupe',grpL:'Un message par groupe WhatsApp (un groupe par fonction). Le bouton ouvre WhatsApp : choisissez le groupe, puis envoyez.',grpOpen:'Partager dans le groupe',grpName:'Groupe {r}',sendAll:'Envoyer à tous ({n})',autoAll:'Envoi automatique ({n})',autoRes:'{ok} envoyé(s), {ko} échec(s)',autoBusy:'Envoi en cours…',serie:'Envoi {i} sur {n}',serieL:'Touchez le bouton, envoyez dans WhatsApp, puis revenez ici pour le suivant.',openFor:'Ouvrir WhatsApp pour {x}',skip:'Passer',stop:'Arrêter',allSent:'Tous les messages ont été ouverts.',sentMark:'Envoyé',open:'Ouvrir WhatsApp',copy:'Copier',copied:'Message copié',
+ noPhone:'Numéro manquant',byPerson:'Par personne',msgFull:'Message complet',msgShort:'Message court + lien',m_link:'Détail : {u}',m_wl:'À surveiller : {l}.',m_lf:'Départ : {l}.',m_ab:'Pas à l\'entraînement : {l}.',m_pr2:'Réathlé : {r}. Adaptés : {a}.',byGroup:'Par groupe',grpL:'Un message par groupe WhatsApp (un groupe par fonction). Le bouton ouvre WhatsApp : choisissez le groupe, puis envoyez.',grpOpen:'Partager dans le groupe',grpName:'Groupe {r}',sendAll:'Envoyer à tous ({n})',autoAll:'Envoi automatique ({n})',autoRes:'{ok} envoyé(s), {ko} échec(s)',autoBusy:'Envoi en cours…',serie:'Envoi {i} sur {n}',serieL:'Touchez le bouton, envoyez dans WhatsApp, puis revenez ici pour le suivant.',openFor:'Ouvrir WhatsApp pour {x}',skip:'Passer',stop:'Arrêter',allSent:'Tous les messages ont été ouverts.',sentMark:'Envoyé',open:'Ouvrir WhatsApp',copy:'Copier',copied:'Message copié',
  waNone:'Aucun briefing validé ce jour. Validez-le dans l\'onglet Médical.',noContacts:'Aucun destinataire. Ajoutez-les dans l\'onglet Staff et accès.',
  st_t:'Staff et accès',st_l:'Chaque personne se connecte avec son e-mail et reçoit la vue de son rôle. Le numéro WhatsApp est au format international, sans + ni espaces (ex. 244923000000).',
  st_name:'Nom',st_role:'Rôle',st_email:'E-mail de connexion',st_phone:'Numéro WhatsApp',st_lang:'Langue',st_add:'Ajouter une personne',st_del:'Retirer',
@@ -77,7 +77,7 @@ pt:{sub:'Seleção Nacional · estágio de 9 a 18 de novembro de 2026',
  perPlayer:'Por jogador',clickP:'Toque num jogador para ver a ficha.',h_player:'Jogador',h_today:'Estado',h_lost:'Dias perdidos',h_rate:'Disp.',h_min:'Minutos jogados',h_miss:'Jogos falhados',h_ret:'Regresso previsto',
  byType:'Dias perdidos por tipo',sheet:'Ficha',sheetTxt:'{l} dia(s) perdido(s) em {d}, disponibilidade {r} %, {m} minutos jogados, {x} jogo(s) falhado(s) em {y}.',matchMark:'contorno = dia de jogo',
  wa_t:'Envio WhatsApp',wa_l:'Uma mensagem por destinatário, na sua língua e filtrada segundo a sua função. Toque em «Abrir WhatsApp» e envie.',
- noPhone:'Número em falta',byPerson:'Por pessoa',byGroup:'Por grupo',grpL:'Uma mensagem por grupo WhatsApp (um grupo por função). O botão abre o WhatsApp: escolha o grupo e envie.',grpOpen:'Partilhar no grupo',grpName:'Grupo {r}',sendAll:'Enviar a todos ({n})',autoAll:'Envio automático ({n})',autoRes:'{ok} enviado(s), {ko} falha(s)',autoBusy:'A enviar…',serie:'Envio {i} de {n}',serieL:'Toque no botão, envie no WhatsApp e volte aqui para o seguinte.',openFor:'Abrir WhatsApp para {x}',skip:'Saltar',stop:'Parar',allSent:'Todas as mensagens foram abertas.',sentMark:'Enviado',open:'Abrir WhatsApp',copy:'Copiar',copied:'Mensagem copiada',
+ noPhone:'Número em falta',byPerson:'Por pessoa',msgFull:'Mensagem completa',msgShort:'Mensagem curta + link',m_link:'Detalhe: {u}',m_wl:'A vigiar: {l}.',m_lf:'Saída: {l}.',m_ab:'Não estão no treino: {l}.',m_pr2:'Readaptação: {r}. Adaptados: {a}.',byGroup:'Por grupo',grpL:'Uma mensagem por grupo WhatsApp (um grupo por função). O botão abre o WhatsApp: escolha o grupo e envie.',grpOpen:'Partilhar no grupo',grpName:'Grupo {r}',sendAll:'Enviar a todos ({n})',autoAll:'Envio automático ({n})',autoRes:'{ok} enviado(s), {ko} falha(s)',autoBusy:'A enviar…',serie:'Envio {i} de {n}',serieL:'Toque no botão, envie no WhatsApp e volte aqui para o seguinte.',openFor:'Abrir WhatsApp para {x}',skip:'Saltar',stop:'Parar',allSent:'Todas as mensagens foram abertas.',sentMark:'Enviado',open:'Abrir WhatsApp',copy:'Copiar',copied:'Mensagem copiada',
  waNone:'Nenhum briefing validado hoje. Valide-o no separador Médico.',noContacts:'Nenhum destinatário. Adicione-os no separador Staff e acessos.',
  st_t:'Staff e acessos',st_l:'Cada pessoa entra com o seu e-mail e recebe a vista da sua função. O número WhatsApp está em formato internacional, sem + nem espaços (ex. 244923000000).',
  st_name:'Nome',st_role:'Função',st_email:'E-mail de acesso',st_phone:'Número WhatsApp',st_lang:'Língua',st_add:'Adicionar uma pessoa',st_del:'Retirar',
@@ -401,7 +401,7 @@ function viewDirection(){
   </div>
   <div class="two">
     <div class="panel pad"><h2>${t('perPlayer')}</h2><p class="lead sync">${t('clickP')}</p><div class="tbl"><table><thead><tr><th>${t('h_player')}</th><th>${t('h_today')}</th><th class="n">${t('h_lost')}</th><th class="n">${t('h_rate')}</th><th class="n">${t('h_min')}</th><th class="n">${t('h_miss')}</th><th>${t('h_ret')}</th></tr></thead><tbody>
-    ${rows.map(r=>{const x=snapOf(r.p.id);return `<tr class="pick${r.p.id===selP?' sel':''}" data-pid="${r.p.id}" tabindex="0"><td>${esc(r.p.nom)}</td><td>${pill(CAT(x.s),t('c_'+CAT(x.s)))}</td><td class="n">${r.lost}</td><td class="n">${r.rate??'—'} %</td><td class="n">${r.min}′</td><td class="n">${r.miss}/${r.mt}</td><td>${dm(x.r)}</td></tr>`}).join('')||`<tr><td colspan="7" class="sync">${t('noBrief')}</td></tr>`}
+    ${rows.map(r=>{const x=snapOf(r.p.id);return `<tr class="pick${r.p.id===selP?' sel':''}" data-pid="${r.p.id}" tabindex="0"><td>${esc(r.p.nom)}</td><td class="st" title="${t('c_'+CAT(x.s))}">${pill(CAT(x.s),t('c_'+CAT(x.s)))}</td><td class="n">${r.lost}</td><td class="n">${r.rate??'—'} %</td><td class="n">${r.min}′</td><td class="n">${r.miss}/${r.mt}</td><td>${dm(x.r)}</td></tr>`}).join('')||`<tr><td colspan="7" class="sync">${t('noBrief')}</td></tr>`}
     </tbody></table></div></div>
     <div style="display:grid;gap:14px;align-content:start">
       ${sr?`<div class="panel pad"><h2>${t('sheet')} · ${esc(sr.p.nom)}</h2>
@@ -416,7 +416,25 @@ function viewDirection(){
 
 /* ---------- messages WhatsApp ---------- */
 function list(L,ids,snap,withC){return ids.map(id=>{const p=byId(id),x=snap[id],pa=[];if(!withC&&['reath','soins','absent'].includes(x.s))pa.push(tr(L,'s_'+x.s).toLowerCase());if(x.r)pa.push(tr(L,'m_ret',{d:dm(x.r)}));return `• ${p.nom}${withC&&x.c?` : ${tx(x,'c',L)}`:''}${pa.length?` (${pa.join(', ')})`:''}`}).join('\n')||tr(L,'m_none')}
+let WA_LEN=(()=>{try{return localStorage.getItem('waLen')||'full'}catch(e){return 'full'}})();
+const TAB_OF={medical:'medical',prepa:'prepa',coach:'coach',tm:'coach',direction:'direction'};
+function buildShort(role,L,s){
+  const snap=s.snap, ids=Object.keys(snap).filter(byId), c=counts(snap), nm=a=>a.map(id=>byId(id).nom).join(', ')||'—';
+  const head=`${tr(L,'label')} ${tr(L,'l_'+s.label)||''} ${dm(s.day)} (${hmOf(s.at)})`;
+  const SM=(T[L]||T.fr).sum, summary=['ok','adapte','reath','soins','indispo','absent'].filter(k=>k==='ok'||k==='adapte'||c[k]).map(k=>`${c[k]} ${SM[k]}`).join(', ')+'.';
+  const prev=prevSend(s), left=ids.filter(id=>snap[id].s==='parti'&&!(prev&&prev.snap[id]&&prev.snap[id].s==='parti'));
+  const wl=ids.filter(id=>snap[id].w&&snap[id].s!=='parti');
+  const lines=[head+(L==='pt'?': ':' : ')+summary];
+  if(role==='prepa')lines.push(tr(L,'m_pr2',{r:nm(ids.filter(id=>snap[id].s==='reath')),a:nm(ids.filter(id=>snap[id].s==='adapte'))}));
+  if(role==='direction')lines.push(tr(L,'m_rate',{p:c.n?Math.round((c.ok+c.adapte)/c.n*100):0,a:c.ok+c.adapte,b:c.n}));
+  if(role==='tm'){const ab=ids.filter(id=>CAT(snap[id].s)==='indispo');if(ab.length)lines.push(tr(L,'m_ab',{l:nm(ab)}))}
+  if((role==='coach'||role==='direction')&&wl.length)lines.push(tr(L,'m_wl',{l:nm(wl)}));
+  if(role!=='medical'&&left.length)lines.push(tr(L,'m_lf',{l:nm(left)}));
+  lines.push(tr(L,'m_link',{u:location.origin+location.pathname+'#'+TAB_OF[role]}));
+  return lines.join('\n');
+}
 function buildMsg(role,L,s){
+  if(WA_LEN==='short')return buildShort(role,L,s);
   const snap=s.snap, ids=Object.keys(snap).filter(byId), c=counts(snap);
   const f=k=>ids.filter(id=>snap[id].s===k), cc=k=>ids.filter(id=>CAT(snap[id].s)===k);
   const prev=prevSend(s), ch=diff(prev?prev.snap:null,snap).filter(x=>prev&&(x.from.s!==x.to.s||x.from.c!==x.to.c||x.from.r!==x.to.r));
@@ -475,7 +493,7 @@ function viewWA(){
         <div class="bar"><a class="btn wa" id="serieGo" href="${waLink(cur,s)}" target="_blank" rel="noopener">${t('openFor',{x:esc(cur.name||'—')})}</a><button class="btn small" id="serieSkip">${t('skip')}</button><button class="btn small" id="serieStop">${t('stop')}</button></div></div>`
         :`<div class="banner ok"><b>${t('allSent')}</b><button class="btn small" id="serieStop">OK</button></div>`;
     }else if(withPh.length){const todo=withPh.filter(x=>!sent.has(x.id));serie=`<div class="bar"><span class="sync">${WA_ERR.map(esc).join(' · ')}</span><div class="bar">${CFG.waAuto&&!DEMO&&todo.length?`<button class="btn wa" id="autoAll">${t('autoAll',{n:todo.length})}</button>`:''}<button class="btn${CFG.waAuto?'':' wa'}" id="sendAll">${t('sendAll',{n:withPh.length})}</button></div></div>`}
-    const modeBar=`<div class="chips" role="group">${['person','group'].map(m=>`<button data-wamode="${m}" aria-pressed="${WA_MODE===m}">${t(m==='person'?'byPerson':'byGroup')}</button>`).join('')}</div>`;
+    const modeBar=`<div class="bar" style="justify-content:flex-start"><div class="chips" role="group">${['person','group'].map(m=>`<button data-wamode="${m}" aria-pressed="${WA_MODE===m}">${t(m==='person'?'byPerson':'byGroup')}</button>`).join('')}</div><div class="chips" role="group">${['full','short'].map(m=>`<button data-walen="${m}" aria-pressed="${WA_LEN===m}">${t(m==='full'?'msgFull':'msgShort')}</button>`).join('')}</div></div>`;
     if(WA_MODE==='group'){
       const roles=ROLES.filter(r=>S.staff.some(x=>x.role===r));
       body=`<div class="chips">${sends.map(x=>`<button data-send="${x.id}" aria-pressed="${x.id===s.id}">${sendLabel(x)} ${hmOf(x.at)}</button>`).join('')}</div>${modeBar}<p class="sync">${t('grpL')}</p>
@@ -577,6 +595,7 @@ V.addEventListener('click',async e=>{
   if(el.dataset.day){DATE=addDays(DATE,+el.dataset.day);LABEL=null;WA_SEND=null;return render(true)}
   if(el.dataset.label){LABEL=el.dataset.label;return render(true)}
   if(el.dataset.tally){TALLY=TALLY===el.dataset.tally?null:el.dataset.tally;return render(true)}
+  if(el.dataset.walen){WA_LEN=el.dataset.walen;try{localStorage.setItem('waLen',WA_LEN)}catch(e){}return render(true)}
   if(el.dataset.wamode){WA_MODE=el.dataset.wamode;SERIE=null;try{localStorage.setItem('waMode',WA_MODE)}catch(e){}return render(true)}
   if(el.dataset.copyg){const txt=groupMsg(el.dataset.copyg,curSend());try{await navigator.clipboard.writeText(txt);toast(t('copied'))}catch(err){}return}
   if(el.dataset.send){WA_SEND=+el.dataset.send||el.dataset.send;return render(true)}
