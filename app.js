@@ -10,7 +10,7 @@ fr:{sub:'Sélection nationale · stage du 9 au 18 novembre 2026',
  c_ok:'Disponible',c_adapte:'Disponible avec adaptation',c_indispo:'Indisponible',c_parti:'A quitté le rassemblement',
  G:'Gardiens',D:'Défenseurs',M:'Milieux',A:'Attaquants',G1:'Gardien',D1:'Défenseur',M1:'Milieu',A1:'Attaquant',
  t_mus:'Musculaire',t_art:'Articulaire / ligamentaire',t_ten:'Tendineuse',t_tra:'Traumatique / contusion',t_mal:'Maladie',t_aut:'Autre',
- l_matin:'Matin',l_aprem:'Après-midi',l_soir:'Soir',l_avmatch:'Avant-match',l_match:'Après-match',g_ok:'Dispo match',g_no:'Indispo match',avL:'Avant-match : indiquez seulement qui est disponible ou non pour le match.',apL:'Après-match : minutes jouées et plainte éventuelle. Le détail de la plainte reste au médical.',pl:'Plainte',pl_non:'Non',pl_oui:'Oui',plt:'Détail de la plainte',pltPh:'Ex. douleur ischio droit',m_av:'Match {o} :\nDisponibles ({a}) :\n{al}\nIndisponibles ({b}) :\n{bl}',m_pl:'\nPlaintes après-match :\n{l}',m_pl0:'\nAucune plainte après-match.',avT:'Avant-match',cp:'Compensation',cpm:'Durée (min)',m_cp:'\nCompensation (dispos n\'ayant pas joué) :\n{l}',cpNo:'non',
+ l_matin:'Matin',l_aprem:'Après-midi',l_soir:'Soir',l_avmatch:'Avant-match',l_match:'Après-match',g_ok:'Dispo match',g_no:'Indispo match',avL:'Avant-match : indiquez seulement qui est disponible ou non pour le match.',apL:'Après-match : minutes jouées et plainte éventuelle. Le détail de la plainte reste au médical.',pl:'Plainte',pl_non:'Non',pl_oui:'Oui',plt:'Détail de la plainte',pltPh:'Ex. douleur ischio droit',m_av:'Match {o} :\nDisponibles ({a}) :\n{al}\nIndisponibles ({b}) :\n{bl}',m_pl:'\nPlaintes après-match :\n{l}',m_pl0:'\nAucune plainte après-match.',avT:'Avant-match',al_btn:'⚠️ Alerte staff',al_t:'Alerte staff',al_l:'Message urgent aux coachs et au prépa, en dehors du briefing. Ils voient la zone et les consignes, pas le diagnostic détaillé.',al_pl:'Joueurs concernés',al_z:'Zones',al_lim:'À limiter',al_note:'Précision (facultatif)',al_notePh:'Ex. pas de sprint au-delà de 80 %',al_urg:'Urgence',u_now:'Immédiat (séance en cours)',u_next:'Dès la prochaine séance',al_send:'Créer l\'alerte',al_ok:'Alerte créée : envoyez-la aux groupes ci-dessous',al_lift:'Lever l\'alerte',al_lifted:'Alerte levée',al_open:'Envoyer à {g}',al_act:'Alertes en cours',al_none:'Cochez au moins un joueur.',al_sql:'Les alertes ne sont pas encore activées : lancez la commande SQL « alertes ».',z_isch:'Ischios',z_add:'Adducteurs',z_quad:'Quadriceps',z_mol:'Mollets',z_dos:'Dos / lombaires',z_gen:'Genou',z_che:'Cheville',x_sprint:'Sprints / haute vitesse',x_frappe:'Frappes',x_cod:'Changements de direction',x_duel:'Duels',x_vol:'Volume total',m_al:'⚠️ ALERTE MÉDICALE · {u}',m_alz:'Zones : {l}',m_alx:'À limiter : {l}',m_alp:'Joueurs ({n}) : {l}',m_alby:'{by}, {d} {h}',cp:'Compensation',cpm:'Durée (min)',m_cp:'\nCompensation (dispos n\'ayant pas joué) :\n{l}',cpNo:'non',
  med_t:'Briefing médical',med_l:'Passez l\'effectif en revue joueur par joueur. Seuls le statut, la consigne et la date de retour sont partagés. Pathologies et soins restent visibles du seul staff médical, jamais envoyés.',
  carry:'Statuts repris du jour précédent. Modifiez ce qui a changé.',fresh:'Premier briefing : tout l\'effectif démarre sans restriction.',
  sendsToday:'Briefings validés ce jour',noneYet:'aucun pour l\'instant',
@@ -55,7 +55,7 @@ pt:{sub:'Seleção Nacional · estágio de 9 a 18 de novembro de 2026',
  c_ok:'Disponível',c_adapte:'Disponível com adaptação',c_indispo:'Indisponível',c_parti:'Deixou o estágio',
  G:'Guarda-redes',D:'Defesas',M:'Médios',A:'Avançados',G1:'Guarda-redes',D1:'Defesa',M1:'Médio',A1:'Avançado',
  t_mus:'Muscular',t_art:'Articular / ligamentar',t_ten:'Tendinosa',t_tra:'Traumática / contusão',t_mal:'Doença',t_aut:'Outro',
- l_matin:'Manhã',l_aprem:'Tarde',l_soir:'Noite',l_avmatch:'Pré-jogo',l_match:'Pós-jogo',g_ok:'Disponível jogo',g_no:'Indisponível jogo',avL:'Pré-jogo: indique apenas quem está disponível ou não para o jogo.',apL:'Pós-jogo: minutos jogados e eventual queixa. O detalhe da queixa fica no médico.',pl:'Queixa',pl_non:'Não',pl_oui:'Sim',plt:'Detalhe da queixa',pltPh:'Ex. dor isquiotibial direito',m_av:'Jogo {o}:\nDisponíveis ({a}):\n{al}\nIndisponíveis ({b}):\n{bl}',m_pl:'\nQueixas pós-jogo:\n{l}',m_pl0:'\nNenhuma queixa pós-jogo.',avT:'Pré-jogo',cp:'Compensação',cpm:'Duração (min)',m_cp:'\nCompensação (disponíveis que não jogaram):\n{l}',cpNo:'não',
+ l_matin:'Manhã',l_aprem:'Tarde',l_soir:'Noite',l_avmatch:'Pré-jogo',l_match:'Pós-jogo',g_ok:'Disponível jogo',g_no:'Indisponível jogo',avL:'Pré-jogo: indique apenas quem está disponível ou não para o jogo.',apL:'Pós-jogo: minutos jogados e eventual queixa. O detalhe da queixa fica no médico.',pl:'Queixa',pl_non:'Não',pl_oui:'Sim',plt:'Detalhe da queixa',pltPh:'Ex. dor isquiotibial direito',m_av:'Jogo {o}:\nDisponíveis ({a}):\n{al}\nIndisponíveis ({b}):\n{bl}',m_pl:'\nQueixas pós-jogo:\n{l}',m_pl0:'\nNenhuma queixa pós-jogo.',avT:'Pré-jogo',al_btn:'⚠️ Alerta staff',al_t:'Alerta staff',al_l:'Mensagem urgente aos treinadores e ao preparador, fora do briefing. Veem a zona e as indicações, não o diagnóstico detalhado.',al_pl:'Jogadores',al_z:'Zonas',al_lim:'A limitar',al_note:'Precisão (opcional)',al_notePh:'Ex. sem sprint acima de 80 %',al_urg:'Urgência',u_now:'Imediato (sessão em curso)',u_next:'A partir da próxima sessão',al_send:'Criar o alerta',al_ok:'Alerta criado: envie-o aos grupos abaixo',al_lift:'Levantar o alerta',al_lifted:'Alerta levantado',al_open:'Enviar a {g}',al_act:'Alertas em curso',al_none:'Marque pelo menos um jogador.',al_sql:'Os alertas ainda não estão ativados: execute o comando SQL « alertas ».',z_isch:'Isquiotibiais',z_add:'Adutores',z_quad:'Quadríceps',z_mol:'Gémeos',z_dos:'Costas / lombar',z_gen:'Joelho',z_che:'Tornozelo',x_sprint:'Sprints / alta velocidade',x_frappe:'Remates',x_cod:'Mudanças de direção',x_duel:'Duelos',x_vol:'Volume total',m_al:'⚠️ ALERTA MÉDICO · {u}',m_alz:'Zonas: {l}',m_alx:'A limitar: {l}',m_alp:'Jogadores ({n}): {l}',m_alby:'{by}, {d} {h}',cp:'Compensação',cpm:'Duração (min)',m_cp:'\nCompensação (disponíveis que não jogaram):\n{l}',cpNo:'não',
  med_t:'Briefing médico',med_l:'Passe o plantel em revista jogador a jogador. Só o estado, a indicação e a data de regresso são partilhados. Patologias e tratamentos ficam visíveis só para o staff médico, nunca enviados.',
  carry:'Estados retomados do dia anterior. Altere o que mudou.',fresh:'Primeiro briefing: todo o plantel começa sem restrições.',
  sendsToday:'Briefings validados hoje',noneYet:'nenhum por enquanto',
@@ -120,9 +120,11 @@ const hmOf=isoTs=>{const d=new Date(isoTs);return `${pad(d.getHours())}h${pad(d.
 let DATE=iso(new Date());
 
 /* ---------- état ---------- */
-const S={players:[],drafts:{},sends:[],prepa:[],staff:[],typeStats:[],me:null,ready:false};
+const S={players:[],drafts:{},sends:[],prepa:[],staff:[],alerts:[],typeStats:[],me:null,ready:false};
 let selP=null, LABEL=null, TALLY=null;
 const OPEN=new Set();
+const ZONES=['isch','add','quad','mol','dos','gen','che'], LIMS=['sprint','frappe','cod','duel','vol'];
+let AL_FORM=false;
 const ini=n=>String(n||'?').split(/\s+/).map(w=>w[0]).join('').slice(0,2).toUpperCase();
 const av=(p,cls='')=>p.photo?`<img class="av ${cls}" src="${esc(p.photo)}" alt="">`:`<span class="av ${cls}" aria-hidden="true">${esc(ini(p.nom))}</span>`;
 // Recadrage : l'utilisateur déplace et zoome dans un cercle, sortie 320 px nette.
@@ -204,8 +206,10 @@ const Store={
     S.players=pl_.data||[];S.sends=se.data||[];
     S.drafts=Object.fromEntries((dr.data||[]).map(d=>[d.day,d]));
     S.prepa=pr.data||[];S.staff=st.data||[];S.typeStats=ty.data||[];
+    S.alerts=[];S.alertsMissing=false;
+    if(['medical','coach','prepa'].includes(role)){const {data,error}=await sb.from('alerts').select('*');if(error)S.alertsMissing=true;else S.alerts=data||[]}
   },
-  persistDemo(){if(DEMO){const {players,drafts,sends,prepa,staff}=S;ls.set('dispo-demo',JSON.stringify({players,drafts,sends,prepa,staff}));S.typeStats=localTypeStats()}},
+  persistDemo(){if(DEMO){const {players,drafts,sends,prepa,staff,alerts}=S;ls.set('dispo-demo',JSON.stringify({players,drafts,sends,prepa,staff,alerts}));S.typeStats=localTypeStats()}},
   async patchDraft(day,patch){
     const d=S.drafts[day]||(S.drafts[day]={day,players:{},match:{on:false,opp:''}});
     Object.assign(d.players,patch.players||{});if(patch.match)d.match=patch.match;
@@ -221,6 +225,15 @@ const Store={
   async addSend(row){
     if(DEMO){row.id=Date.now();S.sends.push(row);return this.persistDemo()}
     const {data,error}=await sb.from('sends').insert(row).select().single();if(error)throw error;S.sends.push(data);
+  },
+  async addAlert(row){
+    if(DEMO){row.id=Date.now();row.at=new Date().toISOString();S.alerts=[...(S.alerts||[]),row];return this.persistDemo()}
+    const {data,error}=await sb.from('alerts').insert(row).select().single();if(error)throw error;S.alerts.push(data);
+  },
+  async liftAlert(id){
+    const a=S.alerts.find(x=>x.id===id);if(!a)return;const at=new Date().toISOString();
+    if(DEMO){a.lifted_at=at;return this.persistDemo()}
+    const {error}=await sb.from('alerts').update({lifted_at:at}).eq('id',id);if(error)throw error;a.lifted_at=at;
   },
   async addPrepa(row){
     if(DEMO){row.id=Date.now();row.at=new Date().toISOString();S.prepa.push(row);return this.persistDemo()}
@@ -283,7 +296,7 @@ async function backfill(){
   }catch(err){console.warn('traduction',err)}
 }
 const dateBar=()=>`<div class="datebar"><button class="btn small" data-day="-1" aria-label="-1">‹</button><strong>${longD(DATE)}</strong><button class="btn small" data-day="1" aria-label="+1">›</button></div>`;
-const head=(ti,le,withDate=true)=>`<div class="head"><div><h1>${ti}</h1><p class="lead">${le}</p></div>${withDate?dateBar():''}</div>${DEMO?`<div class="note warn">${t('demo')}</div>`:''}`;
+const head=(ti,le,withDate=true)=>`<div class="head"><div><h1>${ti}</h1><p class="lead">${le}</p></div>${withDate?dateBar():''}</div>${DEMO?`<div class="note warn">${t('demo')}</div>`:''}${['coach','prepa'].includes(curTab())?alertsBanner():''}`;
 const sendLabel=s=>`${t('l_'+s.label)||s.label}`;
 
 /* ---------- vue médicale ---------- */
@@ -322,7 +335,18 @@ function viewMedical(){
       </div>`}
     </div>`}).join('')}).join('');
   const suivi=roster(DATE).map(p=>({p,x:d.players[p.id]||blankP()})).filter(o=>o.x.s!=='parti'&&hasPath(o.x));
+  const alF=AL_FORM?`<form class="panel pad alertf" id="alertF"><h2>${t('al_t')}</h2><p class="sync">${t('al_l')}</p>
+    <fieldset><legend>${t('al_pl')}</legend><div class="ckl">${roster(DATE).filter(p=>(d.players[p.id]||blankP()).s!=='parti').map(p=>`<label><input type="checkbox" name="pl" value="${p.id}"${(d.players[p.id]||{}).w?' checked':''}> ${esc(p.nom)}</label>`).join('')}</div></fieldset>
+    <fieldset><legend>${t('al_z')}</legend><div class="ckl">${ZONES.map(z=>`<label><input type="checkbox" name="z" value="${z}"> ${t('z_'+z)}</label>`).join('')}</div></fieldset>
+    <fieldset><legend>${t('al_lim')}</legend><div class="ckl">${LIMS.map(z=>`<label><input type="checkbox" name="x" value="${z}"> ${t('x_'+z)}</label>`).join('')}</div></fieldset>
+    <label class="f wide">${t('al_note')}<input type="text" name="note" id="al-note" placeholder="${t('al_notePh')}"></label>
+    <fieldset><legend>${t('al_urg')}</legend><div class="ckl">${['now','next'].map(u=>`<label><input type="radio" name="urg" value="${u}"${u==='next'?' checked':''}> ${t('u_'+u)}</label>`).join('')}</div></fieldset>
+    <div class="bar"><button class="btn small" type="button" id="alertClose">${t('cancel')}</button><button class="btn primary">${t('al_send')}</button></div></form>`:'';
+  const alAct=activeAlerts();
   V.innerHTML=head(t('med_t'),t('med_l'))+`
+  ${S.alertsMissing&&CAN_SEND()?`<div class="note warn">${t('al_sql')}</div>`:''}
+  ${CAN_SEND()&&!S.alertsMissing&&!AL_FORM?`<div class="bar" style="justify-content:flex-start"><button class="btn danger" id="alertOpen">${t('al_btn')}</button></div>`:''}${alF}
+  ${alAct.length?`<div class="sync"><b>${t('al_act')}</b></div>${alAct.map(a=>alertBox(a,CAN_SEND())).join('')}`:''}
   <div class="tally">${['indispo','soins','reath','adapte','ok','absent','parti'].filter(k=>c[k]||!['absent','parti'].includes(k)).map(k=>`<button class="pill k-${k}" data-tally="${k}" aria-pressed="${TALLY===k}"${c[k]?'':' disabled'}><i class="dot"></i>${c[k]} ${t('s_'+k).toLowerCase()}</button>`).join('')}</div>
   ${TALLY&&c[TALLY]?`<div class="panel pad tlist"><b>${t('s_'+TALLY)} (${c[TALLY]})</b><ul>${roster(DATE).filter(p=>(d.players[p.id]||blankP()).s===TALLY).map(p=>{const x=d.players[p.id];return `<li><span class="name">${esc(p.nom)}</span> <span class="sync">${t(p.poste+'1')}${x.c?` · ${esc(tx(x,'c'))}`:''}${x.r?` · ${t('m_ret',{d:dm(x.r)})}`:''}${x.pc?` · ${t('c_'+x.pc)}`:''}</span></li>`}).join('')}</ul></div>`:''}
   <div class="banner${sends.length&&!ch.length?' ok':''}">
@@ -444,6 +468,24 @@ function buildShort(role,L,s){
   lines.push(tr(L,'m_link',{u:location.origin+location.pathname+'#'+TAB_OF[role]}));
   return lines.join('\n');
 }
+const langsOf=role=>{const f=(CFG.waLang||{})[role];if(f)return [f];const l=[...new Set(S.staff.filter(x=>x.role===role).map(x=>x.lang==='fr'?'fr':'pt'))];return l.length?l.sort():['fr','pt']};
+const activeAlerts=()=>(S.alerts||[]).filter(a=>!a.lifted_at&&a.day<=DATE).sort((a,b)=>a.at<b.at?1:-1);
+function alertMsg(a,L){
+  const nm=(a.players||[]).map(byId).filter(Boolean).map(p=>p.nom);
+  const note=a.note?((a.tr&&a.tr.src===a.note&&a.tr[L])||a.note):'';
+  return [tr(L,'m_al',{u:tr(L,a.urg==='now'?'u_now':'u_next')}),
+    (a.zones||[]).length?tr(L,'m_alz',{l:a.zones.map(z=>tr(L,'z_'+z)).join(', ')}):'',
+    (a.limits||[]).length?tr(L,'m_alx',{l:a.limits.map(z=>tr(L,'x_'+z).toLowerCase()).join(', ')}):'',
+    note,
+    tr(L,'m_alp',{n:nm.length,l:nm.join(', ')}),
+    tr(L,'m_alby',{by:a.sent_by||'',d:dm(a.day),h:hmOf(a.at)})].filter(Boolean).join('\n');
+}
+const alertGroupTxt=(a,role)=>langsOf(role).map(L=>alertMsg(a,L)).join('\n\n— — —\n\n');
+function alertBox(a,manage){
+  return `<div class="panel pad alertbox"><pre class="msg">${esc(alertMsg(a,LANG))}</pre>${manage?`<div class="bar">${['coach','prepa','medical'].filter(r=>r==='medical'||S.staff.some(x=>x.role===r)||(CFG.waGroups||{})[r]).map(r=>{const g=(CFG.waGroups||{})[r],m=S.staff.filter(x=>x.role===r),h=g||(m.length===1&&m[0].name?m[0].name:t('r_'+r));
+    return `<a class="btn wa" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent(alertGroupTxt(a,r))}">${t('al_open',{g:esc(h)})}</a>`}).join('')}<button class="btn small" data-lift="${a.id}">${t('al_lift')}</button></div>`:''}</div>`;
+}
+const alertsBanner=()=>!['medical','coach','prepa'].includes(S.me?.role)?'':activeAlerts().map(a=>alertBox(a,false)).join('');
 function avMsg(L,s){
   const snap=s.snap, ids=Object.keys(snap).filter(id=>byId(id)&&snap[id].s!=='parti'&&snap[id].g);
   const a=ids.filter(id=>snap[id].g==='ok'), b=ids.filter(id=>snap[id].g!=='ok');
@@ -625,6 +667,9 @@ V.addEventListener('click',async e=>{
   if(el.dataset.copyg){const txt=groupMsg(el.dataset.copyg,curSend());try{await navigator.clipboard.writeText(txt);toast(t('copied'))}catch(err){}return}
   if(el.dataset.send){WA_SEND=+el.dataset.send||el.dataset.send;return render(true)}
   if(el.dataset.path){const id=el.dataset.path;OPEN.has(id)?OPEN.delete(id):OPEN.add(id);return render(true)}
+  if(el.id==='alertOpen'){AL_FORM=true;return render(true)}
+  if(el.id==='alertClose'){AL_FORM=false;return render(true)}
+  if(el.dataset.lift){if(!confirm(t('al_lift')+' ?'))return;try{await Store.liftAlert(+el.dataset.lift||el.dataset.lift);toast(t('al_lifted'))}catch(err){fail(err)}return render(true)}
   if(el.dataset.g){const id=el.closest('[data-id]').dataset.id,x={...pl(id)};x.g=el.dataset.g;setPlayer(id,x);return render(true)}
   if(el.dataset.st){
     const id=el.closest('[data-id]').dataset.id,x={...pl(id)},p=byId(id);x.s=el.dataset.st;if(x.s==='ok'||x.s==='parti'){x.c='';x.r='';x.t='';}if(x.s==='parti')x.w=false;
@@ -687,6 +732,14 @@ V.addEventListener('input',e=>{
 V.addEventListener('submit',async e=>{
   e.preventDefault();const f=e.target;
   if(f.id==='login')return auth('in');
+  if(f.id==='alertF'){
+    const vals=n=>[...f.querySelectorAll(`[name="${n}"]:checked`)].map(x=>x.value);
+    const row={day:DATE,sent_by:S.me.name||t('r_medical'),players:vals('pl'),zones:vals('z'),limits:vals('x'),note:f.note.value.trim(),urg:(vals('urg')[0]||'next')};
+    if(!row.players.length)return toast(t('al_none'));
+    const btn=f.querySelector('.primary');btn.disabled=true;
+    if(row.note&&TR_ON()){try{const {data}=await sb.functions.invoke('translate',{body:{texts:[row.note]}});if(data&&data.items)row.tr={src:row.note,...data.items[0]}}catch(err){console.warn(err)}}
+    try{await Store.addAlert(row);AL_FORM=false;toast(t('al_ok'))}catch(err){btn.disabled=false;return fail(err)}
+    return render(true)}
   if(f.id==='addP'){const nom=f.nom.value.trim();if(!nom)return;const num=+f.num.value||null;
     const p={id:'n'+Date.now().toString(36),num,nom,poste:f.poste.value,club:f.club.value.trim(),added_on:DATE,left_on:null};
     try{await Store.savePlayer(p);toast(t('added'))}catch(err){fail(err)}return render(true)}

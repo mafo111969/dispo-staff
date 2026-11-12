@@ -60,6 +60,11 @@ h2{font-family:var(--f-display);font-size:20px;font-weight:600;margin:0;text-tra
 .btn{font:inherit;font-weight:600;border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:9px 14px;border-radius:8px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
 .btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
 .btn.wa{background:var(--wa);border-color:var(--wa);color:#fff}
+.btn.danger{background:var(--s-indispo);border-color:var(--s-indispo);color:#fff}
+.alertbox{border:2px solid var(--s-indispo);background:color-mix(in srgb,var(--s-indispo) 8%,var(--surface));display:grid;gap:10px}
+.alertbox pre.msg{margin:0;font-weight:600}
+.alertf{display:grid;gap:12px;border:2px solid var(--s-indispo)}.alertf h2{margin:0}.alertf fieldset{border:1px solid var(--line);border-radius:8px;padding:8px 12px;margin:0}.alertf legend{font-weight:600;font-size:13px;padding:0 4px}
+.ckl{display:flex;flex-wrap:wrap;gap:6px 14px}.ckl label{display:flex;gap:6px;align-items:center;font-size:14px;min-height:32px}
 .btn.small{padding:5px 10px;font-size:12px}
 .btn:disabled{opacity:.45;cursor:not-allowed}
 .tally{display:flex;gap:6px;flex-wrap:wrap}
@@ -206,6 +211,6 @@ img.av{display:block}
 <div class="toast" id="toast" hidden></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3/dist/umd/supabase.js"></script>
 <script src="config.js?v=20261110b"></script>
-<script src="app.js?v=20261111c"></script>
+<script src="app.js?v=20261112a"></script>
 </body>
 </html>
