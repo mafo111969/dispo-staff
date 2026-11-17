@@ -10,7 +10,7 @@ fr:{sub:'Sélection nationale · stage du 9 au 18 novembre 2026',
  c_ok:'Disponible',c_adapte:'Disponible avec adaptation',c_indispo:'Indisponible',c_parti:'A quitté le rassemblement',
  G:'Gardiens',D:'Défenseurs',M:'Milieux',A:'Attaquants',G1:'Gardien',D1:'Défenseur',M1:'Milieu',A1:'Attaquant',
  t_mus:'Musculaire',t_art:'Articulaire / ligamentaire',t_ten:'Tendineuse',t_tra:'Traumatique / contusion',t_mal:'Maladie',t_aut:'Autre',
- l_matin:'Matin',l_aprem:'Après-midi',l_soir:'Soir',l_avmatch:'Avant-match',l_match:'Après-match',g_ok:'Dispo match',g_no:'Indispo match',avL:'Avant-match : indiquez seulement qui est disponible ou non pour le match.',apL:'Après-match : minutes jouées et plainte éventuelle. Le détail de la plainte reste au médical.',pl:'Plainte',pl_non:'Non',pl_oui:'Oui',plt:'Détail de la plainte',pltPh:'Ex. douleur ischio droit',m_av:'Match {o} :\nDisponibles ({a}) :\n{al}\nIndisponibles ({b}) :\n{bl}',m_pl:'\nPlaintes après-match :\n{l}',m_pl0:'\nAucune plainte après-match.',avT:'Avant-match',suiviV:'Soins de la veille',suiviVL:'Joueurs ayant reçu des soins le {d}.',suiviNone:'Aucun soin enregistré le {d}.',suiviAll:'Voir tous les suivis ({n})',suiviLess:'Masquer',aw:'À surveiller',tl:'Temps de jeu limité',awt:'Motif',awtPh:'Ex. tension ischio, reprise',m_aw:'\nÀ surveiller ({n}) :\n{l}',m_tl:'temps de jeu limité',al_btn:'⚠️ Alerte staff',al_t:'Alerte staff',al_l:'Message urgent aux coachs et au prépa, en dehors du briefing. Ils voient la zone et les consignes, pas le diagnostic détaillé.',al_pl:'Joueurs concernés',al_z:'Zones',al_lim:'À limiter',al_note:'Précision (facultatif)',al_notePh:'Ex. pas de sprint au-delà de 80 %',al_urg:'Urgence',u_now:'Immédiat (séance en cours)',u_next:'Dès la prochaine séance',al_send:'Créer l\'alerte',al_ok:'Alerte créée : envoyez-la aux groupes ci-dessous',al_lift:'Lever l\'alerte',al_lifted:'Alerte levée',al_open:'Envoyer à {g}',al_act:'Alertes en cours',al_none:'Cochez au moins un joueur.',al_sql:'Les alertes ne sont pas encore activées : lancez la commande SQL « alertes ».',z_isch:'Ischios',z_add:'Adducteurs',z_quad:'Quadriceps',z_mol:'Mollets',z_dos:'Dos / lombaires',z_gen:'Genou',z_che:'Cheville',x_sprint:'Sprints / haute vitesse',x_frappe:'Frappes',x_cod:'Changements de direction',x_duel:'Duels',x_vol:'Volume total',m_al:'⚠️ ALERTE MÉDICALE · {u}',m_alz:'Zones : {l}',m_alx:'À limiter : {l}',m_alp:'Joueurs ({n}) : {l}',m_alby:'{by}, {d} {h}',cp:'Compensation',cpm:'Durée (min)',m_cp:'\nCompensation (dispos n\'ayant pas joué) :\n{l}',cpNo:'non',
+ l_matin:'Matin',l_aprem:'Après-midi',l_soir:'Soir',l_avmatch:'Avant-match',l_match:'Après-match',g_ok:'Dispo match',g_no:'Indispo match',avL:'Avant-match : indiquez seulement qui est disponible ou non pour le match.',apL:'Après-match : minutes jouées et plainte éventuelle. Le détail de la plainte reste au médical.',pl:'Plainte',pl_non:'Non',pl_oui:'Oui',plt:'Détail de la plainte',pltPh:'Ex. douleur ischio droit',m_av:'Match {o} :\nDisponibles ({a}) :\n{al}\nIndisponibles ({b}) :\n{bl}',m_pl:'\nPlaintes après-match :\n{l}',m_pl0:'\nAucune plainte après-match.',avT:'Avant-match',zone:'Zone',h_map:'Carte des pathologies',suiviV:'Soins de la veille',suiviVL:'Joueurs ayant reçu des soins le {d}.',suiviNone:'Aucun soin enregistré le {d}.',suiviAll:'Voir tous les suivis ({n})',suiviLess:'Masquer',aw:'À surveiller',tl:'Temps de jeu limité',awt:'Motif',awtPh:'Ex. tension ischio, reprise',m_aw:'\nÀ surveiller ({n}) :\n{l}',m_tl:'temps de jeu limité',al_btn:'⚠️ Alerte staff',al_t:'Alerte staff',al_l:'Message urgent aux coachs et au prépa, en dehors du briefing. Ils voient la zone et les consignes, pas le diagnostic détaillé.',al_pl:'Joueurs concernés',al_z:'Zones',al_lim:'À limiter',al_note:'Précision (facultatif)',al_notePh:'Ex. pas de sprint au-delà de 80 %',al_urg:'Urgence',u_now:'Immédiat (séance en cours)',u_next:'Dès la prochaine séance',al_send:'Créer l\'alerte',al_ok:'Alerte créée : envoyez-la aux groupes ci-dessous',al_lift:'Lever l\'alerte',al_lifted:'Alerte levée',al_open:'Envoyer à {g}',al_act:'Alertes en cours',al_none:'Cochez au moins un joueur.',al_sql:'Les alertes ne sont pas encore activées : lancez la commande SQL « alertes ».',z_isch:'Ischios',z_add:'Adducteurs',z_quad:'Quadriceps',z_mol:'Mollets',z_dos:'Dos / lombaires',z_gen:'Genou',z_che:'Cheville',x_sprint:'Sprints / haute vitesse',x_frappe:'Frappes',x_cod:'Changements de direction',x_duel:'Duels',x_vol:'Volume total',m_al:'⚠️ ALERTE MÉDICALE · {u}',m_alz:'Zones : {l}',m_alx:'À limiter : {l}',m_alp:'Joueurs ({n}) : {l}',m_alby:'{by}, {d} {h}',cp:'Compensation',cpm:'Durée (min)',m_cp:'\nCompensation (dispos n\'ayant pas joué) :\n{l}',cpNo:'non',
  med_t:'Briefing médical',med_l:'Passez l\'effectif en revue joueur par joueur. Seuls le statut, la consigne et la date de retour sont partagés. Pathologies et soins restent visibles du seul staff médical, jamais envoyés.',
  carry:'Statuts repris du jour précédent. Modifiez ce qui a changé.',fresh:'Premier briefing : tout l\'effectif démarre sans restriction.',
  sendsToday:'Briefings validés ce jour',noneYet:'aucun pour l\'instant',
@@ -55,7 +55,7 @@ pt:{sub:'Seleção Nacional · estágio de 9 a 18 de novembro de 2026',
  c_ok:'Disponível',c_adapte:'Disponível com adaptação',c_indispo:'Indisponível',c_parti:'Deixou o estágio',
  G:'Guarda-redes',D:'Defesas',M:'Médios',A:'Avançados',G1:'Guarda-redes',D1:'Defesa',M1:'Médio',A1:'Avançado',
  t_mus:'Muscular',t_art:'Articular / ligamentar',t_ten:'Tendinosa',t_tra:'Traumática / contusão',t_mal:'Doença',t_aut:'Outro',
- l_matin:'Manhã',l_aprem:'Tarde',l_soir:'Noite',l_avmatch:'Pré-jogo',l_match:'Pós-jogo',g_ok:'Disponível jogo',g_no:'Indisponível jogo',avL:'Pré-jogo: indique apenas quem está disponível ou não para o jogo.',apL:'Pós-jogo: minutos jogados e eventual queixa. O detalhe da queixa fica no médico.',pl:'Queixa',pl_non:'Não',pl_oui:'Sim',plt:'Detalhe da queixa',pltPh:'Ex. dor isquiotibial direito',m_av:'Jogo {o}:\nDisponíveis ({a}):\n{al}\nIndisponíveis ({b}):\n{bl}',m_pl:'\nQueixas pós-jogo:\n{l}',m_pl0:'\nNenhuma queixa pós-jogo.',avT:'Pré-jogo',suiviV:'Tratamentos da véspera',suiviVL:'Jogadores tratados em {d}.',suiviNone:'Nenhum tratamento registado em {d}.',suiviAll:'Ver todos os seguimentos ({n})',suiviLess:'Ocultar',aw:'A vigiar',tl:'Tempo de jogo limitado',awt:'Motivo',awtPh:'Ex. tensão isquiotibial, regresso',m_aw:'\nA vigiar ({n}):\n{l}',m_tl:'tempo de jogo limitado',al_btn:'⚠️ Alerta staff',al_t:'Alerta staff',al_l:'Mensagem urgente aos treinadores e ao preparador, fora do briefing. Veem a zona e as indicações, não o diagnóstico detalhado.',al_pl:'Jogadores',al_z:'Zonas',al_lim:'A limitar',al_note:'Precisão (opcional)',al_notePh:'Ex. sem sprint acima de 80 %',al_urg:'Urgência',u_now:'Imediato (sessão em curso)',u_next:'A partir da próxima sessão',al_send:'Criar o alerta',al_ok:'Alerta criado: envie-o aos grupos abaixo',al_lift:'Levantar o alerta',al_lifted:'Alerta levantado',al_open:'Enviar a {g}',al_act:'Alertas em curso',al_none:'Marque pelo menos um jogador.',al_sql:'Os alertas ainda não estão ativados: execute o comando SQL « alertas ».',z_isch:'Isquiotibiais',z_add:'Adutores',z_quad:'Quadríceps',z_mol:'Gémeos',z_dos:'Costas / lombar',z_gen:'Joelho',z_che:'Tornozelo',x_sprint:'Sprints / alta velocidade',x_frappe:'Remates',x_cod:'Mudanças de direção',x_duel:'Duelos',x_vol:'Volume total',m_al:'⚠️ ALERTA MÉDICO · {u}',m_alz:'Zonas: {l}',m_alx:'A limitar: {l}',m_alp:'Jogadores ({n}): {l}',m_alby:'{by}, {d} {h}',cp:'Compensação',cpm:'Duração (min)',m_cp:'\nCompensação (disponíveis que não jogaram):\n{l}',cpNo:'não',
+ l_matin:'Manhã',l_aprem:'Tarde',l_soir:'Noite',l_avmatch:'Pré-jogo',l_match:'Pós-jogo',g_ok:'Disponível jogo',g_no:'Indisponível jogo',avL:'Pré-jogo: indique apenas quem está disponível ou não para o jogo.',apL:'Pós-jogo: minutos jogados e eventual queixa. O detalhe da queixa fica no médico.',pl:'Queixa',pl_non:'Não',pl_oui:'Sim',plt:'Detalhe da queixa',pltPh:'Ex. dor isquiotibial direito',m_av:'Jogo {o}:\nDisponíveis ({a}):\n{al}\nIndisponíveis ({b}):\n{bl}',m_pl:'\nQueixas pós-jogo:\n{l}',m_pl0:'\nNenhuma queixa pós-jogo.',avT:'Pré-jogo',zone:'Zona',h_map:'Mapa das patologias',suiviV:'Tratamentos da véspera',suiviVL:'Jogadores tratados em {d}.',suiviNone:'Nenhum tratamento registado em {d}.',suiviAll:'Ver todos os seguimentos ({n})',suiviLess:'Ocultar',aw:'A vigiar',tl:'Tempo de jogo limitado',awt:'Motivo',awtPh:'Ex. tensão isquiotibial, regresso',m_aw:'\nA vigiar ({n}):\n{l}',m_tl:'tempo de jogo limitado',al_btn:'⚠️ Alerta staff',al_t:'Alerta staff',al_l:'Mensagem urgente aos treinadores e ao preparador, fora do briefing. Veem a zona e as indicações, não o diagnóstico detalhado.',al_pl:'Jogadores',al_z:'Zonas',al_lim:'A limitar',al_note:'Precisão (opcional)',al_notePh:'Ex. sem sprint acima de 80 %',al_urg:'Urgência',u_now:'Imediato (sessão em curso)',u_next:'A partir da próxima sessão',al_send:'Criar o alerta',al_ok:'Alerta criado: envie-o aos grupos abaixo',al_lift:'Levantar o alerta',al_lifted:'Alerta levantado',al_open:'Enviar a {g}',al_act:'Alertas em curso',al_none:'Marque pelo menos um jogador.',al_sql:'Os alertas ainda não estão ativados: execute o comando SQL « alertas ».',z_isch:'Isquiotibiais',z_add:'Adutores',z_quad:'Quadríceps',z_mol:'Gémeos',z_dos:'Costas / lombar',z_gen:'Joelho',z_che:'Tornozelo',x_sprint:'Sprints / alta velocidade',x_frappe:'Remates',x_cod:'Mudanças de direção',x_duel:'Duelos',x_vol:'Volume total',m_al:'⚠️ ALERTA MÉDICO · {u}',m_alz:'Zonas: {l}',m_alx:'A limitar: {l}',m_alp:'Jogadores ({n}): {l}',m_alby:'{by}, {d} {h}',cp:'Compensação',cpm:'Duração (min)',m_cp:'\nCompensação (disponíveis que não jogaram):\n{l}',cpNo:'não',
  med_t:'Briefing médico',med_l:'Passe o plantel em revista jogador a jogador. Só o estado, a indicação e a data de regresso são partilhados. Patologias e tratamentos ficam visíveis só para o staff médico, nunca enviados.',
  carry:'Estados retomados do dia anterior. Altere o que mudou.',fresh:'Primeiro briefing: todo o plantel começa sem restrições.',
  sendsToday:'Briefings validados hoje',noneYet:'nenhum por enquanto',
@@ -176,7 +176,7 @@ function draft(day=DATE){
   roster(day).forEach(p=>{
     if(d&&d.players[p.id]){players[p.id]=d.players[p.id];return}
     const b=base[p.id]&&base[p.id].s!=='parti'?base[p.id]:blankP();
-    players[p.id]={s:b.s,c:b.s==='ok'?'':b.c,r:b.s==='ok'?'':b.r,t:b.s==='ok'?'':b.t,m:0,chr:b.chr||'',aig:b.aig||'',aigd:b.aigd||'',w:!!b.w,...(b.tr?{tr:b.tr}:{})};
+    players[p.id]={s:b.s,c:b.s==='ok'?'':b.c,r:b.s==='ok'?'':b.r,t:b.s==='ok'?'':b.t,m:0,chr:b.chr||'',aig:b.aig||'',aigd:b.aigd||'',aigz:b.aigz||'',chrz:b.chrz||'',w:!!b.w,...(b.tr?{tr:b.tr}:{})};
   });
   return {exists:!!d,carried:!d&&prevDays.length>0,players,match:d?d.match:{on:false,opp:'Sudão do Sul'}};
 }
@@ -328,8 +328,10 @@ function viewMedical(){
         ${logs.length?`<div class="sync" style="grid-column:1/-1">${t('lastPrepa')} : ${logs.map(e=>`${e.dur}′ · RPE ${e.rpe} · ${e.gps} m · ${esc(e.exos)}`).join(' / ')}</div>`:''}`:''}
         ${showPath?`<div class="path"><span class="medonly">${t('medOnly')}</span>
           <label class="f wide">${t('chr')}<input type="text" data-f="chr" id="chr-${p.id}" value="${esc(x.chr||'')}" placeholder="${t('chrPh')}"></label>
+          <label class="f">${t('zone')}<select data-f="chrz" id="chrz-${p.id}">${zoneOpts(x.chrz||'',x.chrz?'':guessZone(x.chr))}</select></label>
           <label class="f wide">${t('aig')}<input type="text" data-f="aig" id="aig-${p.id}" value="${esc(x.aig||'')}" placeholder="${t('aigPh')}"></label>
           <label class="f">${t('aigd')}<input type="date" data-f="aigd" id="aigd-${p.id}" value="${esc(x.aigd||'')}"></label>
+          <label class="f">${t('zone')}<select data-f="aigz" id="aigz-${p.id}">${zoneOpts(x.aigz||'',x.aigz?'':guessZone(x.aig))}</select></label>
           <label class="f">${t('care')}<select data-f="pc" id="pc-${p.id}">${['','recup','soins'].map(k=>`<option value="${k}"${k===(x.pc||'')?' selected':''}>${t('c_'+k)}</option>`).join('')}</select></label>
           ${x.pc==='soins'?`<label class="f wide">${t('careTx')}<input type="text" data-f="pct" id="pct-${p.id}" value="${esc(x.pct||'')}" placeholder="${t('careTxPh')}"></label>`:''}
         </div>`:''}
@@ -634,6 +636,47 @@ function viewLogin(msg){
     <div class="bar"><button class="btn primary" data-auth="in">${t('signin')}</button><button class="btn" data-auth="up">${t('signup')}</button></div></form>`;
 }
 
+/* ---------- silhouette des pathologies ---------- */
+// zone : [décalage horizontal depuis l'axe, hauteur, vue F (face) / B (dos), latéralisée]
+const ZB={tete:[0,20,'F',0],cou:[0,40,'B',0],epaule:[22,52,'F',1],bras:[30,78,'F',1],coude:[32,98,'B',1],main:[37,126,'F',1],thorax:[0,66,'F',0],abdo:[0,98,'F',0],dos:[0,70,'B',0],lomb:[0,104,'B',0],
+  hanche:[17,120,'F',1],pub:[0,130,'F',0],add:[6,148,'F',1],quad:[13,156,'F',1],isch:[12,158,'B',1],genou:[12,186,'F',1],tibia:[12,210,'F',1],mollet:[12,206,'B',1],achille:[11,232,'B',1],cheville:[11,238,'F',1],pied:[11,252,'F',1]};
+const ZN={fr:{tete:'Tête',cou:'Cou / cervical',epaule:'Épaule',bras:'Bras',coude:'Coude',main:'Poignet / main',thorax:'Thorax / côtes',abdo:'Abdomen',dos:'Dos',lomb:'Lombaires',hanche:'Hanche',pub:'Pubis / aine',add:'Adducteurs',quad:'Quadriceps',isch:'Ischios',genou:'Genou',tibia:'Tibia / jambe',mollet:'Mollet',achille:'Tendon d\'Achille',cheville:'Cheville',pied:'Pied',G:'gauche',D:'droit'},
+  pt:{tete:'Cabeça',cou:'Pescoço / cervical',epaule:'Ombro',bras:'Braço',coude:'Cotovelo',main:'Pulso / mão',thorax:'Tórax / costelas',abdo:'Abdómen',dos:'Costas',lomb:'Lombar',hanche:'Anca',pub:'Púbis / virilha',add:'Adutores',quad:'Quadríceps',isch:'Isquiotibiais',genou:'Joelho',tibia:'Tíbia / perna',mollet:'Gémeos',achille:'Tendão de Aquiles',cheville:'Tornozelo',pied:'Pé',G:'esquerdo',D:'direito'},
+  en:{tete:'Head',cou:'Neck',epaule:'Shoulder',bras:'Arm',coude:'Elbow',main:'Wrist / hand',thorax:'Chest / ribs',abdo:'Abdomen',dos:'Back',lomb:'Lower back',hanche:'Hip',pub:'Pubis / groin',add:'Adductors',quad:'Quadriceps',isch:'Hamstrings',genou:'Knee',tibia:'Shin / leg',mollet:'Calf',achille:'Achilles tendon',cheville:'Ankle',pied:'Foot',G:'left',D:'right'}};
+const zLabel=(z,L=LANG)=>{if(!z)return '';const [k,sd]=z.split('-'),N=ZN[L]||ZN.fr;return N[k]?N[k]+(sd?' '+N[sd]:''):''};
+// zone déduite du texte libre (FR / PT) quand elle n'a pas été choisie
+function guessZone(txt){
+  const s=String(txt||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');if(!s)return '';
+  const R=[[/ischio|isquio|biceps femoral|semi.?tend|semi.?membr/,'isch'],[/adduct|adut/,'add'],[/quadri|droit anterieur|reto femoral|cuisse|coxa/,'quad'],[/achille|aquiles/,'achille'],[/mollet|gastroc|soleaire|solear|jumeau|gemeo|panturr/,'mollet'],
+    [/genou|rotul|menisq|menisc|lca|lcp|joelho|patel/,'genou'],[/cheville|tornozel|entorse lat/,'cheville'],[/pied|plantaire|orteil|metatars|hallux|pe\b|plantar/,'pied'],[/tibia|perone|perios|canela|fibula/,'tibia'],
+    [/hanche|anca|coxo/,'hanche'],[/pubalg|pubi|aine|virilha|inguin/,'pub'],[/lomb|lombar|lumb|sacr/,'lomb'],[/dos\b|dorsal|rachis|costas/,'dos'],[/epaule|ombro/,'epaule'],[/coude|cotovel/,'coude'],[/poignet|main\b|doigt|pulso|mao\b|dedo/,'main'],
+    [/bras\b|braco|biceps|triceps/,'bras'],[/cervic|cou\b|pescoc/,'cou'],[/thora|cote|costel/,'thorax'],[/abdo/,'abdo'],[/tete|cabeca|crani|commotion|concuss/,'tete']];
+  const hit=R.find(([re])=>re.test(s));if(!hit)return '';const k=hit[1];
+  if(!ZB[k][3])return k;
+  const sd=/(\b|\s)(g|gche|gauche|esq|esquerd[oa])\b/.test(s)?'G':/(\b|\s)(d|dt|drt|droit|droite|dir|direit[oa])\b/.test(s)?'D':'';
+  return sd?k+'-'+sd:k;
+}
+const zoneOf=(x,k)=>(x&&x[k+'z'])||guessZone(x&&x[k]);
+const zoneOpts=(cur,guess)=>`<option value="">${guess?'auto : '+esc(zLabel(guess)):'—'}</option>`+Object.keys(ZB).flatMap(k=>ZB[k][3]?[k+'-G',k+'-D']:[k]).map(z=>`<option value="${z}"${z===cur?' selected':''}>${esc(zLabel(z))}</option>`).join('');
+// marks : [{z, c:'cur'|'old'|'chr', n}] -> deux silhouettes (face, dos)
+function bodySVG(marks,L=LANG){
+  const N={fr:['Face','Dos','En cours','Guérie','Chronique'],pt:['Frente','Costas','Em curso','Curada','Crónica'],en:['Front','Back','Ongoing','Healed','Chronic']}[L]||['Face','Dos','En cours','Guérie','Chronique'];
+  const fig=(view,ox)=>{const pts=[];
+    marks.forEach(m=>{const [k,sd]=String(m.z).split('-'),b=ZB[k];if(!b)return;
+      if(b[2]!==view)return;
+      // vue de face : la droite du joueur est à gauche de l'image ; de dos, à droite
+      const sgn=!b[3]||!sd?0:(view==='F'?(sd==='D'?-1:1):(sd==='D'?1:-1));
+      pts.push(`<circle cx="${ox+60+sgn*b[0]}" cy="${b[1]}" r="${m.n>1?8:6.5}" class="bz ${m.c}"/>${m.n>1?`<text x="${ox+60+sgn*b[0]}" y="${b[1]+3.5}" class="bzn">${m.n}</text>`:''}`)});
+    const x=ox;
+    return `<g class="bd"><circle cx="${x+60}" cy="20" r="12"/><rect x="${x+54}" y="31" width="12" height="10" rx="3"/><path d="M${x+38} 44 Q${x+60} 38 ${x+82} 44 L${x+80} 122 Q${x+60} 128 ${x+40} 122 Z"/>
+      <rect x="${x+26}" y="46" width="11" height="58" rx="5"/><rect x="${x+83}" y="46" width="11" height="58" rx="5"/><rect x="${x+29}" y="100" width="9" height="34" rx="4"/><rect x="${x+82}" y="100" width="9" height="34" rx="4"/>
+      <rect x="${x+41}" y="118" width="17" height="128" rx="7"/><rect x="${x+62}" y="118" width="17" height="128" rx="7"/><ellipse cx="${x+49}" cy="252" rx="9" ry="5"/><ellipse cx="${x+71}" cy="252" rx="9" ry="5"/></g>
+      <text x="${x+60}" y="272" class="bzl">${view==='F'?N[0]:N[1]}</text>${pts.join('')}`};
+  const used=new Set(marks.map(m=>m.c));
+  return `<div class="body"><svg viewBox="0 0 250 280" role="img" aria-label="${N[0]} / ${N[1]}">${fig('F',0)}${fig('B',130)}</svg>
+    <div class="legend">${['cur','old','chr'].filter(c=>used.has(c)).map((c,i)=>`<span><i class="bz ${c}"></i>${N[2+['cur','old','chr'].indexOf(c)]}</span>`).join('')}</div></div>`;
+}
+
 /* ---------- fiches fin de stage ---------- */
 const FT={
 fr:{tab_fiches:'Fiches fin de stage',fi_t:'Fiches fin de stage',fi_l:'Bilan du rassemblement, tiré des briefings validés et des séances saisies. Rien à ressaisir.',fi_period:'Du {a} au {b} · {n} jour(s) · {m} match(s)',fi_print:'Imprimer / PDF',fi_send:'Envoyer les liens',fi_sendL:'Message court avec le lien de la fiche, pour chaque groupe.',fi_none:'Aucun briefing validé pour l\'instant.',
@@ -689,6 +732,8 @@ function campStats(){
       if(d.pc==='soins')o.soins.push({k,d});if(d.pc==='recup')o.recup++;
       if(d.aig&&!o.aig[d.aig])o.aig[d.aig]={d,since:d.aigd||k};if(d.chr)o.chr=d;
       if(d.pl==='oui')o.pl.push({k,d});if(d.rec){o.rec=d;o.recDay=k}});
+    const ld=o.last&&S.drafts&&S.drafts[o.last]&&S.drafts[o.last].players[id];o.aigCur=ld&&ld.aig||'';
+    o.marks=[...Object.entries(o.aig).map(([txt,a])=>({z:zoneOf(a.d,'aig'),c:txt===o.aigCur&&!o.left?'cur':'old',n:1})),...(o.chr?[{z:zoneOf(o.chr,'chr'),c:'chr',n:1}]:[])].filter(m=>m.z);
     P[id]=o;
   });
   const list=ids.map(id=>P[id]).sort((a,b)=>POS.indexOf(a.p.poste)-POS.indexOf(b.p.poste)||(a.p.num??99)-(b.p.num??99));
@@ -704,7 +749,7 @@ const matchName=(C,k)=>`${esc(C.M[k].opp||t('h_match'))} · ${dm(k)}`;
 
 function ficheMedical(C){
   const types={};Object.keys(S.drafts||{}).filter(k=>k>=C.first&&k<=C.last).forEach(k=>Object.values(S.drafts[k].players).forEach(x=>{if(LOST.includes(x.s)&&x.t)types[x.t]=(types[x.t]||0)+1}));
-  const aig=C.list.flatMap(o=>Object.entries(o.aig).map(([txt,a])=>`<b>${nmP(o)}</b> · ${esc(tx(a.d,'aig'))} (${t('fi_since',{d:dm(a.since)})}) · ${t('c_end').toLowerCase()} : ${o.lastX?t('s_'+o.lastX.s):'—'}`));
+  const aig=C.list.flatMap(o=>Object.entries(o.aig).map(([txt,a])=>`<b>${nmP(o)}</b> · ${esc(tx(a.d,'aig'))}${zoneOf(a.d,'aig')?` [${esc(zLabel(zoneOf(a.d,'aig')))}]`:''} (${t('fi_since',{d:dm(a.since)})}) · ${t('c_end').toLowerCase()} : ${o.lastX?t('s_'+o.lastX.s):'—'}`));
   const chr=C.list.filter(o=>o.chr).map(o=>`<b>${nmP(o)}</b> · ${esc(tx(o.chr,'chr'))}`);
   const care=C.list.filter(o=>o.soins.length||o.recup).map(o=>[nmP(o),o.soins.length,o.recup,careRuns(o.soins,d=>d.pct?esc(tx(d,'pct')):'').join('<br>')]);
   const pl=C.list.flatMap(o=>o.pl.map(x=>`<b>${nmP(o)}</b> · ${dm(x.k)}${x.d.plt?' : '+esc(tx(x.d,'plt')):''}`));
@@ -714,6 +759,7 @@ function ficheMedical(C){
     (Object.keys(types).length?`<p class="sync">${t('byType')} : ${Object.entries(types).sort((a,b)=>b[1]-a[1]).map(([k,n])=>`${t('t_'+k)} ${n}`).join(' · ')}</p>`:''))+
   sec(t('h_player'),tbl([t('c_player'),t('c_pres'),t('s_indispo'),t('s_soins'),t('s_reath'),t('c_ad'),t('c_full'),t('c_abs'),t('c_end')],
     C.list.map(o=>[nmP(o),o.pres,o.st.indispo||0,o.st.soins||0,o.st.reath||0,o.ad,o.full,o.abs,o.left?t('fi_dep',{d:dm(o.left)}):o.lastX?t('s_'+o.lastX.s):'—']),[1,2,3,4,5,6,7]))+
+  (()=>{const g={};C.list.forEach(o=>o.marks.forEach(m=>{const k=m.z+'|'+m.c;g[k]=g[k]||{z:m.z,c:m.c,n:0};g[k].n++}));const ms=Object.values(g);return ms.length?sec(t('h_map'),bodySVG(ms)):''})()+
   sec(t('h_aig'),ul(aig))+sec(t('h_chr'),ul(chr))+
   sec(t('h_care'),tbl([t('c_player'),t('c_soins'),t('c_recup'),t('care')],care,[1,2]))+
   (C.mdays.length?sec(t('h_pl'),ul(pl)):'')+
@@ -769,7 +815,7 @@ function resumeText(C,o,L,html){
     :`*${rt(L,'t')}*\n${o.p.nom} · ${rt(L,o.p.poste)}${o.p.club?' · '+o.p.club:''}\n${rt(L,'per',{a:dm(o.first||C.first),b:dm(o.left||o.last||C.last)})}`);
   out.push(H(rt(L,'avail')));out.push(li([rt(L,'pres',{n:o.pres}),rt(L,'full',{n:o.full}),...(o.ad?[rt(L,'ad',{n:o.ad})]:[]),...(o.lost?[rt(L,'lost',{n:o.lost})]:[]),rt(L,'rate',{r:o.rate??'—'})]));
   out.push(H(rt(L,'match')));out.push(o.mt?li(C.mdays.filter(k=>k in o.per).map(k=>rt(L,'vs',{o:C.M[k].opp,d:dm(k),m:o.per[k]}))):(html?`<p class="sync">${rt(L,'nomatch')}</p>`:rt(L,'nomatch')));
-  out.push(H(rt(L,'aig')));out.push(li(Object.values(o.aig).map(a=>`${ft(a.d,'aig')} (${dm(a.since)})`)));
+  out.push(H(rt(L,'aig')));if(html&&o.marks.length)out.push(bodySVG(o.marks,L));out.push(li(Object.values(o.aig).map(a=>`${ft(a.d,'aig')}${zoneOf(a.d,'aig')?' — '+zLabel(zoneOf(a.d,'aig'),L):''} (${dm(a.since)})`)));
   if(o.chr){out.push(H(rt(L,'chr')));out.push(li([ft(o.chr,'chr')]))}
   out.push(H(rt(L,'care')));out.push(li([...careRuns(o.soins,d=>d.pct?ft(d,'pct'):''),...(o.recup?[rt(L,'recup',{n:o.recup})]:[])]));
   const x=o.lastX;out.push(H(rt(L,'end')));out.push(li(x?[o.left?rt(L,'s_parti'):rt(L,'s_'+x.s),...(x.c?[`${rt(L,'cons')} : ${L==='en'?x.c:tx(x,'c',TL_)}`]:[]),...(x.r?[`→ ${dm(x.r)}`]:[])]:[]));
@@ -889,6 +935,7 @@ V.addEventListener('change',e=>{
   if(el.dataset.f==='cp'){const id=el.closest('[data-id]').dataset.id,x={...pl(id)};x.cp=el.value;if(el.value!=='oui')x.cpm=0;setPlayer(id,x);return render(true)}
   if(el.dataset.f==='aw'||el.dataset.f==='tl'){const id=el.closest('[data-id]').dataset.id,x={...pl(id)};x[el.dataset.f]=el.value;if(el.dataset.f==='aw'&&el.value!=='oui'){x.tl='non';x.awt=''}setPlayer(id,x);return render(true)}
   if(el.dataset.f==='pl'){const id=el.closest('[data-id]').dataset.id,x={...pl(id)};x.pl=el.value;if(el.value!=='oui')x.plt='';setPlayer(id,x);return render(true)}
+  if(el.dataset.f==='aigz'||el.dataset.f==='chrz'){const id=el.closest('[data-id]').dataset.id,x={...pl(id)};x[el.dataset.f]=el.value;setPlayer(id,x);return}
   if(el.dataset.f==='aigd'||el.dataset.f==='pc'){const id=el.closest('[data-id]').dataset.id,x={...pl(id)};x[el.dataset.f]=el.value;if(el.dataset.f==='pc'&&el.value!=='soins')x.pct='';setPlayer(id,x);if(el.dataset.f==='pc')render(true);return}
   if(el.dataset.f==='t'||el.dataset.f==='r'){const id=el.closest('[data-id]').dataset.id,x={...pl(id)};x[el.dataset.f]=el.value;setPlayer(id,x);return}
   if(el.dataset.photo&&el.files[0]){const p={...byId(el.dataset.photo)};const f=el.files[0];el.value='';cropDialog(f).then(u=>{if(!u)return null;p.photo=u;return Store.savePlayer(p).then(()=>{toast(t('photoOk'));render(true)})}).catch(()=>toast(t('photoKo')));return}
