@@ -60,6 +60,11 @@ h2{font-family:var(--f-display);font-size:20px;font-weight:600;margin:0;text-tra
 .btn{font:inherit;font-weight:600;border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:9px 14px;border-radius:8px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
 .btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
 .btn.wa{background:var(--wa);border-color:var(--wa);color:#fff}
+.kpis{display:flex;gap:24px;flex-wrap:wrap;margin:4px 0 10px}.kpis div{display:grid}.kpis b{font-size:26px;font-family:var(--f-mono)}
+.fiche{display:grid;gap:14px}.fiche h2.ftitle{margin:0}.fsec h2{margin:0 0 10px;font-size:18px}.fsec h3{margin:12px 0 6px;font-size:14px}.fsec p{margin:4px 0}
+.fl{margin:0;padding-left:18px;display:grid;gap:4px}.reslist{display:flex;flex-wrap:wrap;gap:6px}.reslist .btn{display:inline-flex;gap:6px;align-items:center}
+.resume h2{margin:0 0 6px}.resume h3{margin:14px 0 4px;font-size:15px}.resume .sig{margin-top:18px;font-style:italic}
+@media print{header.app,.noprint,.note.warn,#toast{display:none!important}body{background:#fff}.wrap{max-width:none;padding:0}.panel{box-shadow:none;border:1px solid #ddd;break-inside:avoid}.tbl{overflow:visible}th,td{white-space:normal}.head .datebar{display:none}}
 .btn.danger{background:var(--s-indispo);border-color:var(--s-indispo);color:#fff}
 .alertbox{border:2px solid var(--s-indispo);background:color-mix(in srgb,var(--s-indispo) 8%,var(--surface));display:grid;gap:10px}
 .alertbox pre.msg{margin:0;font-weight:600}
@@ -211,6 +216,6 @@ img.av{display:block}
 <div class="toast" id="toast" hidden></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3/dist/umd/supabase.js"></script>
 <script src="config.js?v=20261110b"></script>
-<script src="app.js?v=20261117c"></script>
+<script src="app.js?v=20261117d"></script>
 </body>
 </html>

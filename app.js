@@ -107,7 +107,7 @@ const ROLES=['medical','prepa','coach','tm','direction'], LABELS=['matin','aprem
 // étiquette proposée par défaut : avant-match puis après-match les jours de match
 const defLabel=(sends,d)=>{if(d&&d.match?.on){const ls_=sends.map(x=>x.label);return ls_.includes('avmatch')?'match':'avmatch'}return ['matin','aprem','soir'][Math.min(sends.length,2)]};
 const gOf=x=>x.g||(['ok','adapte'].includes(x.s)?'ok':'no');
-const TABS={medical:['medical','wa','prepa','coach','direction','roster','staff'],prepa:['prepa','coach'],coach:['coach'],tm:['coach'],direction:['direction','coach']};
+const TABS={medical:['medical','wa','prepa','coach','direction','roster','staff','fiches'],prepa:['prepa','coach','fiches'],coach:['coach','fiches'],tm:['coach','fiches'],direction:['direction','coach','fiches']};
 
 /* ---------- dates ---------- */
 const pad=n=>String(n).padStart(2,'0');
@@ -615,6 +615,7 @@ function viewRoster(){
     <label class="f">${t('nom')}<input type="text" id="rm-${p.id}" data-pf="nom" value="${esc(p.nom)}"></label>
     <label class="f">${t('poste')}<select id="rp-${p.id}" data-pf="poste">${POS.map(k=>`<option value="${k}"${k===p.poste?' selected':''}>${t(k+'1')}</option>`).join('')}</select></label>
     <label class="f">${t('club')}<input type="text" id="rc-${p.id}" data-pf="club" value="${esc(p.club)}"></label>
+    <label class="f">${t('phone')}<input type="tel" id="rw-${p.id}" data-pf="phone" inputmode="numeric" value="${esc(p.phone||'')}" placeholder="244…"></label>
     <label class="f">${t('arr')}<input type="date" id="ra-${p.id}" data-pf="added_on" value="${p.added_on||''}"></label>
     <label class="f">${t('dep')}<input type="date" id="rd-${p.id}" data-pf="left_on" value="${p.left_on||''}"></label>
     <button class="btn small" data-delp="${p.id}">${t('del')}</button></div>`).join('')}
@@ -633,9 +634,168 @@ function viewLogin(msg){
     <div class="bar"><button class="btn primary" data-auth="in">${t('signin')}</button><button class="btn" data-auth="up">${t('signup')}</button></div></form>`;
 }
 
+/* ---------- fiches fin de stage ---------- */
+const FT={
+fr:{tab_fiches:'Fiches fin de stage',fi_t:'Fiches fin de stage',fi_l:'Bilan du rassemblement, tiré des briefings validés et des séances saisies. Rien à ressaisir.',fi_period:'Du {a} au {b} · {n} jour(s) · {m} match(s)',fi_print:'Imprimer / PDF',fi_send:'Envoyer les liens',fi_sendL:'Message court avec le lien de la fiche, pour chaque groupe.',fi_none:'Aucun briefing validé pour l\'instant.',
+ f_medical:'Médical',f_coach:'Staff technique',f_prepa:'Prépa physique',f_tm:'Team manager',f_direction:'Direction',
+ fi_medOnly:'Fiche réservée au staff médical, à relire et valider par le médecin.',
+ h_global:'Bilan global',h_player:'Par joueur',h_aig:'Pathologies aiguës apparues pendant le stage',h_chr:'Pathologies chroniques suivies',h_care:'Soins et récupération',h_pl:'Plaintes après-match',h_watchEnd:'À surveiller au retour en club',h_res:'Résumés individuels',h_day:'Effectif par jour',h_match:'Matchs',h_watch:'Joueurs à surveiller',h_mov:'Mouvements',h_load:'Charge par joueur',h_ra:'Réathlé et adapté',h_end:'Au départ du stage',h_pres:'Présence',h_abs:'Absences à l\'entraînement',h_left:'Départs anticipés',h_fin:'Fin de stage : joueurs libérés',h_avail:'Disponibilité',h_lost:'Jours perdus',h_eff:'Effectif',h_follow:'À suivre',
+ c_player:'Joueur',c_pos:'Poste',c_pres:'Présent',c_full:'Complets',c_ad:'Adapté',c_lost:'Manqués',c_rate:'Dispo',c_min:'Minutes',c_abs:'Absent',c_end:'Au départ',c_day:'Jour',c_soins:'Soins',c_recup:'Récup',c_sess:'Séances',c_dur:'Durée',c_ua:'Charge (UA)',c_gps:'GPS (m)',c_reath:'Réathlé',c_ret:'Retour complet',c_comp:'Compensation',c_club:'Club',c_date:'Date',c_n:'Effectif',c_names:'Joueurs',c_ind:'Indispo',c_ok:'Dispo',
+ k_rate:'Taux de disponibilité',k_lost:'Jours perdus',k_mean:'Moyenne par joueur',k_conv:'Joueurs convoqués',k_arr:'Arrivés en cours de stage',k_left:'Partis avant la fin',k_absP:'Joueurs absents au moins un jour',k_mrate:'Disponibles le jour du match',k_miss:'Indisponibles pour le match',
+ fi_since:'depuis le {d}',fi_noData:'Rien à signaler.',fi_watchD:'{n} jour(s) signalé',fi_stillW:'encore signalé au départ',fi_arr:'arrivé le {d}',fi_dep:'parti le {d}',fi_absD:'absent {n} jour(s)',fi_res:'Résumé',fi_wa:'WhatsApp',fi_noPh:'Numéro du joueur manquant (onglet Effectif)',fi_back:'Retour aux fiches',fi_missH:'Matchs manqués',care:'Détail des soins',phone:'WhatsApp du joueur',fi_linkMsg:'Fiche fin de stage — {r} ({p}) :\n{u}'},
+pt:{tab_fiches:'Fichas fim de estágio',fi_t:'Fichas fim de estágio',fi_l:'Balanço do estágio, a partir dos briefings validados e das sessões registadas. Nada a voltar a registar.',fi_period:'De {a} a {b} · {n} dia(s) · {m} jogo(s)',fi_print:'Imprimir / PDF',fi_send:'Enviar os links',fi_sendL:'Mensagem curta com o link da ficha, para cada grupo.',fi_none:'Ainda não há briefing validado.',
+ f_medical:'Médico',f_coach:'Equipa técnica',f_prepa:'Preparação física',f_tm:'Team manager',f_direction:'Direção',
+ fi_medOnly:'Ficha reservada à equipa médica, a rever e validar pelo médico.',
+ h_global:'Balanço global',h_player:'Por jogador',h_aig:'Patologias agudas surgidas durante o estágio',h_chr:'Patologias crónicas acompanhadas',h_care:'Tratamentos e recuperação',h_pl:'Queixas pós-jogo',h_watchEnd:'A vigiar no regresso ao clube',h_res:'Resumos individuais',h_day:'Efetivo por dia',h_match:'Jogos',h_watch:'Jogadores a vigiar',h_mov:'Movimentos',h_load:'Carga por jogador',h_ra:'Readaptação e treino adaptado',h_end:'À saída do estágio',h_pres:'Presença',h_abs:'Ausências ao treino',h_left:'Saídas antecipadas',h_fin:'Fim de estágio: jogadores libertados',h_avail:'Disponibilidade',h_lost:'Dias perdidos',h_eff:'Efetivo',h_follow:'A acompanhar',
+ c_player:'Jogador',c_pos:'Posição',c_pres:'Presente',c_full:'Completos',c_ad:'Adaptado',c_lost:'Perdidos',c_rate:'Disp.',c_min:'Minutos',c_abs:'Ausente',c_end:'À saída',c_day:'Dia',c_soins:'Trat.',c_recup:'Recup.',c_sess:'Sessões',c_dur:'Duração',c_ua:'Carga (UA)',c_gps:'GPS (m)',c_reath:'Readapt.',c_ret:'Regresso completo',c_comp:'Compensação',c_club:'Clube',c_date:'Data',c_n:'Efetivo',c_names:'Jogadores',c_ind:'Indisp.',c_ok:'Disp.',
+ k_rate:'Taxa de disponibilidade',k_lost:'Dias perdidos',k_mean:'Média por jogador',k_conv:'Jogadores convocados',k_arr:'Chegaram durante o estágio',k_left:'Saíram antes do fim',k_absP:'Jogadores ausentes pelo menos um dia',k_mrate:'Disponíveis no dia do jogo',k_miss:'Indisponíveis para o jogo',
+ fi_since:'desde {d}',fi_noData:'Nada a assinalar.',fi_watchD:'{n} dia(s) assinalado',fi_stillW:'ainda assinalado à saída',fi_arr:'chegou a {d}',fi_dep:'saiu a {d}',fi_absD:'ausente {n} dia(s)',fi_res:'Resumo',fi_wa:'WhatsApp',fi_noPh:'Número do jogador em falta (separador Efetivo)',fi_back:'Voltar às fichas',fi_missH:'Jogos falhados',care:'Detalhe dos tratamentos',phone:'WhatsApp do jogador',fi_linkMsg:'Ficha fim de estágio — {r} ({p}):\n{u}'}};
+Object.keys(FT).forEach(L=>Object.assign(T[L],FT[L]));
+// résumé individuel : FR / PT / EN
+const RT={
+fr:{t:'Résumé médical du rassemblement',per:'Rassemblement du {a} au {b}',avail:'Disponibilité',pres:'{n} jour(s) présent',full:'{n} jour(s) d\'entraînement complet',ad:'{n} jour(s) en entraînement adapté',lost:'{n} jour(s) indisponible',rate:'Taux de disponibilité : {r} %',match:'Matchs',vs:'vs {o} ({d}) : {m} min',nomatch:'Aucun match pendant sa présence.',aig:'Pathologies apparues',chr:'Pathologies chroniques suivies',care:'Soins reçus',recup:'{n} séance(s) de récupération',end:'Statut au départ',cons:'Consigne',none:'Rien à signaler.',sig:'{n}, staff médical de la sélection',G:'Gardien',D:'Défenseur',M:'Milieu',A:'Attaquant',s_indispo:'Indisponible',s_soins:'En soins',s_reath:'En réathlé',s_adapte:'Entraînement adapté',s_ok:'Sans restriction',s_absent:'Absent',s_parti:'A quitté le rassemblement'},
+pt:{t:'Resumo médico do estágio',per:'Estágio de {a} a {b}',avail:'Disponibilidade',pres:'{n} dia(s) presente',full:'{n} dia(s) de treino completo',ad:'{n} dia(s) de treino adaptado',lost:'{n} dia(s) indisponível',rate:'Taxa de disponibilidade: {r} %',match:'Jogos',vs:'vs {o} ({d}): {m} min',nomatch:'Nenhum jogo durante a presença.',aig:'Patologias surgidas',chr:'Patologias crónicas acompanhadas',care:'Tratamentos recebidos',recup:'{n} sessão(ões) de recuperação',end:'Estado à saída',cons:'Indicação',none:'Nada a assinalar.',sig:'{n}, equipa médica da seleção',G:'Guarda-redes',D:'Defesa',M:'Médio',A:'Avançado',s_indispo:'Indisponível',s_soins:'Em tratamento',s_reath:'Em readaptação',s_adapte:'Treino adaptado',s_ok:'Sem restrição',s_absent:'Ausente',s_parti:'Deixou o estágio'},
+en:{t:'Medical summary of the national team camp',per:'Camp from {a} to {b}',avail:'Availability',pres:'{n} day(s) present',full:'{n} day(s) of full training',ad:'{n} day(s) of modified training',lost:'{n} day(s) unavailable',rate:'Availability rate: {r} %',match:'Matches',vs:'vs {o} ({d}): {m} min',nomatch:'No match during his stay.',aig:'Injuries / complaints during the camp',chr:'Chronic conditions followed',care:'Treatments received',recup:'{n} recovery session(s)',end:'Status at departure',cons:'Recommendation',none:'Nothing to report.',sig:'{n}, national team medical staff',G:'Goalkeeper',D:'Defender',M:'Midfielder',A:'Forward',s_indispo:'Unavailable',s_soins:'Under treatment',s_reath:'Return to play',s_adapte:'Modified training',s_ok:'No restriction',s_absent:'Absent',s_parti:'Left the camp'}};
+const rt=(L,k,v={})=>String(RT[L][k]??k).replace(/\{(\w+)\}/g,(_,x)=>v[x]??'');
+const FICHES_OF={medical:['medical','coach','prepa','tm','direction'],prepa:['prepa'],coach:['coach'],tm:['tm'],direction:['direction']};
+let FICHE=null, RES_P=null, RES_L='pt';
+const pct=(a,b)=>b?Math.round(a/b*100):0;
+// regroupe les jours de soins successifs au même texte : 12/11 → 18/11 (7 j) : massage
+function careRuns(list,ft){const r=[];list.forEach(x=>{const txt=ft(x.d),l=r[r.length-1];if(l&&l.txt===txt&&addDays(l.b,1)===x.k){l.b=x.k;l.n++}else r.push({a:x.k,b:x.k,n:1,txt})});
+  return r.map(x=>`${dm(x.a)}${x.n>1?` → ${dm(x.b)} (${x.n} j)`:''}${x.txt?' : '+x.txt:''}`)}
+
+function campStats(){
+  const days=[...new Set(S.sends.map(s=>s.day))].sort();
+  const fin={};days.forEach(k=>{const l=sendsOf(k);fin[k]=l[l.length-1]});
+  const mdays=days.filter(k=>sendsOf(k).some(s=>s.match?.on));
+  const M={};mdays.forEach(k=>{const l=sendsOf(k),any=l.filter(s=>s.match?.on),post=l.filter(s=>s.label==='match'),av_=l.filter(s=>s.label==='avmatch'&&Object.values(s.snap).some(x=>x.g));
+    M[k]={opp:(any[any.length-1]||{}).match?.opp||'',post:post[post.length-1]||null,av:av_[av_.length-1]||null,all:l}});
+  const ids=[...new Set(days.flatMap(k=>Object.keys(fin[k].snap)))].filter(byId);
+  const P={};
+  ids.forEach(id=>{
+    const o={p:byId(id),pres:0,st:{},abs:0,first:null,last:null,lastX:null,left:null,mins:0,mt:0,miss:0,per:{},cp:{},watch:0,soins:[],recup:0,aig:{},chr:'',pl:[],ra:false,ret:null,raD:{reath:0,adapte:0}};
+    days.forEach(k=>{const x=fin[k].snap[id];if(!x)return;
+      if(x.s==='parti'){if(!o.left)o.left=k;return}
+      if(x.s==='absent'){o.abs++;return}
+      o.pres++;o.st[x.s]=(o.st[x.s]||0)+1;if(!o.first)o.first=k;o.last=k;o.lastX=x;if(x.w)o.watch++;
+      if(['reath','adapte'].includes(x.s)){o.ra=true;o.ret=null;o.raD[x.s]++}else if(x.s==='ok'&&o.ra&&!o.ret)o.ret=k;
+      if(M[k]){const m=Math.max(0,...M[k].all.map(s=>+(s.snap[id]&&s.snap[id].m)||0));o.mt++;o.per[k]=m;o.mins+=m;
+        const g=M[k].av&&M[k].av.snap[id]&&M[k].av.snap[id].g;if(!m&&(g==='no'||LOST.includes(x.s)))o.miss++;
+        const c=M[k].post&&M[k].post.snap[id];if(c&&c.cp)o.cp[k]=c.cp==='oui'?(+c.cpm||0):0}
+    });
+    if(o.p.left_on&&!o.left)o.left=o.p.left_on;
+    o.full=o.st.ok||0;o.ad=o.st.adapte||0;o.lost=LOST.reduce((a,s)=>a+(o.st[s]||0),0);o.rate=o.pres?pct(o.pres-o.lost,o.pres):null;
+    Object.keys(S.drafts||{}).sort().filter(k=>!days.length||(k>=days[0]&&k<=days[days.length-1])).forEach(k=>{const d=S.drafts[k].players[id];if(!d)return;
+      if(d.pc==='soins')o.soins.push({k,d});if(d.pc==='recup')o.recup++;
+      if(d.aig&&!o.aig[d.aig])o.aig[d.aig]={d,since:d.aigd||k};if(d.chr)o.chr=d;
+      if(d.pl==='oui')o.pl.push({k,d})});
+    P[id]=o;
+  });
+  const list=ids.map(id=>P[id]).sort((a,b)=>POS.indexOf(a.p.poste)-POS.indexOf(b.p.poste)||(a.p.num??99)-(b.p.num??99));
+  const tot={pres:0,lost:0};list.forEach(o=>{tot.pres+=o.pres;tot.lost+=o.lost});
+  return {days,fin,mdays,M,P,list,tot,first:days[0],last:days[days.length-1]};
+}
+const tbl=(hd,rows,num=[])=>`<div class="tbl"><table><thead><tr>${hd.map((h,i)=>`<th${num.includes(i)?' class="n"':''}>${h}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr>${r.map((c,i)=>`<td${num.includes(i)?' class="n"':''}>${c}</td>`).join('')}</tr>`).join('')||`<tr><td colspan="${hd.length}" class="sync">${t('fi_noData')}</td></tr>`}</tbody></table></div>`;
+const sec=(h,body)=>`<section class="panel pad fsec"><h2>${h}</h2>${body}</section>`;
+const kpis=a=>`<div class="kpis">${a.map(([k,v])=>`<div><b>${v}</b><span class="sync">${k}</span></div>`).join('')}</div>`;
+const ul=a=>a.length?`<ul class="fl">${a.map(x=>`<li>${x}</li>`).join('')}</ul>`:`<p class="sync">${t('fi_noData')}</p>`;
+const nmP=o=>esc(o.p.nom);
+const matchName=(C,k)=>`${esc(C.M[k].opp||t('h_match'))} · ${dm(k)}`;
+
+function ficheMedical(C){
+  const types={};Object.keys(S.drafts||{}).filter(k=>k>=C.first&&k<=C.last).forEach(k=>Object.values(S.drafts[k].players).forEach(x=>{if(LOST.includes(x.s)&&x.t)types[x.t]=(types[x.t]||0)+1}));
+  const aig=C.list.flatMap(o=>Object.entries(o.aig).map(([txt,a])=>`<b>${nmP(o)}</b> · ${esc(tx(a.d,'aig'))} (${t('fi_since',{d:dm(a.since)})}) · ${t('c_end').toLowerCase()} : ${o.lastX?t('s_'+o.lastX.s):'—'}`));
+  const chr=C.list.filter(o=>o.chr).map(o=>`<b>${nmP(o)}</b> · ${esc(tx(o.chr,'chr'))}`);
+  const care=C.list.filter(o=>o.soins.length||o.recup).map(o=>[nmP(o),o.soins.length,o.recup,careRuns(o.soins,d=>d.pct?esc(tx(d,'pct')):'').join('<br>')]);
+  const pl=C.list.flatMap(o=>o.pl.map(x=>`<b>${nmP(o)}</b> · ${dm(x.k)}${x.d.plt?' : '+esc(tx(x.d,'plt')):''}`));
+  const we=C.list.filter(o=>o.lastX&&!o.left&&(o.lastX.w||o.lastX.s!=='ok')).map(o=>`<b>${nmP(o)}</b> · ${t('s_'+o.lastX.s)}${o.lastX.c?' · '+esc(tx(o.lastX,'c')):''}`);
+  return `<div class="note">${LOCK}<span>${t('fi_medOnly')}</span></div>`+
+  sec(t('h_global'),kpis([[t('k_rate'),pct(C.tot.pres-C.tot.lost,C.tot.pres)+' %'],[t('k_lost'),C.tot.lost],[t('k_mean'),(C.list.length?(C.tot.lost/C.list.length).toFixed(1):'0')]])+
+    (Object.keys(types).length?`<p class="sync">${t('byType')} : ${Object.entries(types).sort((a,b)=>b[1]-a[1]).map(([k,n])=>`${t('t_'+k)} ${n}`).join(' · ')}</p>`:''))+
+  sec(t('h_player'),tbl([t('c_player'),t('c_pres'),t('s_indispo'),t('s_soins'),t('s_reath'),t('c_ad'),t('c_full'),t('c_abs'),t('c_end')],
+    C.list.map(o=>[nmP(o),o.pres,o.st.indispo||0,o.st.soins||0,o.st.reath||0,o.ad,o.full,o.abs,o.left?t('fi_dep',{d:dm(o.left)}):o.lastX?t('s_'+o.lastX.s):'—']),[1,2,3,4,5,6,7]))+
+  sec(t('h_aig'),ul(aig))+sec(t('h_chr'),ul(chr))+
+  sec(t('h_care'),tbl([t('c_player'),t('c_soins'),t('c_recup'),t('care')],care,[1,2]))+
+  (C.mdays.length?sec(t('h_pl'),ul(pl)):'')+
+  sec(t('h_watchEnd'),ul(we))+
+  sec(t('h_res'),`<div class="reslist">${C.list.map(o=>`<button class="btn small" data-res="${o.p.id}">${av(o.p,'sm')} ${nmP(o)}</button>`).join('')}</div>`);
+}
+function ficheCoach(C){
+  const day=C.days.map(k=>{const sn=C.fin[k].snap,ids=Object.keys(sn).filter(id=>byId(id)&&!['parti','absent'].includes(sn[id].s));
+    return [dm(k)+(C.M[k]?' ⚽':''),...POS.map(po=>{const a=ids.filter(id=>byId(id).poste===po);return `${a.filter(id=>CAT(sn[id].s)!=='indispo').length}/${a.length}`}),ids.filter(id=>sn[id].s==='ok').length,ids.filter(id=>sn[id].s==='adapte').length,ids.filter(id=>CAT(sn[id].s)==='indispo').length]});
+  const byPos=POS.map(po=>{const l=C.list.filter(o=>o.p.poste===po);return l.length?`<h3>${t(po)}</h3>`+tbl([t('c_player'),t('c_full'),t('c_ad'),t('c_lost'),t('c_rate'),t('c_min')],l.map(o=>[nmP(o),o.full,o.ad,o.lost,(o.rate??'—')+' %',o.mins+'′']),[1,2,3,4,5]):''}).join('');
+  const matches=C.mdays.map(k=>{const pl_=C.list.filter(o=>o.per[k]>0).sort((a,b)=>b.per[k]-a.per[k]),un=C.list.filter(o=>k in o.per&&!o.per[k]&&((C.M[k].av&&C.M[k].av.snap[o.p.id]&&C.M[k].av.snap[o.p.id].g==='no')||LOST.includes(C.fin[k].snap[o.p.id].s)));
+    return `<h3>${matchName(C,k)}</h3>${pl_.length?`<p>${pl_.map(o=>`${nmP(o)} ${o.per[k]}′`).join(' · ')}</p>`:''}${un.length?`<p class="sync">${t('k_miss')} : ${un.map(nmP).join(', ')}</p>`:''}`}).join('')||`<p class="sync">${t('fi_noData')}</p>`;
+  const w=C.list.filter(o=>o.watch).map(o=>`<b>${nmP(o)}</b> · ${t('fi_watchD',{n:o.watch})}${o.lastX&&o.lastX.w&&!o.left?' · '+t('fi_stillW'):''}`);
+  return sec(t('h_day'),tbl([t('c_day'),...POS.map(po=>po),t('c_ok'),t('c_ad'),t('c_ind')],day,[1,2,3,4,5,6,7]))+sec(t('h_player'),byPos)+sec(t('h_match'),matches)+sec(t('h_watch'),ul(w))+sec(t('h_mov'),ul(movements(C)));
+}
+function movements(C){
+  return C.list.flatMap(o=>{const a=[];if(o.p.added_on&&o.p.added_on>C.first)a.push(`<b>${nmP(o)}</b> · ${t('fi_arr',{d:dm(o.p.added_on)})}`);if(o.abs)a.push(`<b>${nmP(o)}</b> · ${t('fi_absD',{n:o.abs})}`);if(o.left)a.push(`<b>${nmP(o)}</b> · ${t('fi_dep',{d:dm(o.left)})}`);return a});
+}
+function fichePrepa(C){
+  const load=C.list.map(o=>{const l=(S.prepa||[]).filter(e=>e.player_id===o.p.id&&e.day>=C.first&&e.day<=C.last);return l.length?[nmP(o),l.length,l.reduce((a,e)=>a+(+e.dur||0),0)+'′',l.reduce((a,e)=>a+(+e.dur||0)*(+e.rpe||0),0),l.reduce((a,e)=>a+(+e.gps||0),0)]:null}).filter(Boolean);
+  const ra=C.list.filter(o=>o.raD.reath||o.raD.adapte).map(o=>[nmP(o),o.raD.reath,o.raD.adapte,o.ret?dm(o.ret):(o.lastX&&['reath','adapte'].includes(o.lastX.s)?'—':'')]);
+  const m=C.list.filter(o=>o.mt).map(o=>[nmP(o),...C.mdays.map(k=>k in o.per?(o.per[k]?o.per[k]+'′':(k in o.cp?(o.cp[k]?`${t('c_comp')} ${o.cp[k]}′`:t('c_comp')+' —'):'0')):''),o.mins+'′']);
+  const end=C.list.filter(o=>o.lastX&&!o.left&&['reath','adapte'].includes(o.lastX.s)).map(o=>`<b>${nmP(o)}</b> · ${t('s_'+o.lastX.s)}${o.lastX.c?' · '+esc(tx(o.lastX,'c')):''}`);
+  return sec(t('h_load'),tbl([t('c_player'),t('c_sess'),t('c_dur'),t('c_ua'),t('c_gps')],load,[1,2,3,4]))+sec(t('h_ra'),tbl([t('c_player'),t('c_reath'),t('c_ad'),t('c_ret')],ra,[1,2]))+
+    (C.mdays.length?sec(t('h_match'),tbl([t('c_player'),...C.mdays.map(k=>matchName(C,k)),t('c_min')],m,[...C.mdays.map((_,i)=>i+1),C.mdays.length+1])):'')+sec(t('h_end'),ul(end));
+}
+function ficheTM(C){
+  const pres=C.days.map(k=>{const sn=C.fin[k].snap,ids=Object.keys(sn).filter(byId);return [dm(k)+(C.M[k]?' ⚽':''),ids.filter(id=>!['parti','absent'].includes(sn[id].s)).length,ids.filter(id=>byId(id).added_on===k&&k>C.first).map(id=>esc(byId(id).nom)).join(', '),ids.filter(id=>sn[id].s==='parti'&&!(C.days.indexOf(k)>0&&C.fin[C.days[C.days.indexOf(k)-1]].snap[id]&&C.fin[C.days[C.days.indexOf(k)-1]].snap[id].s==='parti')).map(id=>esc(byId(id).nom)).join(', ')]});
+  const abs=C.days.map(k=>{const sn=C.fin[k].snap,l=Object.keys(sn).filter(id=>byId(id)&&CAT(sn[id].s)==='indispo');return l.length?`<b>${dm(k)}</b> · ${l.map(id=>esc(byId(id).nom)).join(', ')}`:''}).filter(Boolean);
+  const left=C.list.filter(o=>o.left).map(o=>`<b>${nmP(o)}</b> · ${t('fi_dep',{d:dm(o.left)})} · ${esc(o.p.club||'')}`);
+  const fin=C.list.filter(o=>!o.left).map(o=>[nmP(o),t(o.p.poste+'1'),esc(o.p.club||'')]);
+  return sec(t('h_pres'),tbl([t('c_day'),t('c_n'),t('k_arr'),t('k_left')],pres,[1]))+sec(t('h_abs'),ul(abs))+sec(t('h_left'),ul(left))+sec(t('h_fin'),tbl([t('c_player'),t('c_pos'),t('c_club')],fin));
+}
+function ficheDirection(C){
+  const tmap={};(S.typeStats||[]).filter(x=>x.day>=C.first&&x.day<=C.last).forEach(x=>tmap[x.t]=(tmap[x.t]||0)+Number(x.n));
+  const mrows=C.mdays.map(k=>{const sn=C.fin[k].snap,ids=Object.keys(sn).filter(id=>byId(id)&&!['parti','absent'].includes(sn[id].s));const av_=C.M[k].av;
+    const ok=av_?ids.filter(id=>av_.snap[id]&&av_.snap[id].g==='ok'):ids.filter(id=>!LOST.includes(sn[id].s));const no=ids.filter(id=>!ok.includes(id));
+    return [matchName(C,k),`${ok.length}/${ids.length} (${pct(ok.length,ids.length)} %)`,no.map(id=>esc(byId(id).nom)).join(', ')||'—']});
+  const mins=C.list.filter(o=>o.mt).sort((a,b)=>b.mins-a.mins).map(o=>[nmP(o),...C.mdays.map(k=>k in o.per?o.per[k]+'′':''),o.mins+'′',o.miss]);
+  const follow=C.list.filter(o=>o.lastX&&!o.left&&o.lastX.w).map(nmP);
+  return sec(t('h_avail'),kpis([[t('k_rate'),pct(C.tot.pres-C.tot.lost,C.tot.pres)+' %'],[t('h_match'),C.mdays.length]])+(mrows.length?tbl([t('h_match'),t('k_mrate'),t('k_miss')],mrows):''))+
+    sec(t('h_lost'),kpis([[t('k_lost'),C.tot.lost],[t('k_mean'),(C.list.length?(C.tot.lost/C.list.length).toFixed(1):'0')]])+(Object.keys(tmap).length?`<p class="sync">${t('byType')} : ${Object.entries(tmap).sort((a,b)=>b[1]-a[1]).map(([k,n])=>`${t('t_'+k)} ${n}`).join(' · ')}</p>`:''))+
+    (C.mdays.length?sec(t('h_match'),tbl([t('c_player'),...C.mdays.map(k=>matchName(C,k)),t('c_min'),t('fi_missH')],mins,[...C.mdays.map((_,i)=>i+1),C.mdays.length+1,C.mdays.length+2])):'')+
+    sec(t('h_eff'),kpis([[t('k_conv'),C.list.length],[t('k_arr'),C.list.filter(o=>o.p.added_on&&o.p.added_on>C.first).length],[t('k_left'),C.list.filter(o=>o.left).length],[t('k_absP'),C.list.filter(o=>o.abs).length]]))+
+    sec(t('h_follow'),follow.length?`<p>${follow.join(', ')}</p>`:`<p class="sync">${t('fi_noData')}</p>`);
+}
+// résumé individuel d'un joueur, dans la langue L (fr, pt, en) ; textes libres traduits en fr/pt, originaux en anglais
+function resumeText(C,o,L,html){
+  const TL_=L==='en'?'pt':L, ft=(x,k)=>L==='en'?(x[k]||''):tx(x,k,TL_);
+  const H=s=>html?`<h3>${s}</h3>`:`\n*${s}*`, li=a=>a.length?(html?`<ul class="fl">${a.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:a.map(x=>'• '+x).join('\n')):(html?`<p class="sync">${rt(L,'none')}</p>`:rt(L,'none'));
+  const out=[];
+  out.push(html?`<h2>${rt(L,'t')}</h2><p><b>${esc(o.p.nom)}</b> · ${rt(L,o.p.poste)}${o.p.club?' · '+esc(o.p.club):''}<br><span class="sync">${rt(L,'per',{a:dm(o.first||C.first),b:dm(o.left||o.last||C.last)})}</span></p>`
+    :`*${rt(L,'t')}*\n${o.p.nom} · ${rt(L,o.p.poste)}${o.p.club?' · '+o.p.club:''}\n${rt(L,'per',{a:dm(o.first||C.first),b:dm(o.left||o.last||C.last)})}`);
+  out.push(H(rt(L,'avail')));out.push(li([rt(L,'pres',{n:o.pres}),rt(L,'full',{n:o.full}),...(o.ad?[rt(L,'ad',{n:o.ad})]:[]),...(o.lost?[rt(L,'lost',{n:o.lost})]:[]),rt(L,'rate',{r:o.rate??'—'})]));
+  out.push(H(rt(L,'match')));out.push(o.mt?li(C.mdays.filter(k=>k in o.per).map(k=>rt(L,'vs',{o:C.M[k].opp,d:dm(k),m:o.per[k]}))):(html?`<p class="sync">${rt(L,'nomatch')}</p>`:rt(L,'nomatch')));
+  out.push(H(rt(L,'aig')));out.push(li(Object.values(o.aig).map(a=>`${ft(a.d,'aig')} (${dm(a.since)})`)));
+  if(o.chr){out.push(H(rt(L,'chr')));out.push(li([ft(o.chr,'chr')]))}
+  out.push(H(rt(L,'care')));out.push(li([...careRuns(o.soins,d=>d.pct?ft(d,'pct'):''),...(o.recup?[rt(L,'recup',{n:o.recup})]:[])]));
+  const x=o.lastX;out.push(H(rt(L,'end')));out.push(li(x?[o.left?rt(L,'s_parti'):rt(L,'s_'+x.s),...(x.c?[`${rt(L,'cons')} : ${L==='en'?x.c:tx(x,'c',TL_)}`]:[]),...(x.r?[`→ ${dm(x.r)}`]:[])]:[]));
+  out.push(html?`<p class="sig">${esc(rt(L,'sig',{n:S.me.name||''}))}</p>`:'\n'+rt(L,'sig',{n:S.me.name||''}));
+  return out.join(html?'':'\n');
+}
+function viewFiches(){
+  const C=campStats(), mine=FICHES_OF[S.me.role]||[];
+  if(!C.days.length){V.innerHTML=head(t('fi_t'),t('fi_l'),false)+`<div class="panel empty">${t('fi_none')}</div>`;return}
+  const per=t('fi_period',{a:dm(C.first),b:dm(C.last),n:C.days.length,m:C.mdays.length});
+  if(RES_P&&S.me.role==='medical'&&C.P[RES_P]){const o=C.P[RES_P],ph=String(o.p.phone||'').replace(/\D/g,'');
+    V.innerHTML=`<div class="bar noprint"><button class="btn small" id="resBack">← ${t('fi_back')}</button><div class="chips" role="group">${['pt','fr','en'].map(L=>`<button data-resl="${L}" aria-pressed="${RES_L===L}">${L.toUpperCase()}</button>`).join('')}</div>
+      <div class="bar"><button class="btn small" id="fiPrint">${t('fi_print')}</button>${ph?`<a class="btn wa" target="_blank" rel="noopener" href="https://wa.me/${ph}?text=${encodeURIComponent(resumeText(C,o,RES_L,false))}">${t('fi_wa')}</a>`:`<span class="sync">${t('fi_noPh')}</span>`}</div></div>
+      <article class="panel pad fiche resume">${resumeText(C,o,RES_L,true)}</article>`;return}
+  const f=mine.includes(FICHE)?FICHE:mine[0];
+  const build={medical:ficheMedical,coach:ficheCoach,prepa:fichePrepa,tm:ficheTM,direction:ficheDirection}[f];
+  const url=location.origin+location.pathname+'#fiches';
+  const sendP=S.me.role==='medical'&&CAN_SEND()?`<details class="panel pad noprint"><summary><b>${t('fi_send')}</b></summary><p class="sync">${t('fi_sendL')}</p><div class="bar" style="justify-content:flex-start">${['medical','coach','prepa','tm','direction'].filter(r=>r==='medical'||S.staff.some(x=>x.role===r)).map(r=>{const g=(CFG.waGroups||{})[r],m=S.staff.filter(x=>x.role===r),h=g||(m.length===1&&m[0].name?m[0].name:t('r_'+r));
+    const txt=langsOf(r).map(L=>tr(L,'fi_linkMsg',{r:tr(L,'f_'+r),p:`${dm(C.first)}–${dm(C.last)}`,u:url})).join('\n\n');return `<a class="btn wa" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent(txt)}">${esc(h)}</a>`}).join('')}</div></details>`:'';
+  V.innerHTML=head(t('fi_t'),per,false)+`<div class="bar noprint">${mine.length>1?`<div class="chips" role="group">${mine.map(k=>`<button data-fiche="${k}" aria-pressed="${k===f}">${t('f_'+k)}</button>`).join('')}</div>`:'<span></span>'}<button class="btn small" id="fiPrint">${t('fi_print')}</button></div>${sendP}
+  <article class="fiche"><h2 class="ftitle">${t('fi_t')} · ${t('f_'+f)}<br><span class="sync">${per}</span></h2>${build(C)}</article>`;
+}
+
 /* ---------- rendu ---------- */
-const VIEWS={medical:viewMedical,prepa:viewPrepa,coach:viewCoach,direction:viewDirection,wa:viewWA,staff:viewStaff,roster:viewRoster};
-const TL={medical:'tab_medical',prepa:'tab_prepa',coach:'tab_coach',direction:'tab_direction',wa:'tab_wa',staff:'tab_staff',roster:'tab_roster'};
+const VIEWS={fiches:viewFiches,medical:viewMedical,prepa:viewPrepa,coach:viewCoach,direction:viewDirection,wa:viewWA,staff:viewStaff,roster:viewRoster};
+const TL={fiches:'tab_fiches',medical:'tab_medical',prepa:'tab_prepa',coach:'tab_coach',direction:'tab_direction',wa:'tab_wa',staff:'tab_staff',roster:'tab_roster'};
 const CAN_SEND=()=>DEMO||S.me?.can_send!==false;
 const myTabs=()=>TABS[S.me.role].filter(k=>CAN_SEND()||(k!=='wa'&&k!=='staff'));
 const curTab=()=>{const h=location.hash.slice(1),ok=myTabs();return ok.includes(h)?h:ok[0]};
@@ -674,6 +834,11 @@ V.addEventListener('click',async e=>{
   if(el.dataset.copyg){const txt=groupMsg(el.dataset.copyg,curSend());try{await navigator.clipboard.writeText(txt);toast(t('copied'))}catch(err){}return}
   if(el.dataset.send){WA_SEND=+el.dataset.send||el.dataset.send;return render(true)}
   if(el.dataset.path){const id=el.dataset.path;OPEN.has(id)?OPEN.delete(id):OPEN.add(id);return render(true)}
+  if(el.dataset.fiche){FICHE=el.dataset.fiche;return render(true)}
+  if(el.dataset.res){RES_P=el.dataset.res;scrollTo(0,0);return render(true)}
+  if(el.dataset.resl){RES_L=el.dataset.resl;return render(true)}
+  if(el.id==='resBack'){RES_P=null;return render(true)}
+  if(el.id==='fiPrint'){window.print();return}
   if(el.id==='suiviAll'){SUIVI_ALL=!SUIVI_ALL;return render(true)}
   if(el.id==='alertOpen'){AL_FORM=true;return render(true)}
   if(el.id==='alertClose'){AL_FORM=false;return render(true)}
