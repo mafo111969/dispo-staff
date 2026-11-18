@@ -647,7 +647,7 @@ const zLabel=(z,L=LANG)=>{if(!z)return '';const [k,sd]=z.split('-'),N=ZN[L]||ZN.
 // zone déduite du texte libre (FR / PT) quand elle n'a pas été choisie
 function guessZone(txt){
   const s=String(txt||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');if(!s)return '';
-  const R=[[/ischio|isquio|biceps femoral|semi.?tend|semi.?membr/,'isch'],[/adduct|adut/,'add'],[/quadri|droit anterieur|reto femoral|cuisse|coxa/,'quad'],[/achille|aquiles/,'achille'],[/mollet|gastroc|soleaire|solear|jumeau|gemeo|panturr/,'mollet'],
+  const R=[[/commotion|comoc|concuss|cerebr|crani|\btc\b|\bko\b|traumatisme cr|tete|cabeca|visage|rosto|nez\b|nariz|oeil|olho|machoire|mandib|arcade|sourcil/,'tete'],[/ischio|isquio|biceps femoral|semi.?tend|semi.?membr/,'isch'],[/adduct|adut/,'add'],[/quadri|droit anterieur|reto femoral|cuisse|coxa/,'quad'],[/achille|aquiles/,'achille'],[/mollet|gastroc|soleaire|solear|jumeau|gemeo|panturr/,'mollet'],
     [/genou|rotul|menisq|menisc|lca|lcp|joelho|patel/,'genou'],[/cheville|tornozel|entorse lat/,'cheville'],[/pied|plantaire|orteil|metatars|hallux|pe\b|plantar/,'pied'],[/tibia|perone|perios|canela|fibula/,'tibia'],
     [/hanche|anca|coxo/,'hanche'],[/pubalg|pubi|aine|virilha|inguin/,'pub'],[/lomb|lombar|lumb|sacr/,'lomb'],[/dos\b|dorsal|rachis|costas/,'dos'],[/epaule|ombro/,'epaule'],[/coude|cotovel/,'coude'],[/poignet|main\b|doigt|pulso|mao\b|dedo/,'main'],
     [/bras\b|braco|biceps|triceps/,'bras'],[/cervic|cou\b|pescoc/,'cou'],[/thora|cote|costel/,'thorax'],[/abdo/,'abdo'],[/tete|cabeca|crani|commotion|concuss/,'tete']];
