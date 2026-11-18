@@ -807,8 +807,18 @@ function ficheDirection(C){
     sec(t('h_follow'),follow.length?`<p>${follow.join(', ')}</p>`:`<p class="sync">${t('fi_noData')}</p>`);
 }
 // résumé individuel d'un joueur, dans la langue L (fr, pt, en) ; textes libres traduits en fr/pt, originaux en anglais
+// traductions à la demande pour le résumé (anciens textes sans traduction, et anglais)
+const TC={fr:{},pt:{},en:{}}, TC_ASKED=new Set();
+const ftr=(x,k,L)=>{const v=(x&&x[k])||'';if(!v)return '';if(L!=='en'){const a=tx(x,k,L);if(a!==v)return a}return TC[L][v]||v};
+function resumeTexts(o){return [...Object.values(o.aig).map(a=>[a.d,'aig']),...(o.chr?[[o.chr,'chr']]:[]),...o.soins.map(s=>[s.d,'pct']),...(o.lastX?[[o.lastX,'c']]:[]),...(o.rec?[[o.rec,'rec']]:[])]}
+async function fillTC(o,L){
+  if(!TR_ON())return;const need=[...new Set(resumeTexts(o).filter(([x,k])=>x&&x[k]&&ftr(x,k,L)===x[k]&&!TC_ASKED.has(L+'|'+x[k])).map(([x,k])=>x[k]))].slice(0,40);
+  if(!need.length)return;need.forEach(v=>TC_ASKED.add(L+'|'+v));
+  try{const {data,error}=await sb.functions.invoke('translate',{body:L==='en'?{texts:need,to:'en'}:{texts:need}});if(error||!data||!data.items)throw error||new Error('translate');
+    need.forEach((v,i)=>{const it=data.items[i]||{};if(it[L])TC[L][v]=it[L];if(it.fr)TC.fr[v]=it.fr;if(it.pt)TC.pt[v]=it.pt});render(true)}catch(err){console.warn('traduction',err)}
+}
 function resumeText(C,o,L,html){
-  const TL_=L==='en'?'pt':L, ft=(x,k)=>L==='en'?(x[k]||''):tx(x,k,TL_);
+  const TL_=L, ft=(x,k)=>ftr(x,k,L);
   const H=s=>html?`<h3>${s}</h3>`:`\n*${s}*`, li=a=>a.length?(html?`<ul class="fl">${a.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:a.map(x=>'• '+x).join('\n')):(html?`<p class="sync">${rt(L,'none')}</p>`:rt(L,'none'));
   const out=[];
   out.push(html?`<h2>${rt(L,'t')}</h2><p><b>${esc(o.p.nom)}</b> · ${rt(L,o.p.poste)}${o.p.club?' · '+esc(o.p.club):''}<br><span class="sync">${rt(L,'per',{a:dm(o.first||C.first),b:dm(o.left||o.last||C.last)})}</span></p>`
@@ -818,8 +828,8 @@ function resumeText(C,o,L,html){
   out.push(H(rt(L,'aig')));if(html&&o.marks.length)out.push(bodySVG(o.marks,L));out.push(li(Object.values(o.aig).map(a=>`${ft(a.d,'aig')}${zoneOf(a.d,'aig')?' — '+zLabel(zoneOf(a.d,'aig'),L):''} (${dm(a.since)})`)));
   if(o.chr){out.push(H(rt(L,'chr')));out.push(li([ft(o.chr,'chr')]))}
   out.push(H(rt(L,'care')));out.push(li([...careRuns(o.soins,d=>d.pct?ft(d,'pct'):''),...(o.recup?[rt(L,'recup',{n:o.recup})]:[])]));
-  const x=o.lastX;out.push(H(rt(L,'end')));out.push(li(x?[o.left?rt(L,'s_parti'):rt(L,'s_'+x.s),...(x.c?[`${rt(L,'cons')} : ${L==='en'?x.c:tx(x,'c',TL_)}`]:[]),...(x.r?[`→ ${dm(x.r)}`]:[])]:[]));
-  if(o.rec&&o.rec.rec){out.push(H(rt(L,'rec')));out.push(html?`<p>${esc(L==='en'?o.rec.rec:tx(o.rec,'rec',TL_))}</p>`:(L==='en'?o.rec.rec:tx(o.rec,'rec',TL_)))}
+  const x=o.lastX;out.push(H(rt(L,'end')));out.push(li(x?[o.left?rt(L,'s_parti'):rt(L,'s_'+x.s),...(x.c?[`${rt(L,'cons')} : ${ft(x,'c')}`]:[]),...(x.r?[`→ ${dm(x.r)}`]:[])]:[]));
+  if(o.rec&&o.rec.rec){out.push(H(rt(L,'rec')));out.push(html?`<p>${esc(ft(o.rec,'rec'))}</p>`:ft(o.rec,'rec'))}
   const me=(S.staff||[]).find(x=>x.name&&x.name===S.me.name), ph=me&&String(me.phone||'').replace(/\D/g,'');
   out.push(html?`<p class="sig">${esc(rt(L,'sig',{n:S.me.name||''}))}<br>${esc(rt(L,'contact',{n:S.me.name||'',p:ph?' · +'+ph:''}))}</p>`:'\n'+rt(L,'sig',{n:S.me.name||''})+'\n'+rt(L,'contact',{n:S.me.name||'',p:ph?' · +'+ph:''}));
   return out.join(html?'':'\n');
@@ -828,7 +838,7 @@ function viewFiches(){
   const C=campStats(), mine=FICHES_OF[S.me.role]||[];
   if(!C.days.length){V.innerHTML=head(t('fi_t'),t('fi_l'),false)+`<div class="panel empty">${t('fi_none')}</div>`;return}
   const per=t('fi_period',{a:dm(C.first),b:dm(C.last),n:C.days.length,m:C.mdays.length});
-  if(RES_P&&S.me.role==='medical'&&C.P[RES_P]){const o=C.P[RES_P],ph=String(o.p.phone||'').replace(/\D/g,'');
+  if(RES_P&&S.me.role==='medical'&&C.P[RES_P]){const o=C.P[RES_P];fillTC(o,RES_L);const ph=String(o.p.phone||'').replace(/\D/g,'');
     V.innerHTML=`<div class="bar noprint"><button class="btn small" id="resBack">← ${t('fi_back')}</button><div class="chips" role="group">${['pt','fr','en'].map(L=>`<button data-resl="${L}" aria-pressed="${RES_L===L}">${L.toUpperCase()}</button>`).join('')}</div>
       <div class="bar"><button class="btn small" id="fiPrint">${t('fi_print')}</button>${ph?`<a class="btn wa" target="_blank" rel="noopener" href="https://wa.me/${ph}?text=${encodeURIComponent(resumeText(C,o,RES_L,false))}">${t('fi_wa')}</a>`:`<span class="sync">${t('fi_noPh')}</span>`}</div></div>
       <label class="f wide noprint">${t('fi_rec')}<textarea id="recTx" data-rec="${o.p.id}" rows="3" placeholder="${t('fi_recPh')}" style="font:inherit;padding:8px;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--ink)">${esc(o.rec?o.rec.rec:'')}</textarea></label>

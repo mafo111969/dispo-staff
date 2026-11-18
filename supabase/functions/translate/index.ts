@@ -1,4 +1,4 @@
-// Dispo Staff : traduction FR <-> PT des textes libres, via DeepL. Secret Supabase : DEEPL_KEY.
+// Dispo Staff : traduction FR <-> PT (et EN pour le résumé joueur) des textes libres, via DeepL. Secret Supabase : DEEPL_KEY.
 // Réservé au staff médical connecté. Seul le texte est envoyé, jamais le nom du joueur.
 import { createClient } from "npm:@supabase/supabase-js@2.117.3";
 
@@ -21,7 +21,7 @@ Deno.serve(async (req) => {
   const { data: me } = await sb.rpc("whoami");
   if (!me || me.role !== "medical") return json({ error: "Réservé au staff médical" }, 403);
 
-  const { texts } = await req.json().catch(() => ({ texts: null }));
+  const { texts, to } = await req.json().catch(() => ({ texts: null, to: null }));
   if (!Array.isArray(texts) || !texts.length || texts.length > 40) return json({ error: "texts" }, 400);
   const clean = texts.map((s) => String(s ?? "").slice(0, 500));
 
@@ -36,6 +36,10 @@ Deno.serve(async (req) => {
     return ((await r.json()).translations || []).map((x: { text: string }) => x.text);
   };
   try {
+    if (to === "en") {
+      const en = await call("EN-GB");
+      return json({ items: clean.map((_, i) => ({ en: en[i] ?? "" })) });
+    }
     const [fr, pt] = await Promise.all([call("FR"), call("PT-PT")]);
     return json({ items: clean.map((_, i) => ({ fr: fr[i] ?? "", pt: pt[i] ?? "" })) });
   } catch (e) {
