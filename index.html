@@ -64,6 +64,26 @@ h2{font-family:var(--f-display);font-size:20px;font-weight:600;margin:0;text-tra
 .bz{stroke:#fff;stroke-width:1.5}.bz.cur{fill:var(--s-indispo)}.bz.old{fill:var(--s-adapte)}.bz.chr{fill:var(--s-reath)}i.bz{display:inline-block;width:11px;height:11px;border-radius:50%;border:0}i.bz.cur{background:var(--s-indispo)}i.bz.old{background:var(--s-adapte)}i.bz.chr{background:var(--s-reath)}
 .bzn{font:700 9px var(--f-mono,monospace);fill:#fff;text-anchor:middle}.bzl{font:600 10px sans-serif;fill:var(--muted);text-anchor:middle}
 @media print{.bd>*{fill:#eee;stroke:#bbb}}
+.resume2{background:#fff;color:#1d1b19;border-radius:12px;border:1px solid var(--line);overflow:hidden;max-width:820px;margin:0 auto;font-size:14px;--ink2:#6b6560}
+.resume2 .sync{color:var(--ink2)}
+.rh{background:#161412;color:#fff;padding:18px 24px 20px;border-top:5px solid #b3121f;position:relative}
+.rh-top{display:flex;justify-content:space-between;gap:12px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#cfc8bf}
+.rh-brand{font-family:var(--f-display);font-weight:800;letter-spacing:.06em;color:#fff}.rh-brand em{font-style:normal;color:#e8bd3a}
+.rh-id{display:flex;gap:16px;align-items:center;margin-top:14px;flex-wrap:wrap}.rh-id h2{margin:0;font-family:var(--f-display);text-transform:uppercase;font-size:30px;color:#fff;letter-spacing:.01em}.rh-id p{margin:2px 0;color:#e6dfd6}.rh-per{font-size:12px;color:#bdb5ab!important}
+.av.xl{width:68px;height:68px;font-size:22px;border:2px solid #e8bd3a}
+.rh-st{margin-left:auto;background:#fff;color:#1d1b19}
+.rkpis{display:grid;grid-template-columns:repeat(5,1fr);border-bottom:1px solid #eee}.rk{padding:14px 10px;text-align:center;border-right:1px solid #eee}.rk:last-child{border-right:0}
+.rk b{display:block;font:700 24px var(--f-mono);color:#1d1b19}.rk span{font-size:11px;color:var(--ink2);text-transform:uppercase;letter-spacing:.05em}.rk.k-ok b{color:#24885a}.rk.k-adapte b{color:#c97a0a}.rk.k-indispo b{color:#c0392b}
+.rsec{padding:14px 24px;border-bottom:1px solid #eee}.rsec h3{margin:0 0 8px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#b3121f}.rsec p{margin:0}
+.rmatch{display:grid;gap:8px}.rmatch div{display:grid;grid-template-columns:1fr auto;gap:2px 10px;align-items:center}.rmatch b{font-family:var(--f-mono)}.rmatch i{grid-column:1/-1;height:6px;border-radius:3px;background:linear-gradient(90deg,#24885a var(--w),#eee var(--w))}
+.rgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:18px;align-items:start}.rgrid .body{margin:0}.rgrid .body svg{max-width:280px}
+.rpl{list-style:none;margin:0 0 14px;padding:0;display:grid;gap:8px}.rpl li{display:flex;gap:10px;align-items:flex-start}.rpl i.bz{margin-top:5px;flex:none}.rpl b{display:block;font-weight:600}.rpl span{font-size:12px;color:var(--ink2)}
+.rcare{margin:0;padding-left:18px;display:grid;gap:3px}
+.rrec{background:#fbf6e8;border-left:4px solid #c99a06}
+.rf{padding:14px 24px 18px;display:grid;gap:8px;background:#f7f5f2}.rf div{display:flex;gap:6px 14px;flex-wrap:wrap;align-items:baseline}.rf span{font-size:12px;color:var(--ink2)}.rf p{margin:0;font-size:11px;color:var(--ink2);font-style:italic}
+.resume2 .bd>*{fill:#efece8;stroke:#d8d2cb}.resume2 .bzl{fill:#6b6560}
+@media (max-width:640px){.rkpis{grid-template-columns:repeat(3,1fr)}.rgrid{grid-template-columns:1fr}.rh-st{margin-left:0}}
+@media print{@page{size:A4;margin:10mm}.resume2{border:0;border-radius:0;max-width:none;font-size:12px;-webkit-print-color-adjust:exact;print-color-adjust:exact}.rh,.rk,.rrec,.rf,.rmatch i,.bz,i.bz,.pill{-webkit-print-color-adjust:exact;print-color-adjust:exact}.rsec{break-inside:avoid}.rgrid .body svg{max-width:230px}}
 .kpis{display:flex;gap:24px;flex-wrap:wrap;margin:4px 0 10px}.kpis div{display:grid}.kpis b{font-size:26px;font-family:var(--f-mono)}
 .fiche{display:grid;gap:14px}.fiche h2.ftitle{margin:0}.fsec h2{margin:0 0 10px;font-size:18px}.fsec h3{margin:12px 0 6px;font-size:14px}.fsec p{margin:4px 0}
 .fl{margin:0;padding-left:18px;display:grid;gap:4px}.reslist{display:flex;flex-wrap:wrap;gap:6px}.reslist .btn{display:inline-flex;gap:6px;align-items:center}
@@ -220,6 +240,6 @@ img.av{display:block}
 <div class="toast" id="toast" hidden></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3/dist/umd/supabase.js"></script>
 <script src="config.js?v=20261110b"></script>
-<script src="app.js?v=20261118e"></script>
+<script src="app.js?v=20261118f"></script>
 </body>
 </html>
