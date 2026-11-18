@@ -737,7 +737,10 @@ function campStats(){
       if(d.pl==='oui')o.pl.push({k,d});if(d.rec){o.rec=d;o.recDay=k}});
     const ld=o.last&&S.drafts&&S.drafts[o.last]&&S.drafts[o.last].players[id];o.aigCur=ld&&ld.aig||'';
     const curBad=o.lastX&&o.lastX.s!=='ok'&&!o.left;
-    o.marks=[...o.pl.filter(x=>x.d.plt&&guessZone(x.d.plt)&&!Object.keys(o.aig).includes(x.d.plt)).map(x=>({z:guessZone(x.d.plt),c:curBad?'cur':'old',n:1})),...Object.entries(o.aig).map(([txt,a])=>({z:zoneOf(a.d,'aig'),c:txt===o.aigCur&&!o.left?'cur':'old',n:1})),...(o.chr?[{z:zoneOf(o.chr,'chr'),c:'chr',n:1}]:[])].filter(m=>m.z);
+    // « en cours » : pathologie encore inscrite au dernier jour, ou la plus récente si le joueur n'est pas « sans restriction » au départ
+    const evs=[...Object.entries(o.aig).map(([txt,a])=>({txt,day:a.since,z:zoneOf(a.d,'aig'),aig:true})),...o.pl.filter(x=>x.d.plt&&!Object.keys(o.aig).includes(x.d.plt)).map(x=>({txt:x.d.plt,day:x.k,z:guessZone(x.d.plt)}))];
+    const latest=evs.reduce((m,e)=>!m||e.day>=m.day?e:m,null);
+    o.marks=[...evs.map(e=>({z:e.z,c:!o.left&&((e.aig&&e.txt===o.aigCur)||(curBad&&e===latest))?'cur':'old',n:1})),...(o.chr?[{z:zoneOf(o.chr,'chr'),c:'chr',n:1}]:[])].filter(m=>m.z);
     P[id]=o;
   });
   const list=ids.map(id=>P[id]).sort((a,b)=>POS.indexOf(a.p.poste)-POS.indexOf(b.p.poste)||(a.p.num??99)-(b.p.num??99));
