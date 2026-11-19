@@ -711,7 +711,8 @@ function careRuns(list,ft){const r=[];list.forEach(x=>{const txt=ft(x.d),l=r[r.l
   return r.map(x=>`${dm(x.a)}${x.n>1?` → ${dm(x.b)} (${x.n} j)`:''}${x.txt?' : '+x.txt:''}`)}
 
 function campStats(){
-  const days=[...new Set(S.sends.map(s=>s.day))].sort();
+  const cp=CFG.camp||{};
+  const days=[...new Set(S.sends.map(s=>s.day))].filter(k=>(!cp.from||k>=cp.from)&&(!cp.to||k<=cp.to)).sort();
   const fin={};days.forEach(k=>{const l=sendsOf(k);fin[k]=l[l.length-1]});
   const mdays=days.filter(k=>sendsOf(k).some(s=>s.match?.on));
   const M={};mdays.forEach(k=>{const l=sendsOf(k),any=l.filter(s=>s.match?.on),post=l.filter(s=>s.label==='match'),av_=l.filter(s=>s.label==='avmatch'&&Object.values(s.snap).some(x=>x.g));
