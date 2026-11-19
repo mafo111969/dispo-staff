@@ -723,7 +723,7 @@ function campStats(){
     days.forEach(k=>{const x=fin[k].snap[id];if(!x)return;
       if(x.s==='parti'){if(!o.left)o.left=k;return}
       if(x.s==='absent'){o.abs++;return}
-      o.pres++;o.st[x.s]=(o.st[x.s]||0)+1;if(!o.first)o.first=k;o.last=k;o.lastX=x;if(x.w)o.watch++;
+      o.left=null;o.pres++;o.st[x.s]=(o.st[x.s]||0)+1;if(!o.first)o.first=k;o.last=k;o.lastX=x;if(x.w)o.watch++;
       if(['reath','adapte'].includes(x.s)){o.ra=true;o.ret=null;o.raD[x.s]++}else if(x.s==='ok'&&o.ra&&!o.ret)o.ret=k;
       if(M[k]){const m=Math.max(0,...M[k].all.map(s=>+(s.snap[id]&&s.snap[id].m)||0));o.mt++;o.per[k]=m;o.mins+=m;
         const g=M[k].av&&M[k].av.snap[id]&&M[k].av.snap[id].g;if(!m&&(g==='no'||LOST.includes(x.s)))o.miss++;
