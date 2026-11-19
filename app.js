@@ -734,7 +734,7 @@ function campStats(){
     if(o.p.left_on&&!o.left)o.left=o.p.left_on;
     o.full=o.st.ok||0;o.ad=o.st.adapte||0;o.lost=LOST.reduce((a,s)=>a+(o.st[s]||0),0);o.rate=o.pres?pct(o.pres-o.lost,o.pres):null;
     Object.keys(S.drafts||{}).sort().filter(k=>!days.length||(k>=days[0]&&k<=days[days.length-1])).forEach(k=>{const d=S.drafts[k].players[id];if(!d)return;
-      if(d.pc==='soins')o.soins.push({k,d});if(d.pc==='recup')o.recup++;
+      if(d.pc==='soins')o.soins.push({k,d});if(d.pc==='recup'){o.recup++;(o.recD=o.recD||[]).push(k)}
       if(d.aig&&!o.aig[d.aig])o.aig[d.aig]={d,since:d.aigd||k};if(d.chr)o.chr=d;
       if(d.pl==='oui')o.pl.push({k,d});if(d.rec){o.rec=d;o.recDay=k}});
     const ld=o.last&&S.drafts&&S.drafts[o.last]&&S.drafts[o.last].players[id];o.aigCur=ld&&ld.aig||'';
@@ -794,7 +794,14 @@ function ficheMedical(C){
   sec(t('h_paths'),`<div class="mapgrid">${ms.length?`<div>${bodySVG(ms)}</div>`:''}<div>${tbl([t('c_player'),t('c_path'),t('c_zone'),t('c_date'),t('c_src'),t('c_lostD'),t('c_state')],rows,[5])}</div></div>`)+
   sec(t('h_player'),tbl([t('c_player'),t('c_pres'),t('s_indispo'),t('s_soins'),t('s_reath'),t('c_ad'),t('c_full'),t('c_abs'),t('c_end')],
     concerned.map(o=>[nmP(o),o.pres,o.st.indispo||0,o.st.soins||0,o.st.reath||0,o.ad,o.full,o.abs,o.left?t('fi_dep',{d:dm(o.left)}):o.lastX?t('s_'+o.lastX.s):'—']),[1,2,3,4,5,6,7])+(others?`<p class="sync">${t('fi_others',{n:others})}</p>`:''))+
-  sec(t('h_care'),kpis([[t('k_careS'),careP.reduce((a,o)=>a+o.soins.length,0)],[t('k_recS'),careP.reduce((a,o)=>a+o.recup,0)],[t('k_careP'),careP.length]])+tbl([t('c_player'),t('c_soins'),t('c_recup'),t('care')],careRows,[1,2]))+
+  sec(t('h_care'),(()=>{const nS=careP.reduce((a,o)=>a+o.soins.length,0),nR=careP.reduce((a,o)=>a+o.recup,0),mx=Math.max(1,...careP.map(o=>o.soins.length+o.recup));
+    const tiles=`<div class="ctiles"><div class="ctile soins"><span class="ci">✚</span><b>${nS}</b><small>${t('k_careS')}</small></div><div class="ctile recup"><span class="ci">↻</span><b>${nR}</b><small>${t('k_recS')}</small></div><div class="ctile"><span class="ci">●</span><b>${careP.length}</b><small>${t('k_careP')}</small></div></div>`;
+    const head=`<div class="crow chead"><span></span><div class="cdays">${C.days.map(k=>`<i title="${dm(k)}">${k.slice(8)}</i>`).join('')}</div><span></span><span></span><span></span></div>`;
+    const rows=careP.sort((a,b)=>(b.soins.length+b.recup)-(a.soins.length+a.recup)).map(o=>{const sd=new Set(o.soins.map(x=>x.k)),rd=new Set(o.recD||[]);
+      return `<div class="crow"><b>${nmP(o)}</b><div class="cdays">${C.days.map(k=>`<i class="${sd.has(k)?'cs':rd.has(k)?'cr':!(k in o.dayS)?'cx':''}"></i>`).join('')}</div>
+      <div class="cbar"><i class="cs" style="width:${o.soins.length/mx*100}%"></i><i class="cr" style="width:${o.recup/mx*100}%"></i></div><span class="cnum">${o.soins.length?`<em class="s">✚ ${o.soins.length}</em>`:''}${o.recup?`<em class="r">↻ ${o.recup}</em>`:''}</span>
+      <small>${careRuns(o.soins,d=>d.pct?esc(tx(d,'pct')):'').join('<br>')}</small></div>`}).join('');
+    return tiles+(careP.length?`<div class="cgrid">${head}${rows}</div><div class="legend"><span><i class="dot" style="background:var(--s-soins)"></i>${t('c_soins')}</span><span><i class="dot" style="background:var(--s-reath)"></i>${t('c_recup')}</span></div>`:`<p class="sync">${t('fi_noData')}</p>`)})())+
   sec(t('h_club'),tbl([t('c_player'),t('c_end'),t('c_cons'),t('c_rec')],club))+
   sec(t('h_res'),`<div class="resgrid noprint-btn">${C.list.map(o=>{const ph=String(o.p.phone||'').replace(/\D/g,''),st=o.lastX?CAT(o.lastX.s):'ok';
     return `<button class="rescard k-${st}" data-res="${o.p.id}">${av(o.p,'sm')}<span><b>${nmP(o)}</b><small>${o.lastX?t('s_'+o.lastX.s):''}</small></span><em>${sent[o.p.id]?'✓ '+t('res_sent'):ph?t('res_ph'):t('res_noph')}</em></button>`}).join('')}</div>`);
