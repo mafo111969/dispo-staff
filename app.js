@@ -107,7 +107,7 @@ const ROLES=['medical','prepa','coach','tm','direction'], LABELS=['matin','aprem
 // étiquette proposée par défaut : avant-match puis après-match les jours de match
 const defLabel=(sends,d)=>{if(d&&d.match?.on){const ls_=sends.map(x=>x.label);return ls_.includes('avmatch')?'match':'avmatch'}return ['matin','aprem','soir'][Math.min(sends.length,2)]};
 const gOf=x=>x.g||(['ok','adapte'].includes(x.s)?'ok':'no');
-const TABS={medical:['medical','wa','prepa','coach','direction','roster','staff','fiches'],prepa:['prepa','coach','fiches'],coach:['coach','fiches'],tm:['coach','fiches'],direction:['direction','coach','fiches']};
+const TABS={medical:['medical','wa','prepa','coach','direction','roster','intake','staff','fiches'],prepa:['prepa','coach','fiches'],coach:['coach','fiches'],tm:['coach','fiches'],direction:['direction','coach','fiches']};
 
 /* ---------- dates ---------- */
 const pad=n=>String(n).padStart(2,'0');
@@ -120,7 +120,7 @@ const hmOf=isoTs=>{const d=new Date(isoTs);return `${pad(d.getHours())}h${pad(d.
 let DATE=iso(new Date());
 
 /* ---------- état ---------- */
-const S={players:[],drafts:{},sends:[],prepa:[],staff:[],alerts:[],typeStats:[],me:null,ready:false};
+const S={players:[],drafts:{},sends:[],prepa:[],staff:[],alerts:[],intake:[],typeStats:[],me:null,ready:false};
 let selP=null, LABEL=null, TALLY=null;
 const OPEN=new Set();
 const ZONES=['isch','add','quad','mol','dos','gen','che'], LIMS=['sprint','frappe','cod','duel','vol'];
@@ -208,8 +208,10 @@ const Store={
     S.prepa=pr.data||[];S.staff=st.data||[];S.typeStats=ty.data||[];
     S.alerts=[];S.alertsMissing=false;
     if(['medical','coach','prepa'].includes(role)){const {data,error}=await sb.from('alerts').select('*');if(error)S.alertsMissing=true;else S.alerts=data||[]}
+    S.intake=[];S.intakeMissing=false;
+    if(role==='medical'){const {data,error}=await sb.from('intake').select('*');if(error)S.intakeMissing=true;else S.intake=data||[]}
   },
-  persistDemo(){if(DEMO){const {players,drafts,sends,prepa,staff,alerts}=S;ls.set('dispo-demo',JSON.stringify({players,drafts,sends,prepa,staff,alerts}));S.typeStats=localTypeStats()}},
+  persistDemo(){if(DEMO){const {players,drafts,sends,prepa,staff,alerts,intake}=S;ls.set('dispo-demo',JSON.stringify({players,drafts,sends,prepa,staff,alerts,intake}));S.typeStats=localTypeStats()}},
   async patchDraft(day,patch){
     const d=S.drafts[day]||(S.drafts[day]={day,players:{},match:{on:false,opp:''}});
     Object.assign(d.players,patch.players||{});if(patch.match)d.match=patch.match;
@@ -221,6 +223,14 @@ const Store={
     if(DEMO){d.checks=[...(d.checks||[]),{by:S.me.name||'Démo',at:new Date().toISOString()}];return this.persistDemo()}
     const {error}=await sb.rpc('draft_check',{d:day});if(error)throw error;
     const {data}=await sb.from('drafts').select('*').eq('day',day).maybeSingle();if(data)S.drafts[day]=data;
+  },
+  async saveIntake(pid,ph,patch){
+    const camp=CAMP();S.intake=S.intake||[];let r=ikRow(pid,ph,camp);
+    if(!r){r={camp,player_id:pid,phase:ph,data:{}};S.intake.push(r)}
+    r.data={...r.data,...(patch.data||{})};if(patch.validated_at!==undefined){r.validated_at=patch.validated_at;r.validated_by=patch.validated_by}
+    r.by_name=S.me.name||'';r.at=new Date().toISOString();
+    if(DEMO)return this.persistDemo();
+    const {id,...row}=r;const {data,error}=await sb.from('intake').upsert(row,{onConflict:'camp,player_id,phase'}).select().single();if(error)throw error;r.id=data.id;
   },
   async addSend(row){
     if(DEMO){row.id=Date.now();S.sends.push(row);return this.persistDemo()}
@@ -629,6 +639,113 @@ function viewRoster(){
     <button class="btn">${t('add')}</button></form></div>`;
 }
 
+/* ---------- rassemblement : pré-rassemblement (liste annoncée) et arrivée ---------- */
+// Champs par étape : ajouter une ligne ici + son libellé ik_<k> (et ik_<k>Ph pour un texte) suffit.
+const IK={
+  pre:[{k:'pb',t:'yn'},{k:'pbk',t:'sel',o:['rec','chr'],if:'pb'},{k:'pbt',t:'txt',if:'pb',w:1,tr:1},{k:'src',t:'sel',o:['club','joueur','med'],if:'pb'},
+    {k:'bl',t:'txt',w:1,tr:1},{k:'ex',t:'txt',w:1,tr:1},{k:'tt',t:'txt',w:1,tr:1},{k:'aut',t:'txt',w:1,tr:1},{k:'lm',t:'date'}],
+  arr:[{k:'pl',t:'yn'},{k:'plt',t:'txt',if:'pl',w:1,tr:1},{k:'ci',t:'txt',w:1,tr:1},{k:'ex',t:'txt',w:1,tr:1},{k:'tt',t:'txt',w:1,tr:1},{k:'aut',t:'txt',w:1,tr:1},{k:'lm',t:'date'},
+    {k:'st',t:'sel',o:['ok','adapte','reath','soins','indispo'],lab:'s_'}]
+};
+const IK_YN={pre:'pb',arr:'pl'};
+let IK_PH=ls.get('ik-ph')==='arr'?'arr':'pre', IK_HIST=null;
+const CAMP=()=>ls.get('ik-camp')||(CFG.camp&&CFG.camp.from)||iso(new Date());
+const ikRow=(pid,ph,camp=CAMP())=>(S.intake||[]).find(r=>r.camp===camp&&r.player_id===pid&&r.phase===ph);
+const ikTx=(dt,k,L=LANG)=>{const e=dt.tr&&dt.tr[k];return e&&e.src===dt[k]&&e[L]?e[L]:dt[k]||''};
+const ikOpt=(f,v)=>t(f.lab?f.lab+v:'ik_'+f.k+'_'+v);
+// dernier rassemblement du joueur avant celui-ci (briefings validés ou fiches rassemblement), sinon null = nouveau sélectionné
+function ikLastCamp(pid,camp=CAMP()){
+  const d1=S.sends.filter(s=>s.day<camp&&s.snap&&s.snap[pid]&&s.snap[pid].s!=='parti').map(s=>s.day).sort().pop()||'';
+  const d2=(S.intake||[]).filter(r=>r.player_id===pid&&r.camp<camp).map(r=>r.camp).sort().pop()||'';
+  return (d1>d2?d1:d2)||null;
+}
+const ikLabel=(f,pid)=>{if(f.k!=='bl')return t('ik_'+f.k);const lc=ikLastCamp(pid);return lc?t('ik_blOld',{d:dm(lc)}):t('ik_blNew')};
+function ikField(f,dt,pid,ph){
+  if(f.if&&dt[f.if]!=='oui')return '';
+  const id=`ik-${ph}-${f.k}-${pid}`,v=dt[f.k]??'',lab=ikLabel(f,pid);
+  if(f.t==='txt')return `<label class="f${f.w?' wide':''}">${lab}<input type="text" id="${id}" data-ik="${f.k}" value="${esc(v)}" placeholder="${t('ik_'+f.k+'Ph')}"></label>`;
+  if(f.t==='date')return `<label class="f">${lab}<input type="date" id="${id}" data-ik="${f.k}" value="${esc(v)}"></label>`;
+  if(f.t==='sel')return `<label class="f">${lab}<select id="${id}" data-ik="${f.k}"><option value="">—</option>${f.o.map(o=>`<option value="${o}"${o===v?' selected':''}>${ikOpt(f,o)}</option>`).join('')}</select></label>`;
+  return '';
+}
+// résumé lisible d'une fiche (traduite dans la langue de l'écran)
+function ikSum(dt,ph,pid){
+  const yn=IK_YN[ph];const out=[];
+  if(dt[yn])out.push(`<b>${t('ik_'+yn)} : ${t('pl_'+dt[yn])}</b>`);
+  IK[ph].filter(f=>f.k!==yn&&dt[f.k]&&!(f.if&&dt[f.if]!=='oui')).forEach(f=>out.push(`${esc(ikLabel(f,pid))} : ${esc(f.t==='date'?dm(dt[f.k]):f.t==='sel'?ikOpt(f,dt[f.k]):ikTx(dt,f.k))}`));
+  return out.join(' · ')||'—';
+}
+async function ikTranslate(pid,ph,k,v){
+  if(!TR_ON()||!v)return;
+  try{const {data,error}=await sb.functions.invoke('translate',{body:{texts:[v]}});if(error||!data||!data.items)return;
+    const r=ikRow(pid,ph);if(!r||r.data[k]!==v)return;await Store.saveIntake(pid,ph,{data:{tr:{...(r.data.tr||{}),[k]:{src:v,...data.items[0]}}}})}catch(e){console.warn('traduction',e)}
+}
+// arrivée validée : pré-remplit le premier briefing qui suit (statut proposé, à surveiller, pathologies)
+async function ikValidate(pid){
+  const p=byId(pid),a=ikRow(pid,'arr'),pre=ikRow(pid,'pre');if(!p||!a)return;
+  const camp=CAMP(),arrD=p.added_on&&p.added_on>camp?p.added_on:camp,today=iso(new Date()),day=today>arrD?today:arrD;
+  const d=draft(day),x={...(d.players[pid]||blankP())},A=a.data,P=(pre&&pre.data)||{},trc=(src,k,to)=>{const e=src.tr&&src.tr[k];if(e&&e.src===src[k])x.tr={...(x.tr||{}),[to]:{...e}}};
+  if(A.st&&(x.s==='ok'||!x.s))x.s=A.st;
+  if(A.pl==='oui'||P.pb==='oui')x.w=true;
+  if(A.pl==='oui'&&A.plt&&!x.aig){x.aig=A.plt;x.aigd=day;trc(A,'plt','aig')}
+  if(P.pb==='oui'&&P.pbt){if(P.pbk==='chr'){if(!x.chr){x.chr=P.pbt;trc(P,'pbt','chr')}}else if(!x.aig){x.aig=P.pbt;x.aigd=day;trc(P,'pbt','aig')}}
+  await Store.patchDraft(day,d.exists?{players:{[pid]:x}}:{players:{...d.players,[pid]:x},match:d.match});
+  await Store.saveIntake(pid,'arr',{validated_at:new Date().toISOString(),validated_by:S.me.name||''});
+  return day;
+}
+function viewIntake(){
+  const ph=IK_PH,camp=CAMP(),yn=IK_YN[ph];
+  const ps=[...S.players].filter(p=>!p.left_on||p.left_on>=camp);
+  const rowsOf=ps.map(p=>ikRow(p.id,ph)).filter(Boolean);
+  const nDone=rowsOf.filter(r=>r.data[yn]).length,nYes=rowsOf.filter(r=>r.data[yn]==='oui').length,nVal=rowsOf.filter(r=>r.validated_at).length;
+  const hist=IK_HIST&&byId(IK_HIST);
+  const histP=hist?`<div class="panel pad ikhist"><div class="bar" style="justify-content:space-between"><h2>${t('ik_histT',{n:esc(hist.nom)})}</h2><button class="btn small" id="ikHistClose">${t('ik_close')}</button></div>
+    ${(()=>{const rs=(S.intake||[]).filter(r=>r.player_id===hist.id).sort((a,b)=>a.camp<b.camp?1:a.camp>b.camp?-1:a.phase==='pre'?-1:1);
+      return rs.length?rs.map(r=>`<div class="ikh"><b>${dm(r.camp)}/${r.camp.slice(0,4)} · ${t('ik_'+r.phase)}</b><div>${ikSum(r.data,r.phase,hist.id)}</div><small>${esc(r.by_name||'')}${r.validated_at?' · '+t('ik_done',{d:dm(r.validated_at.slice(0,10))}):''}</small></div>`).join(''):`<p class="sync">${t('ik_none')}</p>`})()}</div>`:'';
+  const rows=POS.map(k=>{const g=ps.filter(p=>p.poste===k).sort((a,b)=>(a.num??99)-(b.num??99));if(!g.length)return '';
+    return `<div class="group-title">${t(k)}</div>`+g.map(p=>{
+      const r=ikRow(p.id,ph),dt=(r&&r.data)||{},pre=ph==='arr'&&ikRow(p.id,'pre');
+      const hasH=(S.intake||[]).some(x=>x.player_id===p.id);
+      return `<div class="row ikrow${dt[yn]==='oui'?' ikyes':''}" data-ikp="${p.id}">
+        <div class="who"><span class="num">${p.num??''}</span>${av(p)}<span><span class="name">${esc(p.nom)}</span> <span class="club">${esc(p.club||'')}${ph==='pre'?` · ${ikLastCamp(p.id)?t('ik_old'):t('ik_new')}`:''}</span></span>
+          ${hasH?`<button class="pbtn" data-ikhist="${p.id}">${t('ik_hist')}</button>`:''}
+          ${ph==='arr'?(r&&r.validated_at?`<span class="ikok">✓ ${t('ik_done',{d:dm(r.validated_at.slice(0,10))})}</span>`:`<button class="btn small primary" data-ikval="${p.id}"${dt.pl?'':' disabled'}>${t('ik_val')}</button>`):''}</div>
+        <div class="seg" role="group" aria-label="${t('ik_'+yn)}"><span class="iklab">${t('ik_'+yn)}</span>${['non','oui'].map(v=>`<button class="k-${v==='non'?'ok':'soins'}" data-yn="${v}" aria-pressed="${dt[yn]===v}"><i class="dot"></i>${t('pl_'+v)}</button>`).join('')}</div>
+        ${pre&&Object.keys(pre.data||{}).length?`<div class="ikpre"><span class="medonly">${t('ik_fromPre')}</span>${ikSum(pre.data,'pre',p.id)}</div>`:''}
+        <div class="details">${IK[ph].filter(f=>f.k!==yn).map(f=>ikField(f,dt,p.id,ph)).join('')}</div>
+      </div>`}).join('')}).join('');
+  V.innerHTML=head(t('ik_t'),t('ik_l'),false)+(S.intakeMissing?`<div class="note warn">${t('ik_sql')}</div>`:'')+histP+
+    `<div class="panel"><div class="ikbar"><label class="f">${t('ik_camp')}<input type="date" id="ikCamp" value="${camp}"></label>
+      <div class="seg" role="group">${['pre','arr'].map(k=>`<button data-ikph="${k}" aria-pressed="${ph===k}">${t('ik_'+k)}</button>`).join('')}</div>
+      <span class="sync">${t(ph==='pre'?'ik_cnt':'ik_cntA',{a:nDone,b:ps.length,o:nYes,v:nVal})}</span>
+      ${ph==='arr'?`<button class="btn small" id="ikValAll"${rowsOf.some(r=>r.data.pl&&!r.validated_at)?'':' disabled'}>${t('ik_valAll')}</button>`:''}
+      <span class="medonly">${t('medOnly')}</span></div>${rows}</div>`;
+}
+const IT={
+fr:{tab_intake:'Rassemblement',ik_t:'Rassemblement',ik_l:'Étape 1 quand la liste est annoncée, étape 2 à l\'arrivée de chaque joueur. Valider l\'arrivée pré-remplit le briefing suivant (statut proposé, à surveiller, pathologie). Tout reste archivé dans l\'historique du joueur.',
+ ik_camp:'Début du rassemblement',ik_pre:'1. Liste annoncée',ik_arr:'2. Arrivée',ik_new:'nouveau sélectionné',ik_old:'déjà venu',
+ ik_pb:'Problème médical connu',ik_pbk:'Nature',ik_pbk_rec:'Récent',ik_pbk_chr:'Chronique',ik_pbt:'Nature du problème',ik_pbtPh:'Ex. entorse cheville D il y a 10 jours',
+ ik_src:'Source',ik_src_club:'Club',ik_src_joueur:'Joueur',ik_src_med:'Médecin du club',
+ ik_bl:'Blessures',ik_blNew:'Blessures des 6 derniers mois',ik_blOld:'Blessures depuis le dernier rassemblement (présent le {d})',ik_blPh:'Ex. lésion ischio D en septembre, 3 semaines',
+ ik_ex:'Examens passés',ik_exPh:'Ex. IRM genou G le 02/11',ik_tt:'Traitement en cours',ik_ttPh:'Ex. anti-inflammatoires, kiné 3×/sem.',ik_aut:'AUT (autorisation d\'usage thérapeutique)',ik_autPh:'Ex. salbutamol inhalé, AUT valable jusqu\'au 06/2027',
+ ik_lm:'Date du dernier match',ik_pl:'Plainte à l\'arrivée',ik_plt:'Détail de la plainte',ik_pltPh:'Ex. gêne ischio G après le vol',ik_ci:'Consignes du club',ik_ciPh:'Ex. 60 min maximum, suivi du tendon',
+ ik_st:'Statut proposé au 1er briefing',ik_fromPre:'Annoncé avant le rassemblement',ik_val:'Valider l\'arrivée',ik_valAll:'Valider toutes les arrivées renseignées',
+ ik_done:'arrivée validée le {d}',ik_valOk:'Arrivée validée : briefing du {d} pré-rempli',ik_valN:'{n} arrivée(s) validée(s)',ik_hist:'Historique',ik_histT:'Historique de {n}',ik_close:'Fermer',ik_none:'Aucun historique.',
+ ik_cnt:'{a}/{b} renseignés · {o} avec problème connu',ik_cntA:'{a}/{b} renseignés · {o} plainte(s) · {v} validé(s)',
+ ik_sql:'La table du rassemblement n\'existe pas encore : lancez la commande SQL « rassemblement » dans Supabase.'},
+pt:{tab_intake:'Estágio',ik_t:'Estágio',ik_l:'Etapa 1 quando a lista é anunciada, etapa 2 à chegada de cada jogador. Validar a chegada pré-preenche o briefing seguinte (estado proposto, a vigiar, patologia). Tudo fica arquivado no histórico do jogador.',
+ ik_camp:'Início do estágio',ik_pre:'1. Lista anunciada',ik_arr:'2. Chegada',ik_new:'nova convocatória',ik_old:'já convocado',
+ ik_pb:'Problema médico conhecido',ik_pbk:'Natureza',ik_pbk_rec:'Recente',ik_pbk_chr:'Crónico',ik_pbt:'Natureza do problema',ik_pbtPh:'Ex. entorse tornozelo dir. há 10 dias',
+ ik_src:'Fonte',ik_src_club:'Clube',ik_src_joueur:'Jogador',ik_src_med:'Médico do clube',
+ ik_bl:'Lesões',ik_blNew:'Lesões dos últimos 6 meses',ik_blOld:'Lesões desde o último estágio (presente a {d})',ik_blPh:'Ex. lesão isquiotibial dir. em setembro, 3 semanas',
+ ik_ex:'Exames realizados',ik_exPh:'Ex. RM joelho esq. a 02/11',ik_tt:'Tratamento em curso',ik_ttPh:'Ex. anti-inflamatórios, fisioterapia 3×/sem.',ik_aut:'AUT (autorização de utilização terapêutica)',ik_autPh:'Ex. salbutamol inalado, AUT válida até 06/2027',
+ ik_lm:'Data do último jogo',ik_pl:'Queixa à chegada',ik_plt:'Detalhe da queixa',ik_pltPh:'Ex. desconforto isquiotibial esq. após o voo',ik_ci:'Indicações do clube',ik_ciPh:'Ex. máximo 60 min, seguir o tendão',
+ ik_st:'Estado proposto no 1.º briefing',ik_fromPre:'Anunciado antes do estágio',ik_val:'Validar a chegada',ik_valAll:'Validar todas as chegadas preenchidas',
+ ik_done:'chegada validada a {d}',ik_valOk:'Chegada validada: briefing de {d} pré-preenchido',ik_valN:'{n} chegada(s) validada(s)',ik_hist:'Histórico',ik_histT:'Histórico de {n}',ik_close:'Fechar',ik_none:'Sem histórico.',
+ ik_cnt:'{a}/{b} preenchidos · {o} com problema conhecido',ik_cntA:'{a}/{b} preenchidos · {o} queixa(s) · {v} validado(s)',
+ ik_sql:'A tabela do estágio ainda não existe: execute o comando SQL « rassemblement » no Supabase.'}};
+Object.keys(IT).forEach(L=>Object.assign(T[L],IT[L]));
+
 /* ---------- connexion ---------- */
 function viewLogin(msg){
   document.getElementById('nav').innerHTML='';
@@ -918,8 +1035,8 @@ function viewFiches(){
 }
 
 /* ---------- rendu ---------- */
-const VIEWS={fiches:viewFiches,medical:viewMedical,prepa:viewPrepa,coach:viewCoach,direction:viewDirection,wa:viewWA,staff:viewStaff,roster:viewRoster};
-const TL={fiches:'tab_fiches',medical:'tab_medical',prepa:'tab_prepa',coach:'tab_coach',direction:'tab_direction',wa:'tab_wa',staff:'tab_staff',roster:'tab_roster'};
+const VIEWS={fiches:viewFiches,medical:viewMedical,prepa:viewPrepa,coach:viewCoach,direction:viewDirection,wa:viewWA,staff:viewStaff,roster:viewRoster,intake:viewIntake};
+const TL={fiches:'tab_fiches',medical:'tab_medical',prepa:'tab_prepa',coach:'tab_coach',direction:'tab_direction',wa:'tab_wa',staff:'tab_staff',roster:'tab_roster',intake:'tab_intake'};
 const CAN_SEND=()=>DEMO||S.me?.can_send!==false;
 const myTabs=()=>TABS[S.me.role].filter(k=>CAN_SEND()||(k!=='wa'&&k!=='staff'));
 const curTab=()=>{const h=location.hash.slice(1),ok=myTabs();return ok.includes(h)?h:ok[0]};
@@ -964,6 +1081,14 @@ V.addEventListener('click',async e=>{
   if(el.dataset.heal){const C=campStats(),o=C.P[RES_P],e=o&&o.evs[+el.dataset.heal];if(!e)return;const k=o.last,d=S.drafts[k];const x={...((d&&d.players[RES_P])||{})};x.heal={...(x.heal||{}),[e.txt]:el.dataset.hc};
     try{await Store.patchDraft(k,{players:{[RES_P]:x}})}catch(err){fail(err)}return render(true)}
   if(el.id==='resBack'){RES_P=null;return render(true)}
+  if(el.dataset.ikph){IK_PH=el.dataset.ikph;ls.set('ik-ph',IK_PH);return render(true)}
+  if(el.dataset.yn){const pid=el.closest('[data-ikp]').dataset.ikp,ph=IK_PH,yn=IK_YN[ph],patch={[yn]:el.dataset.yn};
+    if(el.dataset.yn==='non')IK[ph].filter(f=>f.if===yn).forEach(f=>patch[f.k]='');
+    try{await Store.saveIntake(pid,ph,{data:patch})}catch(err){fail(err)}return render(true)}
+  if(el.dataset.ikhist){IK_HIST=el.dataset.ikhist;scrollTo(0,0);return render(true)}
+  if(el.id==='ikHistClose'){IK_HIST=null;return render(true)}
+  if(el.dataset.ikval){el.disabled=true;try{if(PEND.size)await Promise.all([...PEND]);const day=await ikValidate(el.dataset.ikval);toast(t('ik_valOk',{d:dm(day)}))}catch(err){fail(err)}return render(true)}
+  if(el.id==='ikValAll'){el.disabled=true;let n=0;try{for(const p of S.players){const r=ikRow(p.id,'arr');if(r&&r.data.pl&&!r.validated_at){await ikValidate(p.id);n++}}toast(t('ik_valN',{n}))}catch(err){fail(err)}return render(true)}
   if(el.id==='fiPrint'){window.print();return}
   if(el.id==='suiviAll'){SUIVI_ALL=!SUIVI_ALL;return render(true)}
   if(el.id==='alertOpen'){AL_FORM=true;return render(true)}
@@ -1007,6 +1132,8 @@ V.addEventListener('click',async e=>{
 V.addEventListener('keydown',e=>{const r=e.target.closest('tr.pick');if(r&&(e.key==='Enter'||e.key===' ')){e.preventDefault();selP=r.dataset.pid;render(true);V.querySelector(`tr[data-pid="${selP}"]`)?.focus()}});
 V.addEventListener('change',e=>{
   const el=e.target;
+  if(el.id==='ikCamp'){if(el.value){ls.set('ik-camp',el.value);render(true)}return}
+  if(el.dataset.ik&&el.tagName==='SELECT'||el.dataset.ik&&el.type==='date'){const pid=el.closest('[data-ikp]').dataset.ikp;Store.saveIntake(pid,IK_PH,{data:{[el.dataset.ik]:el.value}}).catch(fail);return}
   if(el.id==='matchOn'){const d=draft(),m={on:el.checked,opp:d.match?.opp||'Sudão do Sul'};const patch={match:m};if(!d.exists)patch.players=d.players;Store.patchDraft(DATE,patch).catch(fail);return render(true)}
   if(el.dataset.w){const id=el.closest('[data-id]').dataset.id,x={...pl(id)};x.w=el.checked;setPlayer(id,x);return render(true)}
   if(el.dataset.f==='cp'){const id=el.closest('[data-id]').dataset.id,x={...pl(id)};x.cp=el.value;if(el.value!=='oui')x.cpm=0;setPlayer(id,x);return render(true)}
@@ -1027,6 +1154,8 @@ V.addEventListener('input',e=>{
     const C=campStats(),o=C.P[id];if(!o)return;const k=o.recDay||o.last||C.last;const d=S.drafts[k];const x={...((d&&d.players[id])||{}),rec:v};
     if(v&&TR_ON()){try{const {data}=await sb.functions.invoke('translate',{body:{texts:[v]}});if(data&&data.items)x.tr={...(x.tr||{}),rec:{src:v,...data.items[0]}}}catch(err){console.warn(err)}}
     try{await Store.patchDraft(k,{players:{[id]:x}});render()}catch(err){fail(err)}},900);return}
+  if(el.dataset.ik&&el.type==='text'){const pid=el.closest('[data-ikp]').dataset.ikp,ph=IK_PH,k=el.dataset.ik;debounced('ik'+ph+k+pid,async()=>{const v=el.value.trim();try{await Store.saveIntake(pid,ph,{data:{[k]:v}});render()}catch(err){return fail(err)}
+    const f=IK[ph].find(x=>x.k===k);if(f&&f.tr){const job=ikTranslate(pid,ph,k,v);PEND.add(job);job.finally(()=>PEND.delete(job))}},800);return}
   if(el.dataset.f==='sbt'){const id=el.closest('[data-id]').dataset.id;debounced('sbt'+id,async()=>{const x={...pl(id)},v=el.value.trim();
     if(!x.aig||x.aig===x.sbt){x.aig=v;x.aigd=x.aigd||DATE}x.sbt=v;await setPlayer(id,x);translateField(id,'aig',v)});return}
   if(['chr','aig','pct','plt','awt'].includes(el.dataset.f)){const id=el.closest('[data-id]').dataset.id,k=el.dataset.f;debounced(k+id,async()=>{const x={...pl(id)},v=el.value.trim();x[k]=v;await setPlayer(id,x);translateField(id,k,v)});return}
